@@ -1,0 +1,150 @@
+:root {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  color: #132036;
+  background: radial-gradient(circle at top left, #f6fbff, #eef4ff 45%, #f8f9fc);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app-root {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+}
+
+.panel {
+  background: #ffffffcc;
+  border: 1px solid #d4ddec;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.hint {
+  margin: 0 0 0.75rem;
+  color: #47556a;
+  font-size: 0.9rem;
+}
+
+.puzzle-input {
+  width: 100%;
+  border: 1px solid #bdcae0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font: 500 0.95rem/1.5 "JetBrains Mono", monospace;
+  resize: vertical;
+}
+
+.error-message {
+  margin: 0;
+  background: #ffe8e8;
+  color: #8f1f1f;
+  border: 1px solid #f3bbbb;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.sudoku-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(28px, 1fr));
+  width: min(100%, 560px);
+  border: 3px solid #1f2d47;
+  background: #ffffff;
+}
+
+.sudoku-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #c7d0e1;
+  text-align: center;
+  font: 700 clamp(0.95rem, 2vw, 1.2rem) / 1 "JetBrains Mono", monospace;
+  color: #22324d;
+}
+
+.sudoku-cell[data-col="2"],
+.sudoku-cell[data-col="5"] {
+  border-right: 3px solid #1f2d47;
+}
+
+.sudoku-cell[data-row="2"],
+.sudoku-cell[data-row="5"] {
+  border-bottom: 3px solid #1f2d47;
+}
+
+.sudoku-cell:focus {
+  outline: 2px solid #52a1ff;
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.origin-given {
+  color: #0f2f6d;
+  background: #eef4ff;
+}
+
+.origin-user {
+  color: #0f6649;
+  background: #ebfff3;
+}
+
+.origin-empty {
+  color: #b6c1d4;
+  background: #fbfdff;
+}
+
+.legend {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+}
+
+.legend-given {
+  background: #eef4ff;
+  border-color: #c6d9ff;
+}
+
+.legend-user {
+  background: #ebfff3;
+  border-color: #b6f0d0;
+}
+
+.legend-empty {
+  background: #fbfdff;
+  border-color: #dde4f1;
+}
+
+@media (max-width: 640px) {
+  .app-root {
+    padding: 0.75rem;
+  }
+
+  .panel {
+    padding: 0.75rem;
+  }
+}
