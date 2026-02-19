@@ -29,6 +29,10 @@ body.solve-no-scroll-body {
   overflow: hidden;
 }
 
+body.review-scroll-lock {
+  overscroll-behavior: none;
+}
+
 .app-root {
   max-width: 1120px;
   margin: 0 auto;

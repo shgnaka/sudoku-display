@@ -176,6 +176,35 @@ describe("Sudoku UI", () => {
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
   });
 
+  it("locks page movement only while review mode is enabled", () => {
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      writable: true,
+      value: 120
+    });
+
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      writable: true,
+      value: 580
+    });
+    fireEvent.scroll(window);
+
+    expect(scrollSpy).toHaveBeenCalledWith(0, 120);
+
+    scrollSpy.mockClear();
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: ON）" }));
+    fireEvent.scroll(window);
+    expect(scrollSpy).not.toHaveBeenCalled();
+
+    scrollSpy.mockRestore();
+  });
+
   it("shows float ink actions only while ink mode is on", () => {
     render(<App />);
 

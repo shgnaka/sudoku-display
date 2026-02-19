@@ -5,6 +5,7 @@ import { InkToggleBar } from "../components/InkToggleBar";
 import { SudokuGrid } from "../components/SudokuGrid";
 import { useKeyboardInset } from "../lib/useKeyboardInset";
 import { useKeyboardScrollLock } from "../lib/useKeyboardScrollLock";
+import { useReviewScrollLock } from "../lib/useReviewScrollLock";
 import { useSudokuAppState } from "../state/SudokuAppStateProvider";
 
 export function SolvePage(): JSX.Element {
@@ -29,6 +30,7 @@ export function SolvePage(): JSX.Element {
   const keyboardInset = useKeyboardInset();
   const shouldShowInkActions = isInkMode && !isReviewMode && keyboardInset === 0;
   useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
+  useReviewScrollLock(isReviewMode);
 
   return (
     <div className="solve-page" style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
@@ -82,7 +84,7 @@ export function SolvePage(): JSX.Element {
             onToggleInkMode={() => setIsInkMode(!isInkMode)}
           />
         </div>
-        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
+        {isReviewMode && <p className="hint">確認モード中: 盤面操作と画面移動をロック中です。</p>}
         <div className="solve-ink-actions-slot">
           {shouldShowInkActions ? (
             <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />

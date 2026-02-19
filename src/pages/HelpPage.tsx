@@ -31,7 +31,9 @@ export function HelpPage(): JSX.Element {
 
       <section className="panel">
         <h2>確認モード</h2>
-        <p className="hint">確認モード中は盤面編集と手書き描画をロックします。見直し時の誤操作防止に使ってください。</p>
+        <p className="hint">
+          確認モード中は盤面編集・手書き描画に加えて画面移動もロックします。見直し時の誤操作防止に使ってください。
+        </p>
       </section>
     </div>
   );
