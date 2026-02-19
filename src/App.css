@@ -172,8 +172,30 @@ button.danger {
 }
 
 .mode-toggle-button {
-  width: min(100%, 560px);
+  width: 100%;
   min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.mode-state-dot {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  background: transparent;
+  flex: 0 0 auto;
+}
+
+.mode-state-dot[data-state="on"] {
+  background: currentColor;
+}
+
+.mode-label {
+  line-height: 1;
 }
 
 .mode-toggle-button.on {
@@ -194,8 +216,15 @@ button.danger {
   width: min(100%, 560px);
 }
 
+.solve-toggle-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
 .ink-actions-inline {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
 }
 

@@ -5,21 +5,19 @@ interface InkToggleBarProps {
 }
 
 export function InkToggleBar({ isInkMode, isReviewMode, onToggleInkMode }: InkToggleBarProps): JSX.Element {
-  const label = isReviewMode
-    ? "確認モード中は手書きモード無効"
-    : isInkMode
-      ? "手書き: ON"
-      : "手書き: OFF";
+  const currentStateLabel = isInkMode ? "ON" : "OFF";
 
   return (
     <button
-      aria-label={isReviewMode ? "確認モード中は手書きモード無効" : `手書きモード切替（現在: ${label}）`}
+      aria-label={isReviewMode ? "確認モード中は手書きモード無効" : `手書きモード切替（現在: ${currentStateLabel}）`}
+      aria-pressed={isInkMode}
       className={isInkMode ? "mode-toggle-button on" : "mode-toggle-button off"}
       disabled={isReviewMode}
       onClick={onToggleInkMode}
       type="button"
     >
-      {label}
+      <span aria-hidden="true" className="mode-state-dot" data-state={isInkMode ? "on" : "off"} />
+      <span className="mode-label">手書き</span>
     </button>
   );
 }

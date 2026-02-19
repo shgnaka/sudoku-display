@@ -24,7 +24,7 @@ export function HelpPage(): JSX.Element {
         <h2>手書きモード</h2>
         <ul className="help-list">
           <li>Apple Pencil/ペンまたはマウスで描画できます。指タッチはスクロール優先です。</li>
-          <li>解くページの「手書き: ON/OFF」ボタンで切り替えます。</li>
+          <li>解くページの「手書き」ボタンで切り替えます（ボタンの色と点で状態を確認できます）。</li>
           <li>手書きモードがONの間だけ、画面下に消去操作が表示されます。</li>
         </ul>
       </section>

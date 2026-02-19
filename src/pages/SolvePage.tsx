@@ -64,25 +64,26 @@ export function SolvePage(): JSX.Element {
         </div>
       </section>
       <section className="panel solve-controls">
-        <button
-          className={isReviewMode ? "mode-toggle-button on" : "mode-toggle-button off"}
-          onClick={toggleReviewMode}
-          type="button"
-        >
-          {isReviewMode ? "確認モードをOFF" : "確認モードをON"}
-        </button>
-        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
-        <InkToggleBar
-          isInkMode={isInkMode}
-          isReviewMode={isReviewMode}
-          onToggleInkMode={() => setIsInkMode(!isInkMode)}
-        />
-        {isInkMode && !isReviewMode && keyboardInset === 0 && (
-          <InkActionFloatBar
-            activeBlockId={activeBlockId}
-            onClearActiveBlock={handleClearActiveBlock}
-            onClearAll={handleClearAllInk}
+        <div className="solve-toggle-row">
+          <button
+            aria-label={`確認モード切替（現在: ${isReviewMode ? "ON" : "OFF"}）`}
+            aria-pressed={isReviewMode}
+            className={isReviewMode ? "mode-toggle-button on" : "mode-toggle-button off"}
+            onClick={toggleReviewMode}
+            type="button"
+          >
+            <span aria-hidden="true" className="mode-state-dot" data-state={isReviewMode ? "on" : "off"} />
+            <span className="mode-label">確認</span>
+          </button>
+          <InkToggleBar
+            isInkMode={isInkMode}
+            isReviewMode={isReviewMode}
+            onToggleInkMode={() => setIsInkMode(!isInkMode)}
           />
+        </div>
+        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
+        {isInkMode && !isReviewMode && keyboardInset === 0 && (
+          <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />
         )}
       </section>
       <div aria-hidden="true" className="keyboard-spacer" />

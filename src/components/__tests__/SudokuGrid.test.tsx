@@ -163,7 +163,7 @@ describe("Sudoku UI", () => {
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.value).toBe("4");
 
-    fireEvent.click(screen.getByRole("button", { name: "確認モードをON" }));
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
 
     expect(editableCell.readOnly).toBe(true);
     expect(editableCell.tabIndex).toBe(-1);
@@ -181,12 +181,12 @@ describe("Sudoku UI", () => {
 
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: OFF）" }));
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
 
     expect(screen.getByRole("region", { name: "手書き操作" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "現在ブロック消去（0-0）" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "ブロック消去" })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: ON）" }));
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: ON）" }));
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
   });
 
@@ -194,7 +194,7 @@ describe("Sudoku UI", () => {
     keyboardInsetState.value = 240;
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: OFF）" }));
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
   });
 
