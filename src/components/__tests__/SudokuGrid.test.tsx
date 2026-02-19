@@ -1,10 +1,19 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../App";
+
+const { generateSudokuMock } = vi.hoisted(() => ({
+  generateSudokuMock: vi.fn()
+}));
+
+vi.mock("../../wasm/sudokuGenerator", () => ({
+  generateSudoku: generateSudokuMock
+}));
 
 describe("Sudoku UI", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    generateSudokuMock.mockReset();
   });
 
   it("renders a 9x9 grid", () => {
@@ -80,5 +89,41 @@ describe("Sudoku UI", () => {
 
     const inkToggle = screen.getByRole("button", { name: "確認モード中は描画モード無効" });
     expect(inkToggle).toBeDisabled();
+  });
+
+  it("generates puzzle via wasm bridge and updates board", async () => {
+    const puzzle = new Uint8Array(81);
+    puzzle[0] = 1;
+    puzzle[1] = 2;
+    puzzle[2] = 3;
+    puzzle[3] = 4;
+    puzzle[4] = 5;
+    puzzle[5] = 6;
+    puzzle[6] = 7;
+    puzzle[7] = 8;
+    puzzle[8] = 9;
+
+    generateSudokuMock.mockResolvedValue({
+      puzzle,
+      solution: puzzle,
+      clues: 9,
+      difficulty: "hard",
+      seed: 10n
+    });
+
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    fireEvent.change(editableCell, { target: { value: "4" } });
+    expect(editableCell.className).toContain("origin-user");
+
+    fireEvent.click(screen.getByRole("button", { name: "新しい問題を生成" }));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("r1c1")).toHaveValue("1");
+    });
+
+    expect(screen.getByLabelText("r1c3")).toHaveValue("3");
+    expect(generateSudokuMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -9,10 +9,13 @@ import { DEFAULT_PUZZLE_TEXT } from "./lib/defaultPuzzle";
 import { loadGameState, saveGameState } from "./lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "./lib/inkModel";
 import { clearInkState, loadInkState, saveInkState } from "./lib/inkStorage";
+import { line81ToPuzzleText } from "./lib/sudokuFormatter";
 import { useKeyboardInset } from "./lib/useKeyboardInset";
 import { useKeyboardScrollLock } from "./lib/useKeyboardScrollLock";
 import { parseSudokuText } from "./lib/sudokuParser";
 import { setUserCell } from "./lib/sudokuModel";
+import { generateSudoku } from "./wasm/sudokuGenerator";
+import type { SudokuDifficulty } from "./wasm/sudokuGenerator";
 import type { Stroke, BlockId, InkState } from "./types/ink";
 import type { Board } from "./types/sudoku";
 
@@ -27,6 +30,9 @@ function App(): JSX.Element {
   const [rawInput, setRawInput] = useState(persistedGame?.rawInput ?? DEFAULT_PUZZLE_TEXT);
   const [board, setBoard] = useState<Board>(() => persistedGame?.board ?? emptyBoard());
   const [errorMessage, setErrorMessage] = useState("");
+  const [generationError, setGenerationError] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [difficulty, setDifficulty] = useState<SudokuDifficulty>("medium");
   const [isInkMode, setIsInkMode] = useState(false);
   const [isGridEditing, setIsGridEditing] = useState(false);
   const [isReviewMode, setIsReviewMode] = useState(false);
@@ -95,6 +101,24 @@ function App(): JSX.Element {
     });
   };
 
+  const handleGeneratePuzzle = async (): Promise<void> => {
+    setIsGenerating(true);
+    setGenerationError("");
+
+    try {
+      const generated = await generateSudoku(difficulty);
+      const generatedText = line81ToPuzzleText(generated.puzzle);
+      setRawInput(generatedText);
+      setInkState(clearAll());
+      clearInkState();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "数独の生成に失敗しました。";
+      setGenerationError(message);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <main
       className="app-root"
@@ -103,6 +127,28 @@ function App(): JSX.Element {
       <header>
         <h1>Sudoku Display</h1>
       </header>
+
+      <section className="panel generator-panel">
+        <h2>問題生成（Rust + WASM）</h2>
+        <p className="hint">重い処理は Rust 側で実行し、唯一解の問題を生成します。</p>
+        <div className="generator-controls">
+          <label htmlFor="difficulty-select">
+            難易度
+            <select
+              id="difficulty-select"
+              onChange={(event) => setDifficulty(event.target.value as SudokuDifficulty)}
+              value={difficulty}
+            >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+          <button disabled={isGenerating} onClick={() => void handleGeneratePuzzle()} type="button">
+            {isGenerating ? "生成中..." : "新しい問題を生成"}
+          </button>
+        </div>
+      </section>
 
       <PuzzleInput onChange={setRawInput} value={rawInput} />
 
@@ -118,6 +164,11 @@ function App(): JSX.Element {
       {errorMessage && (
         <p aria-live="polite" className="error-message" role="alert">
           {errorMessage}
+        </p>
+      )}
+      {generationError && (
+        <p aria-live="polite" className="error-message" role="alert">
+          {generationError}
         </p>
       )}
 
