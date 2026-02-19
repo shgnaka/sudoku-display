@@ -117,6 +117,48 @@ header h1 {
   width: min(100%, 560px);
 }
 
+.board-panel-header {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.board-panel-header h2 {
+  margin: 0;
+}
+
+.review-mode-button {
+  border: 1px solid #9eb1d3;
+  background: #f6f9ff;
+  color: #1f2d47;
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-mode-button.on {
+  border-color: #d6a0a0;
+  background: #fff2f2;
+  color: #7a2525;
+}
+
+.board-wrap.review-locked {
+  touch-action: none;
+}
+
+.board-wrap.review-locked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: none;
+  z-index: 5;
+}
+
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, minmax(28px, 1fr));
@@ -233,6 +275,11 @@ header h1 {
   }
 
   .ink-toolbar-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .board-panel-header {
     align-items: flex-start;
     flex-direction: column;
   }

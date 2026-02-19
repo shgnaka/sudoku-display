@@ -2,6 +2,7 @@ import type { BlockId } from "../types/ink";
 
 interface InkToolbarProps {
   isInkMode: boolean;
+  isReviewMode: boolean;
   activeBlockId: BlockId;
   onClearActiveBlock: () => void;
   onClearAll: () => void;
@@ -10,6 +11,7 @@ interface InkToolbarProps {
 
 export function InkToolbar({
   isInkMode,
+  isReviewMode,
   activeBlockId,
   onClearActiveBlock,
   onClearAll,
@@ -23,10 +25,17 @@ export function InkToolbar({
           {isInkMode ? "描画モード ON" : "描画モード OFF"}
         </span>
       </div>
-      <p className="hint">Apple Pencil/ペンまたはマウスで描画できます。指タッチはスクロール優先です。</p>
+      <p className="hint">
+        Apple Pencil/ペンまたはマウスで描画できます。指タッチはスクロール優先です。
+        {isReviewMode ? " 確認モード中は手書き入力できません。" : ""}
+      </p>
       <div className="ink-toolbar-actions">
-        <button onClick={onToggleInkMode} type="button">
-          {isInkMode ? "描画モードをOFF" : "描画モードをON"}
+        <button disabled={isReviewMode} onClick={onToggleInkMode} type="button">
+          {isReviewMode
+            ? "確認モード中は描画モード無効"
+            : isInkMode
+              ? "描画モードをOFF"
+              : "描画モードをON"}
         </button>
         <button onClick={onClearActiveBlock} type="button">
           現在ブロックを消去（{activeBlockId}）

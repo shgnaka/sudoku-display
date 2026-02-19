@@ -4,6 +4,7 @@ interface SudokuCellProps {
   cell: CellData;
   row: number;
   col: number;
+  disabled?: boolean;
   onChange: (row: number, col: number, value: number | null) => void;
   onBlurCell?: () => void;
   onFocusCell?: () => void;
@@ -13,6 +14,7 @@ export function SudokuCell({
   cell,
   row,
   col,
+  disabled = false,
   onChange,
   onBlurCell,
   onFocusCell
@@ -20,7 +22,7 @@ export function SudokuCell({
   const className = ["sudoku-cell", `origin-${cell.origin}`].join(" ");
 
   const handleChange = (rawValue: string): void => {
-    if (cell.origin === "given") {
+    if (cell.origin === "given" || disabled) {
       return;
     }
 
@@ -43,10 +45,11 @@ export function SudokuCell({
       data-row={row}
       inputMode="numeric"
       maxLength={1}
-      onBlur={onBlurCell}
+      onBlur={disabled ? undefined : onBlurCell}
       onChange={(event) => handleChange(event.target.value)}
-      onFocus={onFocusCell}
-      readOnly={cell.origin === "given"}
+      onFocus={disabled ? undefined : onFocusCell}
+      readOnly={cell.origin === "given" || disabled}
+      tabIndex={disabled ? -1 : undefined}
       value={cell.value ?? ""}
     />
   );

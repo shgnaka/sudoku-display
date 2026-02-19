@@ -3,6 +3,7 @@ import { SudokuCell } from "./SudokuCell";
 
 interface SudokuGridProps {
   board: Board;
+  disabled?: boolean;
   onCellChange: (row: number, col: number, value: number | null) => void;
   onCellBlur?: () => void;
   onCellFocus?: () => void;
@@ -10,6 +11,7 @@ interface SudokuGridProps {
 
 export function SudokuGrid({
   board,
+  disabled = false,
   onCellChange,
   onCellBlur,
   onCellFocus
@@ -21,6 +23,7 @@ export function SudokuGrid({
           <SudokuCell
             cell={cell}
             col={colIndex}
+            disabled={disabled}
             key={`${rowIndex}-${colIndex}`}
             onBlurCell={onCellBlur}
             onChange={onCellChange}

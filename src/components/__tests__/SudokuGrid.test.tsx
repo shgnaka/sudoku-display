@@ -62,4 +62,23 @@ describe("Sudoku UI", () => {
     expect(restoredCell.value).toBe("4");
     expect(restoredCell.className).toContain("origin-user");
   });
+
+  it("disables grid interaction in review mode", () => {
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    fireEvent.change(editableCell, { target: { value: "4" } });
+    expect(editableCell.value).toBe("4");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モードをON" }));
+
+    expect(editableCell.readOnly).toBe(true);
+    expect(editableCell.tabIndex).toBe(-1);
+
+    fireEvent.change(editableCell, { target: { value: "8" } });
+    expect(editableCell.value).toBe("4");
+
+    const inkToggle = screen.getByRole("button", { name: "確認モード中は描画モード無効" });
+    expect(inkToggle).toBeDisabled();
+  });
 });

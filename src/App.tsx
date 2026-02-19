@@ -29,11 +29,12 @@ function App(): JSX.Element {
   const [errorMessage, setErrorMessage] = useState("");
   const [isInkMode, setIsInkMode] = useState(false);
   const [isGridEditing, setIsGridEditing] = useState(false);
+  const [isReviewMode, setIsReviewMode] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
   const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
   const keyboardInset = useKeyboardInset();
-  useKeyboardScrollLock({ enabled: isGridEditing, keyboardInset });
+  useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
 
   useEffect(() => {
     setInkState(loadInkState());
@@ -83,6 +84,17 @@ function App(): JSX.Element {
     clearInkState();
   };
 
+  const toggleReviewMode = (): void => {
+    setIsReviewMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsInkMode(false);
+        setIsGridEditing(false);
+      }
+      return next;
+    });
+  };
+
   return (
     <main
       className="app-root"
@@ -97,6 +109,7 @@ function App(): JSX.Element {
       <InkToolbar
         activeBlockId={activeBlockId}
         isInkMode={isInkMode}
+        isReviewMode={isReviewMode}
         onClearActiveBlock={handleClearActiveBlock}
         onClearAll={handleClearAll}
         onToggleInkMode={() => setIsInkMode((prev) => !prev)}
@@ -109,10 +122,21 @@ function App(): JSX.Element {
       )}
 
       <section className="panel">
-        <h2>盤面</h2>
-        <div className="board-wrap">
+        <div className="board-panel-header">
+          <h2>盤面</h2>
+          <button
+            className={isReviewMode ? "review-mode-button on" : "review-mode-button"}
+            onClick={toggleReviewMode}
+            type="button"
+          >
+            {isReviewMode ? "確認モードをOFF" : "確認モードをON"}
+          </button>
+        </div>
+        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
+        <div className={isReviewMode ? "board-wrap review-locked" : "board-wrap"}>
           <SudokuGrid
             board={board}
+            disabled={isReviewMode}
             onCellBlur={() => setIsGridEditing(false)}
             onCellChange={handleCellChange}
             onCellFocus={() => setIsGridEditing(true)}
