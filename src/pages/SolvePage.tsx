@@ -28,7 +28,7 @@ export function SolvePage(): JSX.Element {
   } = useSudokuAppState();
 
   const keyboardInset = useKeyboardInset();
-  const shouldShowInkActions = isInkMode && !isReviewMode && keyboardInset === 0;
+  const shouldShowInkActions = isInkMode && keyboardInset === 0;
   useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
   useReviewScrollLock(isReviewMode);
 
@@ -84,18 +84,13 @@ export function SolvePage(): JSX.Element {
             onToggleInkMode={toggleInkMode}
           />
         </div>
-        <div className="solve-review-message-slot">
+        <div className="solve-mode-slot">
           {isReviewMode ? (
             <p className="hint review-mode-message">確認モード中: 盤面操作と画面移動をロック中です。</p>
-          ) : (
-            <div aria-hidden="true" className="review-message-placeholder" />
-          )}
-        </div>
-        <div className="solve-ink-actions-slot">
-          {shouldShowInkActions ? (
+          ) : shouldShowInkActions ? (
             <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />
           ) : (
-            <div aria-hidden="true" className="ink-actions-placeholder" />
+            <div aria-hidden="true" className="mode-slot-placeholder" />
           )}
         </div>
       </section>

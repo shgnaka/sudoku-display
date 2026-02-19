@@ -174,6 +174,8 @@ describe("Sudoku UI", () => {
     const inkToggle = screen.getByRole("button", { name: "確認モード中は手書きモード無効" });
     expect(inkToggle).toBeDisabled();
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+    expect(screen.getByText("確認モード中: 盤面操作と画面移動をロック中です。")).toBeInTheDocument();
+    expect(document.querySelector(".mode-slot-placeholder")).not.toBeInTheDocument();
   });
 
   it("locks page movement only while review mode is enabled", () => {
@@ -208,19 +210,19 @@ describe("Sudoku UI", () => {
   it("shows float ink actions only while ink mode is on", () => {
     render(<App />);
 
-    expect(document.querySelector(".solve-ink-actions-slot")).toBeInTheDocument();
-    expect(document.querySelector(".ink-actions-placeholder")).toBeInTheDocument();
+    expect(document.querySelector(".solve-mode-slot")).toBeInTheDocument();
+    expect(document.querySelector(".mode-slot-placeholder")).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
 
     expect(screen.getByRole("region", { name: "手書き操作" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "ブロック消去" })).toBeInTheDocument();
-    expect(document.querySelector(".ink-actions-placeholder")).not.toBeInTheDocument();
+    expect(document.querySelector(".mode-slot-placeholder")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: ON）" }));
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
-    expect(document.querySelector(".ink-actions-placeholder")).toBeInTheDocument();
+    expect(document.querySelector(".mode-slot-placeholder")).toBeInTheDocument();
   });
 
   it("hides float ink actions while keyboard inset is active", () => {

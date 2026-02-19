@@ -303,12 +303,12 @@ button.danger {
   gap: 0.45rem;
 }
 
-.solve-review-message-slot {
+.solve-mode-slot {
   min-height: 44px;
   display: grid;
 }
 
-.review-message-placeholder {
+.mode-slot-placeholder {
   min-height: 44px;
 }
 
@@ -320,15 +320,6 @@ button.danger {
 
 .ink-actions-inline button {
   width: 100%;
-  min-height: 44px;
-}
-
-.solve-ink-actions-slot {
-  min-height: 44px;
-  display: grid;
-}
-
-.ink-actions-placeholder {
   min-height: 44px;
 }
 
