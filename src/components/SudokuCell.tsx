@@ -5,9 +5,18 @@ interface SudokuCellProps {
   row: number;
   col: number;
   onChange: (row: number, col: number, value: number | null) => void;
+  onBlurCell?: () => void;
+  onFocusCell?: () => void;
 }
 
-export function SudokuCell({ cell, row, col, onChange }: SudokuCellProps): JSX.Element {
+export function SudokuCell({
+  cell,
+  row,
+  col,
+  onChange,
+  onBlurCell,
+  onFocusCell
+}: SudokuCellProps): JSX.Element {
   const className = ["sudoku-cell", `origin-${cell.origin}`].join(" ");
 
   const handleChange = (rawValue: string): void => {
@@ -34,7 +43,9 @@ export function SudokuCell({ cell, row, col, onChange }: SudokuCellProps): JSX.E
       data-row={row}
       inputMode="numeric"
       maxLength={1}
+      onBlur={onBlurCell}
       onChange={(event) => handleChange(event.target.value)}
+      onFocus={onFocusCell}
       readOnly={cell.origin === "given"}
       value={cell.value ?? ""}
     />

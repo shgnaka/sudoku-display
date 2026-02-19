@@ -10,6 +10,7 @@ import { loadGameState, saveGameState } from "./lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "./lib/inkModel";
 import { clearInkState, loadInkState, saveInkState } from "./lib/inkStorage";
 import { useKeyboardInset } from "./lib/useKeyboardInset";
+import { useKeyboardScrollLock } from "./lib/useKeyboardScrollLock";
 import { parseSudokuText } from "./lib/sudokuParser";
 import { setUserCell } from "./lib/sudokuModel";
 import type { Stroke, BlockId, InkState } from "./types/ink";
@@ -27,10 +28,12 @@ function App(): JSX.Element {
   const [board, setBoard] = useState<Board>(() => persistedGame?.board ?? emptyBoard());
   const [errorMessage, setErrorMessage] = useState("");
   const [isInkMode, setIsInkMode] = useState(false);
+  const [isGridEditing, setIsGridEditing] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
   const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
   const keyboardInset = useKeyboardInset();
+  useKeyboardScrollLock({ enabled: isGridEditing, keyboardInset });
 
   useEffect(() => {
     setInkState(loadInkState());
@@ -108,7 +111,12 @@ function App(): JSX.Element {
       <section className="panel">
         <h2>盤面</h2>
         <div className="board-wrap">
-          <SudokuGrid board={board} onCellChange={handleCellChange} />
+          <SudokuGrid
+            board={board}
+            onCellBlur={() => setIsGridEditing(false)}
+            onCellChange={handleCellChange}
+            onCellFocus={() => setIsGridEditing(true)}
+          />
           <InkOverlay
             activeBlockId={activeBlockId}
             inkState={inkState}
