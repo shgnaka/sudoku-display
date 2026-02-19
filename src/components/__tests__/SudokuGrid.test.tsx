@@ -42,6 +42,31 @@ describe("Sudoku UI", () => {
     expect(editableCell.className).toContain("origin-user");
   });
 
+  it("selects all text when an editable cell gets focus", () => {
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    fireEvent.change(editableCell, { target: { value: "4" } });
+
+    fireEvent.focus(editableCell);
+
+    expect(editableCell.selectionStart).toBe(0);
+    expect(editableCell.selectionEnd).toBe(1);
+  });
+
+  it("keeps full selection after mouse up on an editable cell", () => {
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    fireEvent.change(editableCell, { target: { value: "4" } });
+
+    fireEvent.focus(editableCell);
+    fireEvent.mouseUp(editableCell);
+
+    expect(editableCell.selectionStart).toBe(0);
+    expect(editableCell.selectionEnd).toBe(1);
+  });
+
   it("shows an error and keeps board when puzzle input becomes invalid", () => {
     render(<App />);
 

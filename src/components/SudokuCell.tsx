@@ -1,3 +1,4 @@
+import type { FocusEvent, MouseEvent } from "react";
 import type { CellData } from "../types/sudoku";
 
 interface SudokuCellProps {
@@ -20,9 +21,10 @@ export function SudokuCell({
   onFocusCell
 }: SudokuCellProps): JSX.Element {
   const className = ["sudoku-cell", `origin-${cell.origin}`].join(" ");
+  const isReadOnly = cell.origin === "given" || disabled;
 
   const handleChange = (rawValue: string): void => {
-    if (cell.origin === "given" || disabled) {
+    if (isReadOnly) {
       return;
     }
 
@@ -37,6 +39,23 @@ export function SudokuCell({
     }
   };
 
+  const handleFocus = (event: FocusEvent<HTMLInputElement>): void => {
+    if (isReadOnly) {
+      return;
+    }
+
+    event.currentTarget.select();
+    onFocusCell?.();
+  };
+
+  const handleMouseUp = (event: MouseEvent<HTMLInputElement>): void => {
+    if (isReadOnly) {
+      return;
+    }
+
+    event.preventDefault();
+  };
+
   return (
     <input
       aria-label={`r${row + 1}c${col + 1}`}
@@ -47,8 +66,9 @@ export function SudokuCell({
       maxLength={1}
       onBlur={disabled ? undefined : onBlurCell}
       onChange={(event) => handleChange(event.target.value)}
-      onFocus={disabled ? undefined : onFocusCell}
-      readOnly={cell.origin === "given" || disabled}
+      onFocus={disabled ? undefined : handleFocus}
+      onMouseUp={disabled ? undefined : handleMouseUp}
+      readOnly={isReadOnly}
       tabIndex={disabled ? -1 : undefined}
       value={cell.value ?? ""}
     />
