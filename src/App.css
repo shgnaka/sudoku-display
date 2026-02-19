@@ -39,6 +39,25 @@ body.solve-no-scroll-body {
 }
 
 .app-root.solve-no-scroll {
+  --solve-inline-size: calc(100vw - 1.5rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  --solve-header-reserved: 3.4rem;
+  --solve-controls-reserved: 10.8rem;
+  --solve-bottom-reserved: 1rem;
+  --solve-board-size: clamp(
+    320px,
+    min(
+      var(--solve-inline-size),
+      calc(
+        100dvh
+          - var(--solve-header-reserved)
+          - var(--solve-controls-reserved)
+          - var(--solve-bottom-reserved)
+          - env(safe-area-inset-top, 0px)
+          - env(safe-area-inset-bottom, 0px)
+      )
+    ),
+    var(--solve-inline-size)
+  );
   max-width: none;
   height: 100dvh;
   min-height: 100dvh;
@@ -260,6 +279,7 @@ button.danger {
 
 .app-root.solve-no-scroll .solve-controls {
   gap: 0.35rem;
+  width: min(100%, var(--solve-board-size));
 }
 
 .solve-toggle-row {
@@ -276,6 +296,15 @@ button.danger {
 
 .ink-actions-inline button {
   width: 100%;
+  min-height: 44px;
+}
+
+.solve-ink-actions-slot {
+  min-height: 44px;
+  display: grid;
+}
+
+.ink-actions-placeholder {
   min-height: 44px;
 }
 
@@ -305,15 +334,15 @@ button.danger {
 }
 
 .app-root.solve-no-scroll .board-panel-header {
-  width: min(100%, 560px);
+  width: min(100%, var(--solve-board-size));
   margin-bottom: 0.25rem;
 }
 
 .app-root.solve-no-scroll .board-wrap {
-  width: auto;
-  height: 100%;
-  max-width: min(100%, 560px);
-  max-height: 100%;
+  width: min(100%, var(--solve-board-size));
+  height: min(100%, var(--solve-board-size));
+  max-width: var(--solve-board-size);
+  max-height: var(--solve-board-size);
   aspect-ratio: 1 / 1;
   justify-self: center;
   align-self: center;
@@ -548,6 +577,8 @@ button.danger {
   }
 
   .app-root.solve-no-scroll {
+    --solve-controls-reserved: 11.6rem;
+    --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + 0.35rem);
     padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.35rem);
   }
 

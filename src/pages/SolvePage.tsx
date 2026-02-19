@@ -27,6 +27,7 @@ export function SolvePage(): JSX.Element {
   } = useSudokuAppState();
 
   const keyboardInset = useKeyboardInset();
+  const shouldShowInkActions = isInkMode && !isReviewMode && keyboardInset === 0;
   useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
 
   return (
@@ -82,9 +83,13 @@ export function SolvePage(): JSX.Element {
           />
         </div>
         {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
-        {isInkMode && !isReviewMode && keyboardInset === 0 && (
-          <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />
-        )}
+        <div className="solve-ink-actions-slot">
+          {shouldShowInkActions ? (
+            <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />
+          ) : (
+            <div aria-hidden="true" className="ink-actions-placeholder" />
+          )}
+        </div>
       </section>
       <div aria-hidden="true" className="keyboard-spacer" />
     </div>

@@ -179,15 +179,19 @@ describe("Sudoku UI", () => {
   it("shows float ink actions only while ink mode is on", () => {
     render(<App />);
 
+    expect(document.querySelector(".solve-ink-actions-slot")).toBeInTheDocument();
+    expect(document.querySelector(".ink-actions-placeholder")).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
 
     expect(screen.getByRole("region", { name: "手書き操作" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "ブロック消去" })).toBeInTheDocument();
+    expect(document.querySelector(".ink-actions-placeholder")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: ON）" }));
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+    expect(document.querySelector(".ink-actions-placeholder")).toBeInTheDocument();
   });
 
   it("hides float ink actions while keyboard inset is active", () => {
