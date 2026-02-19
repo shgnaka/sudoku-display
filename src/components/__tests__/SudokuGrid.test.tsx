@@ -257,6 +257,31 @@ describe("Sudoku UI", () => {
     expect(within(drawerNav).queryByRole("button", { name: "作問" })).not.toBeInTheDocument();
   });
 
+  it("toggles menu button label and expanded state while drawer is open", () => {
+    render(<App />);
+
+    const openButton = screen.getByRole("button", { name: "メニューを開く" });
+    expect(openButton).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(openButton);
+
+    const closeButton = screen.getByRole("button", { name: "メニューを閉じる" });
+    expect(closeButton).toHaveAttribute("aria-expanded", "true");
+    expect(closeButton.className).toContain("open");
+    expect(screen.queryByRole("button", { name: "閉じる" })).not.toBeInTheDocument();
+  });
+
+  it("closes drawer on Escape key press", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "メニューを開く" }));
+    expect(screen.getByRole("button", { name: "メニューを閉じる" })).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: "Escape" });
+
+    expect(screen.getByRole("button", { name: "メニューを開く" })).toBeInTheDocument();
+  });
+
   it("generates puzzle via wasm bridge and updates board", async () => {
     const puzzle = new Uint8Array(81);
     puzzle[0] = 1;

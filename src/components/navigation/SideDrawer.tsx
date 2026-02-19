@@ -12,12 +12,9 @@ export function SideDrawer({ isOpen, currentRoute, routes, onClose, onNavigate }
   return (
     <>
       <div className={isOpen ? "drawer-backdrop open" : "drawer-backdrop"} onClick={onClose} />
-      <aside className={isOpen ? "side-drawer open" : "side-drawer"}>
+      <aside className={isOpen ? "side-drawer open" : "side-drawer"} id="app-side-drawer">
         <div className="drawer-header">
           <h2>メニュー</h2>
-          <button onClick={onClose} type="button">
-            閉じる
-          </button>
         </div>
         <nav aria-label="アプリメニュー">
           <ul className="drawer-nav">

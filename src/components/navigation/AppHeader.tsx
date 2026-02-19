@@ -1,12 +1,13 @@
 interface AppHeaderProps {
   currentLabel: string;
-  onOpenMenu: () => void;
+  isMenuOpen: boolean;
+  onToggleMenu: () => void;
   compact?: boolean;
-  floatingMenuOnly?: boolean;
 }
 
-export function AppHeader({ currentLabel, onOpenMenu, compact = false, floatingMenuOnly = false }: AppHeaderProps): JSX.Element {
-  const buttonClassName = floatingMenuOnly ? "hamburger-button floating" : "hamburger-button";
+export function AppHeader({ currentLabel, isMenuOpen, onToggleMenu, compact = false }: AppHeaderProps): JSX.Element {
+  const buttonClassName = isMenuOpen ? "hamburger-button open" : "hamburger-button";
+  const menuAriaLabel = isMenuOpen ? "メニューを閉じる" : "メニューを開く";
 
   return (
     <header className={compact ? "app-header compact" : "app-header"}>
@@ -16,7 +17,14 @@ export function AppHeader({ currentLabel, onOpenMenu, compact = false, floatingM
           <p className="header-current">現在: {currentLabel}</p>
         </div>
       )}
-      <button aria-label="メニューを開く" className={buttonClassName} onClick={onOpenMenu} type="button">
+      <button
+        aria-controls="app-side-drawer"
+        aria-expanded={isMenuOpen}
+        aria-label={menuAriaLabel}
+        className={buttonClassName}
+        onClick={onToggleMenu}
+        type="button"
+      >
         <span />
         <span />
         <span />

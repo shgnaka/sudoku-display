@@ -71,6 +71,25 @@ function AppBody(): JSX.Element {
     };
   }, [isSolveRoute]);
 
+  useEffect(() => {
+    if (typeof window === "undefined" || !isDrawerOpen) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      setIsDrawerOpen(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isDrawerOpen]);
+
   const navigate = (route: AppRouteKey): void => {
     if (typeof window === "undefined") {
       return;
@@ -108,8 +127,8 @@ function AppBody(): JSX.Element {
       <AppHeader
         compact={isSolveRoute}
         currentLabel={currentLabel}
-        floatingMenuOnly={isSolveRoute}
-        onOpenMenu={() => setIsDrawerOpen(true)}
+        isMenuOpen={isDrawerOpen}
+        onToggleMenu={() => setIsDrawerOpen((open) => !open)}
       />
       <SideDrawer
         currentRoute={currentRoute}
