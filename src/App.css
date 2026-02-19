@@ -1,7 +1,6 @@
 :root {
   --keyboard-inset: 0px;
-  --mobile-tabbar-height: 4.75rem;
-  --ink-float-gap: 0.5rem;
+  --mobile-tabbar-height: 4.3rem;
   --app-bg-start: #f7fbff;
   --app-bg-mid: #edf4ff;
   --app-bg-end: #f8fafc;
@@ -172,42 +171,35 @@ button.danger {
   padding: 0.6rem 0.75rem;
 }
 
-.ink-toggle-bar {
-  padding: 0.75rem;
+.mode-toggle-button {
+  width: min(100%, 560px);
+  min-height: 44px;
 }
 
-.ink-toggle-button {
-  min-width: 180px;
-}
-
-.ink-toggle-button.on {
+.mode-toggle-button.on {
   border-color: #7ca6e3;
   background: #eaf3ff;
   color: #143b72;
 }
 
-.ink-toggle-button.off {
+.mode-toggle-button.off {
   border-color: #9eb1d3;
   background: #f6f9ff;
   color: #1f2d47;
 }
 
-.ink-actions-float {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  width: min(560px, calc(100vw - 1.5rem));
-  z-index: 24;
-  border: 1px solid #cdd9ea;
-  border-radius: 12px;
-  background: #f8fbffef;
-  padding: 0.55rem;
+.solve-controls {
   display: grid;
   gap: 0.5rem;
+  width: min(100%, 560px);
 }
 
-.ink-actions-float button {
+.ink-actions-inline {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ink-actions-inline button {
   width: 100%;
   min-height: 44px;
 }
@@ -222,12 +214,6 @@ button.danger {
 
 .board-panel-header h2 {
   margin: 0;
-}
-
-.review-mode-button.on {
-  border-color: #d6a0a0;
-  background: #fff2f2;
-  color: #7a2525;
 }
 
 .board-wrap {
@@ -453,22 +439,13 @@ button.danger {
     margin-bottom: 0.2rem;
   }
 
-  .hamburger-button {
-    display: none;
-  }
-
-  .side-drawer,
-  .drawer-backdrop {
-    display: none;
-  }
-
   .bottom-tab-bar {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.4rem;
     padding: 0.45rem 0.45rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
     background: #f3f7ffef;
@@ -493,8 +470,7 @@ button.danger {
     flex-direction: column;
   }
 
-  .ink-actions-float {
-    width: calc(100vw - 1rem);
-    bottom: calc(var(--mobile-tabbar-height) + var(--ink-float-gap) + env(safe-area-inset-bottom, 0px));
+  .solve-controls {
+    width: 100%;
   }
 }

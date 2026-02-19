@@ -1,4 +1,4 @@
-import { APP_ROUTES } from "../../lib/navigation";
+import { BOTTOM_TAB_ROUTES } from "../../lib/navigation";
 import type { AppRouteKey } from "../../lib/navigation";
 
 interface BottomTabBarProps {
@@ -9,7 +9,7 @@ interface BottomTabBarProps {
 export function BottomTabBar({ currentRoute, onNavigate }: BottomTabBarProps): JSX.Element {
   return (
     <nav aria-label="ページナビゲーション" className="bottom-tab-bar">
-      {APP_ROUTES.filter((route) => route.mobile).map((route) => (
+      {BOTTOM_TAB_ROUTES.map((route) => (
         <button
           className={route.key === currentRoute ? "active" : ""}
           key={route.key}

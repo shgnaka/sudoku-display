@@ -12,7 +12,7 @@ export function InkActionFloatBar({
   onClearAll
 }: InkActionFloatBarProps): JSX.Element {
   return (
-    <section className="ink-actions-float" role="region" aria-label="手書き操作">
+    <section className="ink-actions-inline" role="region" aria-label="手書き操作">
       <button onClick={onClearActiveBlock} type="button">
         現在ブロック消去（{activeBlockId}）
       </button>

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../App";
 
@@ -21,11 +21,28 @@ function clickNav(label: string): void {
 }
 
 describe("Sudoku UI", () => {
+  let isMobileViewport = false;
+
   beforeEach(() => {
     window.localStorage.clear();
     window.location.hash = "#/solve";
     generateSudokuMock.mockReset();
     keyboardInsetState.value = 0;
+    isMobileViewport = false;
+
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn().mockImplementation(() => ({
+        matches: isMobileViewport,
+        media: "(max-width: 768px)",
+        onchange: null,
+        addListener: () => undefined,
+        removeListener: () => undefined,
+        addEventListener: () => undefined,
+        removeEventListener: () => undefined,
+        dispatchEvent: () => false
+      }))
+    });
   });
 
   it("renders a 9x9 grid on solve page", () => {
@@ -179,6 +196,30 @@ describe("Sudoku UI", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: OFF）" }));
     expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+  });
+
+  it("shows only solve and manage in bottom tab bar", () => {
+    isMobileViewport = true;
+    render(<App />);
+
+    const tab = screen.getByRole("navigation", { name: "ページナビゲーション" });
+    expect(within(tab).getByRole("button", { name: "解く" })).toBeInTheDocument();
+    expect(within(tab).getByRole("button", { name: "作問" })).toBeInTheDocument();
+    expect(within(tab).queryByRole("button", { name: "保存管理" })).not.toBeInTheDocument();
+    expect(within(tab).queryByRole("button", { name: "ヘルプ" })).not.toBeInTheDocument();
+  });
+
+  it("limits mobile drawer items to storage and help", () => {
+    isMobileViewport = true;
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "メニューを開く" }));
+
+    const drawerNav = screen.getByRole("navigation", { name: "アプリメニュー" });
+    expect(within(drawerNav).getByRole("button", { name: "保存管理" })).toBeInTheDocument();
+    expect(within(drawerNav).getByRole("button", { name: "ヘルプ" })).toBeInTheDocument();
+    expect(within(drawerNav).queryByRole("button", { name: "解く" })).not.toBeInTheDocument();
+    expect(within(drawerNav).queryByRole("button", { name: "作問" })).not.toBeInTheDocument();
   });
 
   it("generates puzzle via wasm bridge and updates board", async () => {

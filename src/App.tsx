@@ -3,7 +3,8 @@ import "./App.css";
 import { AppHeader } from "./components/navigation/AppHeader";
 import { BottomTabBar } from "./components/navigation/BottomTabBar";
 import { SideDrawer } from "./components/navigation/SideDrawer";
-import { APP_ROUTES, getRouteHash, normalizeRouteHash } from "./lib/navigation";
+import { APP_ROUTES, MOBILE_DRAWER_ROUTES, getRouteHash, normalizeRouteHash } from "./lib/navigation";
+import { useIsMobileViewport } from "./lib/useIsMobileViewport";
 import { HelpPage } from "./pages/HelpPage";
 import { ManagePage } from "./pages/ManagePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -23,6 +24,7 @@ function readCurrentRoute(): AppRouteKey {
 function AppBody(): JSX.Element {
   const [currentRoute, setCurrentRoute] = useState<AppRouteKey>(() => readCurrentRoute());
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useIsMobileViewport();
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -51,6 +53,10 @@ function AppBody(): JSX.Element {
 
     return APP_ROUTES.find((route) => route.key === currentRoute)?.label ?? "解く";
   }, [currentRoute]);
+
+  const drawerRoutes = useMemo(() => {
+    return isMobile ? MOBILE_DRAWER_ROUTES : APP_ROUTES;
+  }, [isMobile]);
 
   const navigate = (route: AppRouteKey): void => {
     if (typeof window === "undefined") {
@@ -90,6 +96,7 @@ function AppBody(): JSX.Element {
       <SideDrawer
         currentRoute={currentRoute}
         isOpen={isDrawerOpen}
+        routes={drawerRoutes}
         onClose={() => setIsDrawerOpen(false)}
         onNavigate={navigate}
       />

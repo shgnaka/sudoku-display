@@ -1,14 +1,14 @@
-import { APP_ROUTES } from "../../lib/navigation";
-import type { AppRouteKey } from "../../lib/navigation";
+import type { AppRouteKey, NavRoute } from "../../lib/navigation";
 
 interface SideDrawerProps {
   isOpen: boolean;
   currentRoute: AppRouteKey;
+  routes: readonly NavRoute[];
   onClose: () => void;
   onNavigate: (route: AppRouteKey) => void;
 }
 
-export function SideDrawer({ isOpen, currentRoute, onClose, onNavigate }: SideDrawerProps): JSX.Element {
+export function SideDrawer({ isOpen, currentRoute, routes, onClose, onNavigate }: SideDrawerProps): JSX.Element {
   return (
     <>
       <div className={isOpen ? "drawer-backdrop open" : "drawer-backdrop"} onClick={onClose} />
@@ -19,9 +19,9 @@ export function SideDrawer({ isOpen, currentRoute, onClose, onNavigate }: SideDr
             閉じる
           </button>
         </div>
-        <nav>
+        <nav aria-label="アプリメニュー">
           <ul className="drawer-nav">
-            {APP_ROUTES.map((route) => (
+            {routes.map((route) => (
               <li key={route.key}>
                 <button
                   className={currentRoute === route.key ? "active" : ""}

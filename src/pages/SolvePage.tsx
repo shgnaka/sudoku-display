@@ -31,12 +31,6 @@ export function SolvePage(): JSX.Element {
 
   return (
     <div className="solve-page" style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
-      <InkToggleBar
-        isInkMode={isInkMode}
-        isReviewMode={isReviewMode}
-        onToggleInkMode={() => setIsInkMode(!isInkMode)}
-      />
-
       {errorMessage && (
         <p aria-live="polite" className="error-message" role="alert">
           {errorMessage}
@@ -46,15 +40,7 @@ export function SolvePage(): JSX.Element {
       <section className="panel">
         <div className="board-panel-header">
           <h2>盤面</h2>
-          <button
-            className={isReviewMode ? "review-mode-button on" : "review-mode-button"}
-            onClick={toggleReviewMode}
-            type="button"
-          >
-            {isReviewMode ? "確認モードをOFF" : "確認モードをON"}
-          </button>
         </div>
-        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
         <div className={isReviewMode ? "board-wrap review-locked" : "board-wrap"}>
           <SudokuGrid
             board={board}
@@ -77,13 +63,28 @@ export function SolvePage(): JSX.Element {
           <span className="legend-item legend-empty">空マス</span>
         </div>
       </section>
-      {isInkMode && !isReviewMode && keyboardInset === 0 && (
-        <InkActionFloatBar
-          activeBlockId={activeBlockId}
-          onClearActiveBlock={handleClearActiveBlock}
-          onClearAll={handleClearAllInk}
+      <section className="panel solve-controls">
+        <button
+          className={isReviewMode ? "mode-toggle-button on" : "mode-toggle-button off"}
+          onClick={toggleReviewMode}
+          type="button"
+        >
+          {isReviewMode ? "確認モードをOFF" : "確認モードをON"}
+        </button>
+        {isReviewMode && <p className="hint">確認モード中: 盤面の入力・手書き・盤面内操作をロック中です。</p>}
+        <InkToggleBar
+          isInkMode={isInkMode}
+          isReviewMode={isReviewMode}
+          onToggleInkMode={() => setIsInkMode(!isInkMode)}
         />
-      )}
+        {isInkMode && !isReviewMode && keyboardInset === 0 && (
+          <InkActionFloatBar
+            activeBlockId={activeBlockId}
+            onClearActiveBlock={handleClearActiveBlock}
+            onClearAll={handleClearAllInk}
+          />
+        )}
+      </section>
       <div aria-hidden="true" className="keyboard-spacer" />
     </div>
   );
