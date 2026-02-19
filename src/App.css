@@ -1,4 +1,5 @@
 :root {
+  --keyboard-inset: 0px;
   font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   color: #132036;
   background: radial-gradient(circle at top left, #f6fbff, #eef4ff 45%, #f8f9fc);
@@ -216,6 +217,10 @@ header h1 {
 .legend-empty {
   background: #fbfdff;
   border-color: #dde4f1;
+}
+
+.keyboard-spacer {
+  height: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px));
 }
 
 @media (max-width: 640px) {

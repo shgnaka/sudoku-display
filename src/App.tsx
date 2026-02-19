@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import "./App.css";
 import { InkOverlay } from "./components/InkOverlay";
 import { InkToolbar } from "./components/InkToolbar";
@@ -8,6 +9,7 @@ import { DEFAULT_PUZZLE_TEXT } from "./lib/defaultPuzzle";
 import { loadGameState, saveGameState } from "./lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "./lib/inkModel";
 import { clearInkState, loadInkState, saveInkState } from "./lib/inkStorage";
+import { useKeyboardInset } from "./lib/useKeyboardInset";
 import { parseSudokuText } from "./lib/sudokuParser";
 import { setUserCell } from "./lib/sudokuModel";
 import type { Stroke, BlockId, InkState } from "./types/ink";
@@ -28,6 +30,7 @@ function App(): JSX.Element {
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
   const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
+  const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
     setInkState(loadInkState());
@@ -78,7 +81,10 @@ function App(): JSX.Element {
   };
 
   return (
-    <main className="app-root">
+    <main
+      className="app-root"
+      style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}
+    >
       <header>
         <h1>Sudoku Display</h1>
       </header>
@@ -117,6 +123,7 @@ function App(): JSX.Element {
           <span className="legend-item legend-empty">空マス</span>
         </div>
       </section>
+      <div aria-hidden="true" className="keyboard-spacer" />
     </main>
   );
 }
