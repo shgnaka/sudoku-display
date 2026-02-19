@@ -3,10 +3,10 @@ export function HelpPage(): JSX.Element {
     <div className="help-page">
       <section className="panel">
         <h2>使い方</h2>
-        <p className="hint">解くページで盤面入力と手書きメモ、問題作成/生成ページで問題準備を行います。</p>
+        <p className="hint">解くページで盤面入力と手書きメモ、作問ページで問題準備を行います。</p>
         <ul className="help-list">
           <li>「解く」: 数字入力、描画モード、確認モード。</li>
-          <li>「問題作成/生成」: 難易度指定で自動生成、またはテキスト入力。</li>
+          <li>「作問」: 難易度指定で自動生成、またはテキスト入力。</li>
           <li>「保存管理」: ローカル保存データの削除。</li>
         </ul>
       </section>

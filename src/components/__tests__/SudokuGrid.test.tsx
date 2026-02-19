@@ -102,7 +102,7 @@ describe("Sudoku UI", () => {
 
   it("shows an error and keeps board when puzzle input becomes invalid", async () => {
     render(<App />);
-    clickNav("問題作成/生成");
+    clickNav("作問");
 
     const textarea = screen.getByLabelText("puzzle-input");
 
@@ -178,7 +178,7 @@ describe("Sudoku UI", () => {
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.className).toContain("origin-user");
 
-    clickNav("問題作成/生成");
+    clickNav("作問");
     fireEvent.click(screen.getByRole("button", { name: "新しい問題を生成" }));
 
     clickNav("解く");
