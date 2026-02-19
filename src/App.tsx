@@ -25,6 +25,7 @@ function AppBody(): JSX.Element {
   const [currentRoute, setCurrentRoute] = useState<AppRouteKey>(() => readCurrentRoute());
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isMobile = useIsMobileViewport();
+  const isSolveRoute = currentRoute === "solve";
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -57,6 +58,18 @@ function AppBody(): JSX.Element {
   const drawerRoutes = useMemo(() => {
     return isMobile ? MOBILE_DRAWER_ROUTES : APP_ROUTES;
   }, [isMobile]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.body.classList.toggle("solve-no-scroll-body", isSolveRoute);
+
+    return () => {
+      document.body.classList.remove("solve-no-scroll-body");
+    };
+  }, [isSolveRoute]);
 
   const navigate = (route: AppRouteKey): void => {
     if (typeof window === "undefined") {
@@ -91,8 +104,13 @@ function AppBody(): JSX.Element {
   };
 
   return (
-    <main className="app-root">
-      <AppHeader currentLabel={currentLabel} onOpenMenu={() => setIsDrawerOpen(true)} />
+    <main className={isSolveRoute ? "app-root solve-no-scroll" : "app-root"}>
+      <AppHeader
+        compact={isSolveRoute}
+        currentLabel={currentLabel}
+        floatingMenuOnly={isSolveRoute}
+        onOpenMenu={() => setIsDrawerOpen(true)}
+      />
       <SideDrawer
         currentRoute={currentRoute}
         isOpen={isDrawerOpen}

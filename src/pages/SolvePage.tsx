@@ -37,7 +37,7 @@ export function SolvePage(): JSX.Element {
         </p>
       )}
 
-      <section className="panel">
+      <section className="panel solve-board-panel">
         <div className="board-panel-header">
           <h2>盤面</h2>
         </div>
@@ -57,7 +57,7 @@ export function SolvePage(): JSX.Element {
             onCommitStroke={handleCommitStroke}
           />
         </div>
-        <div className="legend">
+        <div className="legend solve-legend">
           <span className="legend-item legend-given">初期値</span>
           <span className="legend-item legend-user">ユーザー入力</span>
           <span className="legend-item legend-empty">空マス</span>
