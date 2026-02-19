@@ -72,12 +72,12 @@ function AppBody(): JSX.Element {
   }, [isSolveRoute]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !isSolveRoute) {
+    if (typeof window === "undefined") {
       return;
     }
 
     window.scrollTo(0, 0);
-  }, [isSolveRoute]);
+  }, [currentRoute]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !isDrawerOpen) {
