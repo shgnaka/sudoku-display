@@ -4,3 +4,6 @@ dist
 coverage
 .DS_Store
 *.tsbuildinfo
+rust/sudoku_generator/target
+public/wasm/pkg/*
+!public/wasm/pkg/.gitkeep

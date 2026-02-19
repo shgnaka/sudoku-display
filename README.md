@@ -2,12 +2,37 @@
 
 数独のテキスト形式を見やすい 9x9 グリッドで表示し、空マスを編集できる Web アプリです。
 
-## セットアップ
+## セットアップ（Rust + WASM 含む）
+
+### 必須ツール
+
+- Node.js 20+
+- Rust（`rustup` 経由推奨）
+- `wasm32-unknown-unknown` ターゲット
+- `wasm-pack`
+
+```bash
+rustup target add wasm32-unknown-unknown
+cargo install wasm-pack --locked
+```
+
+Windows の場合は PATH 設定と Build Tools 不足で失敗することがあるため、`wasm-pack --version` が通ることを先に確認してください。
+
+### 開発起動
 
 ```bash
 npm install
+npm run wasm:build
 npm run dev
 ```
+
+### 本番ビルド
+
+```bash
+npm run build
+```
+
+`npm run build` は内部で `npm run wasm:build` を実行し、`public/wasm/pkg` に生成物を配置します。
 
 ## 公開URL
 
@@ -23,6 +48,8 @@ npm run dev
 ## 主な仕様
 
 - テキスト入力を自動パースして即時反映
+- Rust + WASM で数独を生成（Easy / Medium / Hard）
+- 生成問題は唯一解チェック済み
 - 3x3 ブロックを太線で区切って表示
 - 初期値（given）とユーザー入力（user）を色分け
 - 初期値セルは編集不可
