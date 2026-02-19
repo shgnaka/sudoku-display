@@ -1,5 +1,12 @@
 import "@testing-library/jest-dom";
 
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "scrollTo", {
+    writable: true,
+    value: () => undefined
+  });
+}
+
 if (typeof HTMLCanvasElement !== "undefined") {
   Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
     writable: true,

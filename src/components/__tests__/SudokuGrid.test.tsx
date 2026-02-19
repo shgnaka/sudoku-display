@@ -282,6 +282,19 @@ describe("Sudoku UI", () => {
     expect(screen.getByRole("button", { name: "メニューを開く" })).toBeInTheDocument();
   });
 
+  it("resets window scroll to top when navigating to solve", () => {
+    window.location.hash = "#/manage";
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+
+    render(<App />);
+    expect(screen.getByRole("heading", { name: "問題生成（Rust + WASM）" })).toBeInTheDocument();
+
+    clickNav("解く");
+
+    expect(scrollSpy).toHaveBeenCalledWith(0, 0);
+    scrollSpy.mockRestore();
+  });
+
   it("generates puzzle via wasm bridge and updates board", async () => {
     const puzzle = new Uint8Array(81);
     puzzle[0] = 1;

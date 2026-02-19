@@ -72,6 +72,14 @@ function AppBody(): JSX.Element {
   }, [isSolveRoute]);
 
   useEffect(() => {
+    if (typeof window === "undefined" || !isSolveRoute) {
+      return;
+    }
+
+    window.scrollTo(0, 0);
+  }, [isSolveRoute]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !isDrawerOpen) {
       return;
     }
