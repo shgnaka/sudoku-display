@@ -5,7 +5,6 @@
   --menu-btn-height: 42px;
   --menu-offset: 8px;
   --menu-reserved-top: calc(env(safe-area-inset-top, 0px) + var(--menu-offset) + var(--menu-btn-height));
-  --menu-reserved-right: calc(env(safe-area-inset-right, 0px) + var(--menu-offset) + var(--menu-btn-width));
   --app-bg-start: #f7fbff;
   --app-bg-mid: #edf4ff;
   --app-bg-end: #f8fafc;
@@ -41,10 +40,7 @@ body.review-scroll-lock {
 .app-root {
   max-width: 1120px;
   margin: 0 auto;
-  padding-top: max(1rem, var(--menu-reserved-top));
-  padding-right: max(1.25rem, var(--menu-reserved-right));
-  padding-bottom: 1.5rem;
-  padding-left: 1.25rem;
+  padding: 1rem 1.25rem 1.5rem;
   display: grid;
   gap: 1rem;
   min-height: 100vh;
@@ -80,10 +76,7 @@ body.review-scroll-lock {
   min-height: 100dvh;
   overflow: hidden;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  padding-top: max(0.55rem, var(--menu-reserved-top));
-  padding-right: max(0.75rem, var(--menu-reserved-right));
-  padding-bottom: 0.75rem;
-  padding-left: 0.75rem;
+  padding: 0.55rem 0.75rem 0.75rem;
   gap: 0.45rem;
 }
 
@@ -92,10 +85,7 @@ body.review-scroll-lock {
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-}
-
-.app-header.compact {
-  min-height: 0;
+  min-height: var(--menu-reserved-top);
 }
 
 .app-header h1 {
@@ -620,10 +610,7 @@ button.danger {
 
 @media (max-width: 768px) {
   .app-root {
-    padding-top: max(0.75rem, var(--menu-reserved-top));
-    padding-right: max(0.75rem, var(--menu-reserved-right));
-    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px));
-    padding-left: 0.75rem;
+    padding: 0.75rem 0.75rem calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px));
   }
 
   .panel {
