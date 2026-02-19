@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
+import { InkActionFloatBar } from "../components/InkActionFloatBar";
 import { InkOverlay } from "../components/InkOverlay";
-import { InkToolbar } from "../components/InkToolbar";
+import { InkToggleBar } from "../components/InkToggleBar";
 import { SudokuGrid } from "../components/SudokuGrid";
 import { useKeyboardInset } from "../lib/useKeyboardInset";
 import { useKeyboardScrollLock } from "../lib/useKeyboardScrollLock";
@@ -30,12 +31,9 @@ export function SolvePage(): JSX.Element {
 
   return (
     <div className="solve-page" style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
-      <InkToolbar
-        activeBlockId={activeBlockId}
+      <InkToggleBar
         isInkMode={isInkMode}
         isReviewMode={isReviewMode}
-        onClearActiveBlock={handleClearActiveBlock}
-        onClearAll={handleClearAllInk}
         onToggleInkMode={() => setIsInkMode(!isInkMode)}
       />
 
@@ -79,6 +77,13 @@ export function SolvePage(): JSX.Element {
           <span className="legend-item legend-empty">空マス</span>
         </div>
       </section>
+      {isInkMode && !isReviewMode && keyboardInset === 0 && (
+        <InkActionFloatBar
+          activeBlockId={activeBlockId}
+          onClearActiveBlock={handleClearActiveBlock}
+          onClearAll={handleClearAllInk}
+        />
+      )}
       <div aria-hidden="true" className="keyboard-spacer" />
     </div>
   );

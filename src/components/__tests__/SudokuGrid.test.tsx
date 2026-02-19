@@ -2,12 +2,17 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../App";
 
-const { generateSudokuMock } = vi.hoisted(() => ({
-  generateSudokuMock: vi.fn()
+const { generateSudokuMock, keyboardInsetState } = vi.hoisted(() => ({
+  generateSudokuMock: vi.fn(),
+  keyboardInsetState: { value: 0 }
 }));
 
 vi.mock("../../wasm/sudokuGenerator", () => ({
   generateSudoku: generateSudokuMock
+}));
+
+vi.mock("../../lib/useKeyboardInset", () => ({
+  useKeyboardInset: () => keyboardInsetState.value
 }));
 
 function clickNav(label: string): void {
@@ -20,6 +25,7 @@ describe("Sudoku UI", () => {
     window.localStorage.clear();
     window.location.hash = "#/solve";
     generateSudokuMock.mockReset();
+    keyboardInsetState.value = 0;
   });
 
   it("renders a 9x9 grid on solve page", () => {
@@ -148,8 +154,31 @@ describe("Sudoku UI", () => {
     fireEvent.change(editableCell, { target: { value: "8" } });
     expect(editableCell.value).toBe("4");
 
-    const inkToggle = screen.getByRole("button", { name: "確認モード中は描画モード無効" });
+    const inkToggle = screen.getByRole("button", { name: "確認モード中は手書きモード無効" });
     expect(inkToggle).toBeDisabled();
+    expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+  });
+
+  it("shows float ink actions only while ink mode is on", () => {
+    render(<App />);
+
+    expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: OFF）" }));
+
+    expect(screen.getByRole("region", { name: "手書き操作" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "現在ブロック消去（0-0）" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: ON）" }));
+    expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
+  });
+
+  it("hides float ink actions while keyboard inset is active", () => {
+    keyboardInsetState.value = 240;
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: 手書き: OFF）" }));
+    expect(screen.queryByRole("region", { name: "手書き操作" })).not.toBeInTheDocument();
   });
 
   it("generates puzzle via wasm bridge and updates board", async () => {

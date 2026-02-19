@@ -1,5 +1,7 @@
 :root {
   --keyboard-inset: 0px;
+  --mobile-tabbar-height: 4.75rem;
+  --ink-float-gap: 0.5rem;
   --app-bg-start: #f7fbff;
   --app-bg-mid: #edf4ff;
   --app-bg-end: #f8fafc;
@@ -170,37 +172,44 @@ button.danger {
   padding: 0.6rem 0.75rem;
 }
 
-.ink-panel {
+.ink-toggle-bar {
+  padding: 0.75rem;
+}
+
+.ink-toggle-button {
+  min-width: 180px;
+}
+
+.ink-toggle-button.on {
+  border-color: #7ca6e3;
+  background: #eaf3ff;
+  color: #143b72;
+}
+
+.ink-toggle-button.off {
+  border-color: #9eb1d3;
+  background: #f6f9ff;
+  color: #1f2d47;
+}
+
+.ink-actions-float {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  width: min(560px, calc(100vw - 1.5rem));
+  z-index: 24;
+  border: 1px solid #cdd9ea;
+  border-radius: 12px;
+  background: #f8fbffef;
+  padding: 0.55rem;
   display: grid;
   gap: 0.5rem;
 }
 
-.ink-toolbar-header {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ink-mode-badge {
-  font-size: 0.82rem;
-  border: 1px solid #b9c7e0;
-  border-radius: 999px;
-  padding: 0.2rem 0.65rem;
-  background: #f3f6fd;
-  color: #3f4f67;
-}
-
-.ink-mode-badge.on {
-  background: #e8f2ff;
-  border-color: #8eb6f3;
-  color: #1b4279;
-}
-
-.ink-toolbar-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.ink-actions-float button {
+  width: 100%;
+  min-height: 44px;
 }
 
 .board-panel-header {
@@ -433,7 +442,7 @@ button.danger {
 
 @media (max-width: 768px) {
   .app-root {
-    padding: 0.75rem 0.75rem calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.75rem 0.75rem calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px));
   }
 
   .panel {
@@ -479,9 +488,13 @@ button.danger {
     color: #143b72;
   }
 
-  .ink-toolbar-header,
   .board-panel-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ink-actions-float {
+    width: calc(100vw - 1rem);
+    bottom: calc(var(--mobile-tabbar-height) + var(--ink-float-gap) + env(safe-area-inset-bottom, 0px));
   }
 }
