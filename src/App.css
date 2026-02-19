@@ -173,6 +173,12 @@ body.review-scroll-lock {
   font-size: 0.9rem;
 }
 
+.review-mode-message {
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+
 .puzzle-input {
   width: 100%;
   border: 1px solid #bdcae0;
