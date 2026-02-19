@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { DEFAULT_PUZZLE_TEXT } from "../lib/defaultPuzzle";
 import { clearGameState, loadGameState, saveGameState } from "../lib/gameStorage";
@@ -26,10 +26,9 @@ interface SudokuAppState {
   inkState: InkState;
   setRawInput: (value: string) => void;
   setDifficulty: (value: SudokuDifficulty) => void;
-  setIsInkMode: (value: boolean) => void;
+  toggleInkMode: () => void;
   setIsGridEditing: (value: boolean) => void;
   setActiveBlockId: (value: BlockId) => void;
-  setIsReviewMode: (value: boolean) => void;
   handleCellChange: (row: number, col: number, value: number | null) => void;
   handleCommitStroke: (blockId: BlockId, stroke: Stroke) => void;
   handleClearActiveBlock: () => void;
@@ -42,6 +41,41 @@ interface SudokuAppState {
 }
 
 const SudokuAppStateContext = createContext<SudokuAppState | null>(null);
+
+type SolveMode = "normal" | "ink" | "review";
+
+interface SolveModeState {
+  mode: SolveMode;
+}
+
+type SolveModeAction =
+  | { type: "TOGGLE_INK" }
+  | { type: "TOGGLE_REVIEW" }
+  | { type: "EXIT_INK" }
+  | { type: "EXIT_REVIEW" }
+  | { type: "RESET_MODES" };
+
+const initialSolveModeState: SolveModeState = { mode: "normal" };
+
+function solveModeReducer(state: SolveModeState, action: SolveModeAction): SolveModeState {
+  switch (action.type) {
+    case "TOGGLE_INK":
+      if (state.mode === "review") {
+        return state;
+      }
+      return { mode: state.mode === "ink" ? "normal" : "ink" };
+    case "TOGGLE_REVIEW":
+      return { mode: state.mode === "review" ? "normal" : "review" };
+    case "EXIT_INK":
+      return state.mode === "ink" ? { mode: "normal" } : state;
+    case "EXIT_REVIEW":
+      return state.mode === "review" ? { mode: "normal" } : state;
+    case "RESET_MODES":
+      return initialSolveModeState;
+    default:
+      return state;
+  }
+}
 
 function emptyBoard(): Board {
   return Array.from({ length: 9 }, () =>
@@ -62,12 +96,13 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
   const [generationError, setGenerationError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [difficulty, setDifficulty] = useState<SudokuDifficulty>("medium");
-  const [isInkMode, setIsInkMode] = useState(false);
+  const [modeState, dispatchMode] = useReducer(solveModeReducer, initialSolveModeState);
   const [isGridEditing, setIsGridEditing] = useState(false);
-  const [isReviewMode, setIsReviewMode] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
   const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
+  const isInkMode = modeState.mode === "ink";
+  const isReviewMode = modeState.mode === "review";
 
   useEffect(() => {
     setInkState(loadInkState());
@@ -117,15 +152,15 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
     clearInkState();
   };
 
+  const toggleInkMode = (): void => {
+    dispatchMode({ type: "TOGGLE_INK" });
+  };
+
   const toggleReviewMode = (): void => {
-    setIsReviewMode((prev) => {
-      const next = !prev;
-      if (next) {
-        setIsInkMode(false);
-        setIsGridEditing(false);
-      }
-      return next;
-    });
+    if (!isReviewMode) {
+      setIsGridEditing(false);
+    }
+    dispatchMode({ type: "TOGGLE_REVIEW" });
   };
 
   const handleGeneratePuzzle = async (): Promise<void> => {
@@ -152,14 +187,14 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
     setBoard(getDefaultBoard());
     setErrorMessage("");
     setGenerationError("");
-    setIsReviewMode(false);
+    dispatchMode({ type: "EXIT_REVIEW" });
     shouldKeepPersistedBoardRef.current = false;
   };
 
   const clearInkData = (): void => {
     setInkState(clearAll());
     clearInkState();
-    setIsInkMode(false);
+    dispatchMode({ type: "EXIT_INK" });
   };
 
   const clearAllStoredData = (): void => {
@@ -170,8 +205,7 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
     setInkState(clearAll());
     setErrorMessage("");
     setGenerationError("");
-    setIsInkMode(false);
-    setIsReviewMode(false);
+    dispatchMode({ type: "RESET_MODES" });
     setIsGridEditing(false);
     shouldKeepPersistedBoardRef.current = false;
   };
@@ -190,10 +224,9 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
     inkState,
     setRawInput,
     setDifficulty,
-    setIsInkMode,
+    toggleInkMode,
     setIsGridEditing,
     setActiveBlockId,
-    setIsReviewMode,
     handleCellChange,
     handleCommitStroke,
     handleClearActiveBlock,

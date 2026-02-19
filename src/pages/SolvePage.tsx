@@ -17,7 +17,7 @@ export function SolvePage(): JSX.Element {
     activeBlockId,
     inkState,
     setActiveBlockId,
-    setIsInkMode,
+    toggleInkMode,
     setIsGridEditing,
     handleCellChange,
     handleCommitStroke,
@@ -81,7 +81,7 @@ export function SolvePage(): JSX.Element {
           <InkToggleBar
             isInkMode={isInkMode}
             isReviewMode={isReviewMode}
-            onToggleInkMode={() => setIsInkMode(!isInkMode)}
+            onToggleInkMode={toggleInkMode}
           />
         </div>
         <div className="solve-review-message-slot">
