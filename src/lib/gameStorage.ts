@@ -92,3 +92,15 @@ export function saveGameState(state: PersistedGameState): void {
     // Ignore storage failures to keep app usable.
   }
 }
+
+export function clearGameState(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage failures.
+  }
+}

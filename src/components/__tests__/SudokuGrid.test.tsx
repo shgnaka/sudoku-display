@@ -10,17 +10,50 @@ vi.mock("../../wasm/sudokuGenerator", () => ({
   generateSudoku: generateSudokuMock
 }));
 
+function clickNav(label: string): void {
+  const buttons = screen.getAllByRole("button", { name: label });
+  fireEvent.click(buttons[0]);
+}
+
 describe("Sudoku UI", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    window.location.hash = "#/solve";
     generateSudokuMock.mockReset();
   });
 
-  it("renders a 9x9 grid", () => {
+  it("renders a 9x9 grid on solve page", () => {
     render(<App />);
 
     const cells = screen.getAllByRole("textbox");
-    expect(cells).toHaveLength(82); // 81 cells + 1 textarea
+    expect(cells).toHaveLength(81);
+  });
+
+  it("normalizes empty hash to #/solve without breaking initial render", async () => {
+    window.location.hash = "";
+    render(<App />);
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe("#/solve");
+    });
+
+    expect(screen.getAllByRole("textbox")).toHaveLength(81);
+  });
+
+  it("shows not found page for unknown hash and keeps URL", () => {
+    window.location.hash = "#/unknown";
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "ページが見つかりません" })).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/unknown");
+  });
+
+  it("keeps known hash route on initial load", () => {
+    window.location.hash = "#/manage";
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "問題生成（Rust + WASM）" })).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/manage");
   });
 
   it("keeps given cells read-only", () => {
@@ -67,18 +100,21 @@ describe("Sudoku UI", () => {
     expect(editableCell.selectionEnd).toBe(1);
   });
 
-  it("shows an error and keeps board when puzzle input becomes invalid", () => {
+  it("shows an error and keeps board when puzzle input becomes invalid", async () => {
     render(<App />);
+    clickNav("問題作成/生成");
 
     const textarea = screen.getByLabelText("puzzle-input");
-    const original = screen.getByLabelText("r1c1") as HTMLInputElement;
-
-    expect(original.value).toBe("5");
 
     fireEvent.change(textarea, { target: { value: "1 2 3" } });
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect((screen.getByLabelText("r1c1") as HTMLInputElement).value).toBe("5");
+
+    clickNav("解く");
+
+    await waitFor(() => {
+      expect((screen.getByLabelText("r1c1") as HTMLInputElement).value).toBe("5");
+    });
   });
 
   it("keeps user input after reload", () => {
@@ -142,7 +178,10 @@ describe("Sudoku UI", () => {
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.className).toContain("origin-user");
 
+    clickNav("問題作成/生成");
     fireEvent.click(screen.getByRole("button", { name: "新しい問題を生成" }));
+
+    clickNav("解く");
 
     await waitFor(() => {
       expect(screen.getByLabelText("r1c1")).toHaveValue("1");
@@ -150,5 +189,17 @@ describe("Sudoku UI", () => {
 
     expect(screen.getByLabelText("r1c3")).toHaveValue("3");
     expect(generateSudokuMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("navigates from not found page back to solve", async () => {
+    window.location.hash = "#/unknown";
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "解くへ戻る" }));
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe("#/solve");
+    });
+    expect(screen.getAllByRole("textbox")).toHaveLength(81);
   });
 });

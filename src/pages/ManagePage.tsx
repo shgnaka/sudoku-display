@@ -1,0 +1,55 @@
+import { PuzzleInput } from "../components/PuzzleInput";
+import { useSudokuAppState } from "../state/SudokuAppStateProvider";
+import type { SudokuDifficulty } from "../wasm/sudokuGenerator";
+
+export function ManagePage(): JSX.Element {
+  const {
+    rawInput,
+    setRawInput,
+    difficulty,
+    setDifficulty,
+    isGenerating,
+    handleGeneratePuzzle,
+    generationError,
+    errorMessage
+  } = useSudokuAppState();
+
+  return (
+    <div className="manage-page">
+      <section className="panel generator-panel">
+        <h2>問題生成（Rust + WASM）</h2>
+        <p className="hint">重い処理は Rust 側で実行し、唯一解の問題を生成します。</p>
+        <div className="generator-controls">
+          <label htmlFor="difficulty-select">
+            難易度
+            <select
+              id="difficulty-select"
+              onChange={(event) => setDifficulty(event.target.value as SudokuDifficulty)}
+              value={difficulty}
+            >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+          <button disabled={isGenerating} onClick={() => void handleGeneratePuzzle()} type="button">
+            {isGenerating ? "生成中..." : "新しい問題を生成"}
+          </button>
+        </div>
+      </section>
+
+      {generationError && (
+        <p aria-live="polite" className="error-message" role="alert">
+          {generationError}
+        </p>
+      )}
+      {errorMessage && (
+        <p aria-live="polite" className="error-message" role="alert">
+          {errorMessage}
+        </p>
+      )}
+
+      <PuzzleInput onChange={setRawInput} value={rawInput} />
+    </div>
+  );
+}
