@@ -39,7 +39,8 @@ body.solve-no-scroll-body {
 }
 
 .app-root.solve-no-scroll {
-  --solve-inline-size: calc(100vw - 1.5rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  /* Use the actual container width to avoid viewport rounding overflow on mobile. */
+  --solve-inline-size: calc(100% - 1px);
   --solve-header-reserved: 3.4rem;
   --solve-controls-reserved: 10.8rem;
   --solve-bottom-reserved: 1rem;
@@ -327,6 +328,7 @@ button.danger {
 
 .app-root.solve-no-scroll .solve-board-panel {
   min-height: 0;
+  width: 100%;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   align-items: start;
