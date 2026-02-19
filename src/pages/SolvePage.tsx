@@ -84,7 +84,13 @@ export function SolvePage(): JSX.Element {
             onToggleInkMode={() => setIsInkMode(!isInkMode)}
           />
         </div>
-        {isReviewMode && <p className="hint review-mode-message">確認モード中: 盤面操作と画面移動をロック中です。</p>}
+        <div className="solve-review-message-slot">
+          {isReviewMode ? (
+            <p className="hint review-mode-message">確認モード中: 盤面操作と画面移動をロック中です。</p>
+          ) : (
+            <div aria-hidden="true" className="review-message-placeholder" />
+          )}
+        </div>
         <div className="solve-ink-actions-slot">
           {shouldShowInkActions ? (
             <InkActionFloatBar onClearActiveBlock={handleClearActiveBlock} onClearAll={handleClearAllInk} />

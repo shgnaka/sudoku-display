@@ -303,6 +303,15 @@ button.danger {
   gap: 0.45rem;
 }
 
+.solve-review-message-slot {
+  min-height: 44px;
+  display: grid;
+}
+
+.review-message-placeholder {
+  min-height: 44px;
+}
+
 .ink-actions-inline {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
