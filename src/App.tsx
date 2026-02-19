@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { InkOverlay } from "./components/InkOverlay";
 import { InkToolbar } from "./components/InkToolbar";
 import { PuzzleInput } from "./components/PuzzleInput";
 import { SudokuGrid } from "./components/SudokuGrid";
 import { DEFAULT_PUZZLE_TEXT } from "./lib/defaultPuzzle";
+import { loadGameState, saveGameState } from "./lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "./lib/inkModel";
 import { clearInkState, loadInkState, saveInkState } from "./lib/inkStorage";
 import { parseSudokuText } from "./lib/sudokuParser";
@@ -19,12 +20,14 @@ function emptyBoard(): Board {
 }
 
 function App(): JSX.Element {
-  const [rawInput, setRawInput] = useState(DEFAULT_PUZZLE_TEXT);
-  const [board, setBoard] = useState<Board>(emptyBoard);
+  const persistedGame = loadGameState();
+  const [rawInput, setRawInput] = useState(persistedGame?.rawInput ?? DEFAULT_PUZZLE_TEXT);
+  const [board, setBoard] = useState<Board>(() => persistedGame?.board ?? emptyBoard());
   const [errorMessage, setErrorMessage] = useState("");
   const [isInkMode, setIsInkMode] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
+  const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
 
   useEffect(() => {
     setInkState(loadInkState());
@@ -35,14 +38,25 @@ function App(): JSX.Element {
   }, [inkState]);
 
   useEffect(() => {
+    saveGameState({ rawInput, board });
+  }, [rawInput, board]);
+
+  useEffect(() => {
     const result = parseSudokuText(rawInput);
 
     if (result.ok) {
+      if (shouldKeepPersistedBoardRef.current) {
+        shouldKeepPersistedBoardRef.current = false;
+        setErrorMessage("");
+        return;
+      }
+
       setBoard(result.board);
       setErrorMessage("");
       return;
     }
 
+    shouldKeepPersistedBoardRef.current = false;
     setErrorMessage(result.error);
   }, [rawInput]);
 

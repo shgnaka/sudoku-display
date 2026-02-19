@@ -1,8 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import App from "../../App";
 
 describe("Sudoku UI", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it("renders a 9x9 grid", () => {
     render(<App />);
 
@@ -41,5 +45,21 @@ describe("Sudoku UI", () => {
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect((screen.getByLabelText("r1c1") as HTMLInputElement).value).toBe("5");
+  });
+
+  it("keeps user input after reload", () => {
+    const first = render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    fireEvent.change(editableCell, { target: { value: "4" } });
+    expect(editableCell.value).toBe("4");
+
+    first.unmount();
+
+    render(<App />);
+
+    const restoredCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    expect(restoredCell.value).toBe("4");
+    expect(restoredCell.className).toContain("origin-user");
   });
 });
