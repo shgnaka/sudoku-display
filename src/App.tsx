@@ -26,6 +26,7 @@ function AppBody(): JSX.Element {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isMobile = useIsMobileViewport();
   const isSolveRoute = currentRoute === "solve";
+  const shouldUseSolveNoScroll = isSolveRoute && isMobile;
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -64,12 +65,12 @@ function AppBody(): JSX.Element {
       return;
     }
 
-    document.body.classList.toggle("solve-no-scroll-body", isSolveRoute);
+    document.body.classList.toggle("solve-no-scroll-body", shouldUseSolveNoScroll);
 
     return () => {
       document.body.classList.remove("solve-no-scroll-body");
     };
-  }, [isSolveRoute]);
+  }, [shouldUseSolveNoScroll]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -131,7 +132,7 @@ function AppBody(): JSX.Element {
   };
 
   return (
-    <main className={isSolveRoute ? "app-root solve-no-scroll" : "app-root"}>
+    <main className={shouldUseSolveNoScroll ? "app-root solve-no-scroll" : "app-root"}>
       <AppHeader
         compact={isSolveRoute}
         currentLabel={currentLabel}
