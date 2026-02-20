@@ -1,8 +1,11 @@
+import { useRef } from "react";
 import type { CSSProperties } from "react";
 import { InkActionFloatBar } from "../components/InkActionFloatBar";
 import { InkOverlay } from "../components/InkOverlay";
 import { InkToggleBar } from "../components/InkToggleBar";
 import { SudokuGrid } from "../components/SudokuGrid";
+import { useBoardFitSize } from "../lib/useBoardFitSize";
+import { useIsMobileViewport } from "../lib/useIsMobileViewport";
 import { useKeyboardInset } from "../lib/useKeyboardInset";
 import { useKeyboardScrollLock } from "../lib/useKeyboardScrollLock";
 import { useReviewScrollLock } from "../lib/useReviewScrollLock";
@@ -28,6 +31,9 @@ export function SolvePage(): JSX.Element {
   } = useSudokuAppState();
 
   const keyboardInset = useKeyboardInset();
+  const isMobileViewport = useIsMobileViewport();
+  const boardSlotRef = useRef<HTMLDivElement | null>(null);
+  const boardFitSize = useBoardFitSize(boardSlotRef, { enabled: !isMobileViewport });
   const shouldShowInkActions = isInkMode && keyboardInset === 0;
   useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
   useReviewScrollLock(isReviewMode);
@@ -44,21 +50,26 @@ export function SolvePage(): JSX.Element {
         <div className="board-panel-header">
           <h2>盤面</h2>
         </div>
-        <div className={isReviewMode ? "board-wrap review-locked" : "board-wrap"}>
-          <SudokuGrid
-            board={board}
-            disabled={isReviewMode}
-            onCellBlur={() => setIsGridEditing(false)}
-            onCellChange={handleCellChange}
-            onCellFocus={() => setIsGridEditing(true)}
-          />
-          <InkOverlay
-            activeBlockId={activeBlockId}
-            inkState={inkState}
-            isInkMode={isInkMode}
-            onActiveBlockChange={setActiveBlockId}
-            onCommitStroke={handleCommitStroke}
-          />
+        <div className="board-slot" ref={boardSlotRef}>
+          <div
+            className={isReviewMode ? "board-wrap review-locked" : "board-wrap"}
+            style={boardFitSize ? ({ "--board-fit-size": `${boardFitSize}px` } as CSSProperties) : undefined}
+          >
+            <SudokuGrid
+              board={board}
+              disabled={isReviewMode}
+              onCellBlur={() => setIsGridEditing(false)}
+              onCellChange={handleCellChange}
+              onCellFocus={() => setIsGridEditing(true)}
+            />
+            <InkOverlay
+              activeBlockId={activeBlockId}
+              inkState={inkState}
+              isInkMode={isInkMode}
+              onActiveBlockChange={setActiveBlockId}
+              onCommitStroke={handleCommitStroke}
+            />
+          </div>
         </div>
         <div className="legend solve-legend">
           <span className="legend-item legend-given">初期値</span>

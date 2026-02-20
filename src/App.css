@@ -379,13 +379,23 @@ button.danger {
   margin-bottom: 0.25rem;
 }
 
+.app-root.solve-no-scroll .board-slot {
+  min-width: 0;
+  min-height: 0;
+  width: min(100%, var(--solve-board-size));
+  height: 100%;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+}
+
 .app-root.solve-no-scroll .board-wrap {
   min-width: 0;
-  width: min(100%, var(--solve-board-size));
-  height: min(100%, var(--solve-board-size));
+  width: var(--board-fit-size, min(100%, var(--solve-board-size)));
+  height: var(--board-fit-size, min(100%, var(--solve-board-size)));
   max-inline-size: 100%;
-  max-width: var(--solve-board-size);
-  max-height: var(--solve-board-size);
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 1 / 1;
   justify-self: center;
   align-self: center;
