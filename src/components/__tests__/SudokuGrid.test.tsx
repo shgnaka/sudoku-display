@@ -370,6 +370,16 @@ describe("Sudoku UI", () => {
     expect(editableCell).toHaveTextContent("4");
   });
 
+  it("keeps number pad in a single row with 1-9 and backspace", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const pad = screen.getByRole("region", { name: "数字入力" });
+    const keys = within(pad).getAllByRole("button");
+    expect(keys).toHaveLength(10);
+    expect(within(pad).getByRole("button", { name: "数字を消去" })).toBeInTheDocument();
+  });
+
   it("keeps sheet slot reserved when number pad is hidden in ink mode", () => {
     isSheetInputViewport = true;
     render(<App />);
@@ -381,7 +391,7 @@ describe("Sudoku UI", () => {
     expect(document.querySelector(".solve-number-pad-placeholder")).toBeInTheDocument();
   });
 
-  it("disables number pad actions while review mode is enabled", () => {
+  it("disables number keys while review mode is enabled", () => {
     isSheetInputViewport = true;
     render(<App />);
 
@@ -392,11 +402,103 @@ describe("Sudoku UI", () => {
     fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
 
     const numberButton = screen.getByRole("button", { name: "数字 8" });
-    const clearButton = screen.getByRole("button", { name: "数字消去" });
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
     expect(numberButton).toBeDisabled();
-    expect(clearButton).toBeDisabled();
+    expect(backspaceButton).not.toBeDisabled();
 
     fireEvent.click(numberButton);
+    fireEvent.click(backspaceButton);
     expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
+  });
+
+  it("supports backspace on selected sheet cell and keeps it enabled without selection", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+    expect(backspaceButton).not.toBeDisabled();
+
+    fireEvent.click(backspaceButton);
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(editableCell).toHaveTextContent("4");
+
+    fireEvent.click(backspaceButton);
+    expect(editableCell).toHaveTextContent("");
+  });
+
+  it("deselects a sheet cell when tapping the same cell again", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    expect(editableCell.className).toContain("is-selected");
+
+    fireEvent.click(editableCell);
+    expect(editableCell.className).not.toContain("is-selected");
+  });
+
+  it("deselects a sheet cell when tapping outside grid except number pad", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    expect(editableCell.className).toContain("is-selected");
+
+    fireEvent.click(screen.getByText("盤面"));
+    expect(editableCell.className).not.toContain("is-selected");
+
+    fireEvent.click(editableCell);
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(editableCell.className).toContain("is-selected");
+  });
+
+  it("deselects current sheet selection when tapping a given cell", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    expect(editableCell.className).toContain("is-selected");
+
+    fireEvent.click(screen.getByLabelText("r1c1"));
+    expect(editableCell.className).not.toContain("is-selected");
+  });
+
+  it("clears selection when review mode or ink mode gets enabled", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    expect(editableCell.className).toContain("is-selected");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+    expect(editableCell.className).not.toContain("is-selected");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: ON）" }));
+    fireEvent.click(editableCell);
+    expect(editableCell.className).toContain("is-selected");
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+    expect(editableCell.className).not.toContain("is-selected");
+  });
+
+  it("announces selection and input updates through aria-live in sheet mode", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    fireEvent.click(screen.getByLabelText("r1c3"));
+    expect(screen.getByText("1行3列を選択。現在は空です。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(screen.getByText("1行3列を 4 にしました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "数字を消去" }));
+    expect(screen.getByText("1行3列を空にしました。")).toBeInTheDocument();
   });
 });
