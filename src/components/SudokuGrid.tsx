@@ -16,7 +16,7 @@ interface SudokuGridProps {
   onCellChange: (row: number, col: number, value: number | null) => void;
   onCellBlur?: () => void;
   onCellFocus?: () => void;
-  onCellSelect?: (row: number, col: number) => void;
+  onCellSelect?: (row: number, col: number, isEditable: boolean) => void;
 }
 
 export function SudokuGrid({

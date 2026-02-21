@@ -199,6 +199,18 @@ body.review-scroll-lock {
   font-size: 0.9rem;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .review-mode-message {
   height: 44px;
   display: flex;
@@ -455,6 +467,10 @@ button.sudoku-cell:disabled {
   cursor: default;
 }
 
+button.sudoku-cell[aria-disabled="true"] {
+  cursor: default;
+}
+
 .sudoku-cell[data-col="2"],
 .sudoku-cell[data-col="5"] {
   border-right: 3px solid #1f2d47;
@@ -493,25 +509,29 @@ button.sudoku-cell:disabled {
 }
 
 .solve-number-pad {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.45rem;
+  display: flex;
   align-items: stretch;
 }
 
 .solve-number-pad-grid {
   display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 0.32rem;
+  width: 100%;
 }
 
 .solve-number-pad button {
-  min-height: 44px;
+  min-height: clamp(36px, 8vw, 44px);
+  min-width: 0;
   padding: 0.2rem;
+  font-size: clamp(0.72rem, 2.8vw, 0.98rem);
 }
 
-.solve-number-pad .clear {
-  min-width: 4.3rem;
+.solve-number-pad .backspace {
+  border-color: #8aa2c9;
+  background: #ecf4ff;
+  color: #173e72;
+  font-weight: 700;
 }
 
 .ink-overlay {
@@ -735,11 +755,8 @@ button.sudoku-cell:disabled {
     width: 100%;
   }
 
-  .solve-number-pad {
-    grid-template-columns: 1fr;
-  }
-
   .solve-number-pad-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 0.24rem;
   }
 }

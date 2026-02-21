@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { InkActionFloatBar } from "../components/InkActionFloatBar";
 import { InkOverlay } from "../components/InkOverlay";
@@ -41,6 +41,8 @@ export function SolvePage(): JSX.Element {
   const isMobileViewport = useIsMobileViewport();
   const isSheetInputViewport = useSolveInputSheetViewport();
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
+  const [sheetA11yMessage, setSheetA11yMessage] = useState("");
+  const solvePageRef = useRef<HTMLDivElement | null>(null);
   const boardSlotRef = useRef<HTMLDivElement | null>(null);
   const boardFitSize = useBoardFitSize(boardSlotRef, { enabled: !isMobileViewport });
   const inputMode = isSheetInputViewport ? "sheet" : "keyboard";
@@ -51,13 +53,36 @@ export function SolvePage(): JSX.Element {
   });
   useReviewScrollLock(isReviewMode);
 
+  const announceSheetMessage = useCallback((message: string): void => {
+    setSheetA11yMessage((previous) => {
+      if (previous === message) {
+        return previous;
+      }
+
+      return message;
+    });
+  }, []);
+
+  const describeCurrentCell = (row: number, col: number): string => {
+    const cell = board[row]?.[col];
+    if (!cell || cell.value === null) {
+      return `${row + 1}行${col + 1}列を選択。現在は空です。`;
+    }
+
+    return `${row + 1}行${col + 1}列を選択。現在の値は ${cell.value} です。`;
+  };
+
   useEffect(() => {
-    if (!isSheetInputViewport || !isInkMode) {
+    if (inputMode !== "sheet") {
+      setSelectedCell(null);
       return;
     }
 
-    setSelectedCell(null);
-  }, [isInkMode, isSheetInputViewport]);
+    if (isInkMode || isReviewMode) {
+      setSelectedCell(null);
+      announceSheetMessage("セル選択を解除しました。");
+    }
+  }, [announceSheetMessage, inputMode, isInkMode, isReviewMode]);
 
   useEffect(() => {
     if (inputMode !== "sheet") {
@@ -73,18 +98,61 @@ export function SolvePage(): JSX.Element {
     }
 
     handleCellChange(selectedCell.row, selectedCell.col, value);
+    announceSheetMessage(`${selectedCell.row + 1}行${selectedCell.col + 1}列を ${value} にしました。`);
   };
 
-  const handleNumberPadClear = (): void => {
+  const handleNumberPadBackspace = (): void => {
     if (!selectedCell || isReviewMode) {
       return;
     }
 
     handleCellChange(selectedCell.row, selectedCell.col, null);
+    announceSheetMessage(`${selectedCell.row + 1}行${selectedCell.col + 1}列を空にしました。`);
   };
 
+  useEffect(() => {
+    if (inputMode !== "sheet" || selectedCell === null) {
+      return;
+    }
+
+    const root = solvePageRef.current;
+    if (!root) {
+      return;
+    }
+
+    const onPointerDown = (event: Event): void => {
+      const target = event.target as Element | null;
+      if (!target) {
+        return;
+      }
+
+      if (target.closest(".sudoku-cell") || target.closest(".solve-number-pad")) {
+        return;
+      }
+
+      setSelectedCell(null);
+      announceSheetMessage("セル選択を解除しました。");
+    };
+
+    root.addEventListener("pointerdown", onPointerDown, true);
+    root.addEventListener("mousedown", onPointerDown, true);
+    root.addEventListener("touchstart", onPointerDown, true);
+    root.addEventListener("click", onPointerDown, true);
+    return () => {
+      root.removeEventListener("pointerdown", onPointerDown, true);
+      root.removeEventListener("mousedown", onPointerDown, true);
+      root.removeEventListener("touchstart", onPointerDown, true);
+      root.removeEventListener("click", onPointerDown, true);
+    };
+  }, [announceSheetMessage, inputMode, selectedCell]);
+
   return (
-    <div className="solve-page" style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
+    <div className="solve-page" ref={solvePageRef} style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
+      {inputMode === "sheet" && (
+        <p aria-atomic="true" aria-live="polite" className="visually-hidden">
+          {sheetA11yMessage}
+        </p>
+      )}
       {errorMessage && (
         <p aria-live="polite" className="error-message" role="alert">
           {errorMessage}
@@ -109,8 +177,22 @@ export function SolvePage(): JSX.Element {
               onCellFocus={inputMode === "keyboard" ? () => setIsGridEditing(true) : undefined}
               onCellSelect={
                 inputMode === "sheet"
-                  ? (row, col) => {
-                      setSelectedCell({ row, col });
+                  ? (row, col, isEditable) => {
+                      if (!isEditable) {
+                        setSelectedCell(null);
+                        announceSheetMessage("セル選択を解除しました。");
+                        return;
+                      }
+
+                      setSelectedCell((current) => {
+                        if (current?.row === row && current.col === col) {
+                          announceSheetMessage("セル選択を解除しました。");
+                          return null;
+                        }
+
+                        announceSheetMessage(describeCurrentCell(row, col));
+                        return { row, col };
+                      });
                     }
                   : undefined
               }
@@ -163,8 +245,8 @@ export function SolvePage(): JSX.Element {
         <section className="solve-input-sheet-slot">
           {!isInkMode ? (
             <SolveNumberPad
-              disabled={isReviewMode || selectedCell === null}
-              onClear={handleNumberPadClear}
+              numberDisabled={isReviewMode || selectedCell === null}
+              onBackspace={handleNumberPadBackspace}
               onNumber={handleNumberPadInput}
             />
           ) : (

@@ -13,7 +13,7 @@ interface SudokuCellProps {
   onChange: (row: number, col: number, value: number | null) => void;
   onBlurCell?: () => void;
   onFocusCell?: () => void;
-  onSelect?: (row: number, col: number) => void;
+  onSelect?: (row: number, col: number, isEditable: boolean) => void;
 }
 
 export function SudokuCell({
@@ -32,6 +32,7 @@ export function SudokuCell({
     .filter(Boolean)
     .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
+  const isEditable = cell.origin !== "given" && !disabled;
 
   const handleChange = (rawValue: string): void => {
     if (isReadOnly) {
@@ -67,21 +68,21 @@ export function SudokuCell({
   };
 
   const handleSelect = (): void => {
-    if (isReadOnly) {
+    if (disabled) {
       return;
     }
 
-    onSelect?.(row, col);
+    onSelect?.(row, col, isEditable);
   };
 
   if (inputMode === "sheet") {
     return (
       <button
         aria-label={`r${row + 1}c${col + 1}`}
+        aria-disabled={isReadOnly}
         className={className}
         data-col={col}
         data-row={row}
-        disabled={isReadOnly}
         onClick={handleSelect}
         tabIndex={disabled ? -1 : undefined}
         type="button"
