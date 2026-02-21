@@ -1,15 +1,22 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { InkActionFloatBar } from "../components/InkActionFloatBar";
 import { InkOverlay } from "../components/InkOverlay";
 import { InkToggleBar } from "../components/InkToggleBar";
+import { SolveNumberPad } from "../components/SolveNumberPad";
 import { SudokuGrid } from "../components/SudokuGrid";
 import { useBoardFitSize } from "../lib/useBoardFitSize";
 import { useIsMobileViewport } from "../lib/useIsMobileViewport";
 import { useKeyboardInset } from "../lib/useKeyboardInset";
 import { useKeyboardScrollLock } from "../lib/useKeyboardScrollLock";
+import { useSolveInputSheetViewport } from "../lib/useSolveInputSheetViewport";
 import { useReviewScrollLock } from "../lib/useReviewScrollLock";
 import { useSudokuAppState } from "../state/SudokuAppStateProvider";
+
+interface SelectedCell {
+  row: number;
+  col: number;
+}
 
 export function SolvePage(): JSX.Element {
   const {
@@ -32,11 +39,49 @@ export function SolvePage(): JSX.Element {
 
   const keyboardInset = useKeyboardInset();
   const isMobileViewport = useIsMobileViewport();
+  const isSheetInputViewport = useSolveInputSheetViewport();
+  const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const boardSlotRef = useRef<HTMLDivElement | null>(null);
   const boardFitSize = useBoardFitSize(boardSlotRef, { enabled: !isMobileViewport });
-  const shouldShowInkActions = isInkMode && keyboardInset === 0;
-  useKeyboardScrollLock({ enabled: isGridEditing && !isReviewMode, keyboardInset });
+  const inputMode = isSheetInputViewport ? "sheet" : "keyboard";
+  const shouldShowInkActions = isInkMode && (inputMode === "sheet" || keyboardInset === 0);
+  useKeyboardScrollLock({
+    enabled: inputMode === "keyboard" && isGridEditing && !isReviewMode,
+    keyboardInset
+  });
   useReviewScrollLock(isReviewMode);
+
+  useEffect(() => {
+    if (!isSheetInputViewport || !isInkMode) {
+      return;
+    }
+
+    setSelectedCell(null);
+  }, [isInkMode, isSheetInputViewport]);
+
+  useEffect(() => {
+    if (inputMode !== "sheet") {
+      return;
+    }
+
+    setIsGridEditing(false);
+  }, [inputMode, setIsGridEditing]);
+
+  const handleNumberPadInput = (value: number): void => {
+    if (!selectedCell || isReviewMode) {
+      return;
+    }
+
+    handleCellChange(selectedCell.row, selectedCell.col, value);
+  };
+
+  const handleNumberPadClear = (): void => {
+    if (!selectedCell || isReviewMode) {
+      return;
+    }
+
+    handleCellChange(selectedCell.row, selectedCell.col, null);
+  };
 
   return (
     <div className="solve-page" style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
@@ -58,9 +103,18 @@ export function SolvePage(): JSX.Element {
             <SudokuGrid
               board={board}
               disabled={isReviewMode}
-              onCellBlur={() => setIsGridEditing(false)}
+              inputMode={inputMode}
+              onCellBlur={inputMode === "keyboard" ? () => setIsGridEditing(false) : undefined}
               onCellChange={handleCellChange}
-              onCellFocus={() => setIsGridEditing(true)}
+              onCellFocus={inputMode === "keyboard" ? () => setIsGridEditing(true) : undefined}
+              onCellSelect={
+                inputMode === "sheet"
+                  ? (row, col) => {
+                      setSelectedCell({ row, col });
+                    }
+                  : undefined
+              }
+              selectedCell={inputMode === "sheet" ? selectedCell : null}
             />
             <InkOverlay
               activeBlockId={activeBlockId}
@@ -105,7 +159,21 @@ export function SolvePage(): JSX.Element {
           )}
         </div>
       </section>
-      <div aria-hidden="true" className="keyboard-spacer" />
+      {inputMode === "sheet" ? (
+        <section className="solve-input-sheet-slot">
+          {!isInkMode ? (
+            <SolveNumberPad
+              disabled={isReviewMode || selectedCell === null}
+              onClear={handleNumberPadClear}
+              onNumber={handleNumberPadInput}
+            />
+          ) : (
+            <div aria-hidden="true" className="solve-number-pad-placeholder" />
+          )}
+        </section>
+      ) : (
+        <div aria-hidden="true" className="keyboard-spacer" />
+      )}
     </div>
   );
 }

@@ -55,6 +55,7 @@ body.review-scroll-lock {
   --solve-board-min-size: 258px;
   --solve-header-reserved: 3.4rem;
   --solve-controls-reserved: 10.8rem;
+  --solve-sheet-reserved: 5.2rem;
   --solve-bottom-reserved: 1rem;
   --solve-board-size: clamp(
     var(--solve-board-min-size),
@@ -64,6 +65,7 @@ body.review-scroll-lock {
         100dvh
           - var(--solve-header-reserved)
           - var(--solve-controls-reserved)
+          - var(--solve-sheet-reserved)
           - var(--solve-bottom-reserved)
           - env(safe-area-inset-top, 0px)
           - env(safe-area-inset-bottom, 0px)
@@ -431,13 +433,26 @@ button.danger {
 }
 
 .sudoku-cell {
+  appearance: none;
   min-width: 0;
   width: 100%;
   aspect-ratio: 1 / 1;
   border: 1px solid #c7d0e1;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
   text-align: center;
   font: 700 clamp(0.95rem, 2vw, 1.2rem) / 1 "JetBrains Mono", monospace;
   color: #22324d;
+}
+
+button.sudoku-cell {
+  cursor: pointer;
+}
+
+button.sudoku-cell:disabled {
+  opacity: 1;
+  cursor: default;
 }
 
 .sudoku-cell[data-col="2"],
@@ -454,6 +469,49 @@ button.danger {
   outline: 2px solid var(--focus);
   outline-offset: -2px;
   z-index: 1;
+}
+
+.sudoku-cell.is-selected {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.solve-input-sheet-slot {
+  --solve-sheet-height: 5.2rem;
+  height: calc(var(--solve-sheet-height) + env(safe-area-inset-bottom, 0px));
+  width: min(100%, 560px);
+}
+
+.app-root.solve-no-scroll .solve-input-sheet-slot {
+  width: min(100%, var(--solve-board-size));
+}
+
+.solve-number-pad,
+.solve-number-pad-placeholder {
+  height: 100%;
+}
+
+.solve-number-pad {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+.solve-number-pad-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 0.32rem;
+}
+
+.solve-number-pad button {
+  min-height: 44px;
+  padding: 0.2rem;
+}
+
+.solve-number-pad .clear {
+  min-width: 4.3rem;
 }
 
 .ink-overlay {
@@ -633,6 +691,7 @@ button.danger {
 
   .app-root.solve-no-scroll {
     --solve-controls-reserved: 11.6rem;
+    --solve-sheet-reserved: 5.1rem;
     --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + 0.35rem);
     padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.35rem);
   }
@@ -670,5 +729,17 @@ button.danger {
 
   .solve-controls {
     width: 100%;
+  }
+
+  .solve-input-sheet-slot {
+    width: 100%;
+  }
+
+  .solve-number-pad {
+    grid-template-columns: 1fr;
+  }
+
+  .solve-number-pad-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }

@@ -22,6 +22,7 @@ function clickNav(label: string): void {
 
 describe("Sudoku UI", () => {
   let isMobileViewport = false;
+  let isSheetInputViewport = false;
 
   beforeEach(() => {
     window.localStorage.clear();
@@ -29,12 +30,18 @@ describe("Sudoku UI", () => {
     generateSudokuMock.mockReset();
     keyboardInsetState.value = 0;
     isMobileViewport = false;
+    isSheetInputViewport = false;
 
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: vi.fn().mockImplementation(() => ({
-        matches: isMobileViewport,
-        media: "(max-width: 768px)",
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches:
+          query === "(max-width: 768px)"
+            ? isMobileViewport
+            : query === "(max-width: 1024px)"
+              ? isSheetInputViewport
+              : false,
+        media: query,
         onchange: null,
         addListener: () => undefined,
         removeListener: () => undefined,
@@ -235,6 +242,7 @@ describe("Sudoku UI", () => {
 
   it("shows only solve and manage in bottom tab bar", () => {
     isMobileViewport = true;
+    isSheetInputViewport = true;
     render(<App />);
 
     const tab = screen.getByRole("navigation", { name: "ページナビゲーション" });
@@ -246,6 +254,7 @@ describe("Sudoku UI", () => {
 
   it("limits mobile drawer items to storage and help", () => {
     isMobileViewport = true;
+    isSheetInputViewport = true;
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "メニューを開く" }));
@@ -344,5 +353,50 @@ describe("Sudoku UI", () => {
       expect(window.location.hash).toBe("#/solve");
     });
     expect(screen.getAllByRole("textbox")).toHaveLength(81);
+  });
+
+  it("uses number pad input on sheet viewport", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+    expect(document.querySelector(".solve-input-sheet-slot")).toBeInTheDocument();
+
+    const editableCell = screen.getByLabelText("r1c3");
+    fireEvent.click(editableCell);
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+
+    expect(editableCell.className).toContain("origin-user");
+    expect(editableCell).toHaveTextContent("4");
+  });
+
+  it("keeps sheet slot reserved when number pad is hidden in ink mode", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    expect(document.querySelector(".solve-number-pad")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+
+    expect(document.querySelector(".solve-input-sheet-slot")).toBeInTheDocument();
+    expect(document.querySelector(".solve-number-pad-placeholder")).toBeInTheDocument();
+  });
+
+  it("disables number pad actions while review mode is enabled", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    fireEvent.click(screen.getByLabelText("r1c3"));
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+
+    const numberButton = screen.getByRole("button", { name: "数字 8" });
+    const clearButton = screen.getByRole("button", { name: "数字消去" });
+    expect(numberButton).toBeDisabled();
+    expect(clearButton).toBeDisabled();
+
+    fireEvent.click(numberButton);
+    expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
   });
 });

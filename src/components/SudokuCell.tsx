@@ -1,14 +1,19 @@
 import type { FocusEvent, MouseEvent } from "react";
 import type { CellData } from "../types/sudoku";
 
+type SudokuCellInputMode = "keyboard" | "sheet";
+
 interface SudokuCellProps {
   cell: CellData;
   row: number;
   col: number;
   disabled?: boolean;
+  inputMode?: SudokuCellInputMode;
+  isSelected?: boolean;
   onChange: (row: number, col: number, value: number | null) => void;
   onBlurCell?: () => void;
   onFocusCell?: () => void;
+  onSelect?: (row: number, col: number) => void;
 }
 
 export function SudokuCell({
@@ -16,11 +21,16 @@ export function SudokuCell({
   row,
   col,
   disabled = false,
+  inputMode = "keyboard",
+  isSelected = false,
   onChange,
   onBlurCell,
-  onFocusCell
+  onFocusCell,
+  onSelect
 }: SudokuCellProps): JSX.Element {
-  const className = ["sudoku-cell", `origin-${cell.origin}`].join(" ");
+  const className = ["sudoku-cell", `origin-${cell.origin}`, isSelected ? "is-selected" : ""]
+    .filter(Boolean)
+    .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
 
   const handleChange = (rawValue: string): void => {
@@ -55,6 +65,31 @@ export function SudokuCell({
 
     event.preventDefault();
   };
+
+  const handleSelect = (): void => {
+    if (isReadOnly) {
+      return;
+    }
+
+    onSelect?.(row, col);
+  };
+
+  if (inputMode === "sheet") {
+    return (
+      <button
+        aria-label={`r${row + 1}c${col + 1}`}
+        className={className}
+        data-col={col}
+        data-row={row}
+        disabled={isReadOnly}
+        onClick={handleSelect}
+        tabIndex={disabled ? -1 : undefined}
+        type="button"
+      >
+        {cell.value ?? ""}
+      </button>
+    );
+  }
 
   return (
     <input
