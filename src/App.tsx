@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { AppHeader } from "./components/navigation/AppHeader";
 import { BottomTabBar } from "./components/navigation/BottomTabBar";
@@ -25,6 +25,7 @@ function readCurrentRoute(): AppRouteKey {
 function AppBody(): JSX.Element {
   const [currentRoute, setCurrentRoute] = useState<AppRouteKey>(() => readCurrentRoute());
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const isMobile = useIsMobileViewport();
   const isSolveRoute = currentRoute === "solve";
   const shouldUseSolveNoScroll = isSolveRoute && isMobile;
@@ -92,6 +93,7 @@ function AppBody(): JSX.Element {
       }
 
       setIsDrawerOpen(false);
+      menuButtonRef.current?.focus();
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -99,6 +101,20 @@ function AppBody(): JSX.Element {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [isDrawerOpen]);
+
+  const closeDrawer = (): void => {
+    setIsDrawerOpen(false);
+    menuButtonRef.current?.focus();
+  };
+
+  const toggleDrawer = (): void => {
+    if (isDrawerOpen) {
+      closeDrawer();
+      return;
+    }
+
+    setIsDrawerOpen(true);
+  };
 
   const navigate = (route: AppRouteKey): void => {
     if (typeof window === "undefined") {
@@ -138,13 +154,15 @@ function AppBody(): JSX.Element {
         compact={isSolveRoute}
         currentLabel={currentLabel}
         isMenuOpen={isDrawerOpen}
-        onToggleMenu={() => setIsDrawerOpen((open) => !open)}
+        menuButtonRef={menuButtonRef}
+        onToggleMenu={toggleDrawer}
       />
       <SideDrawer
         currentRoute={currentRoute}
         isOpen={isDrawerOpen}
+        menuButtonRef={menuButtonRef}
         routes={drawerRoutes}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={closeDrawer}
         onNavigate={navigate}
       />
       <section className="content-area">{renderPage()}</section>

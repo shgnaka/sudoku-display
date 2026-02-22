@@ -1,11 +1,20 @@
+import type { RefObject } from "react";
+
 interface AppHeaderProps {
   currentLabel: string;
   isMenuOpen: boolean;
   onToggleMenu: () => void;
+  menuButtonRef?: RefObject<HTMLButtonElement>;
   compact?: boolean;
 }
 
-export function AppHeader({ currentLabel, isMenuOpen, onToggleMenu, compact = false }: AppHeaderProps): JSX.Element {
+export function AppHeader({
+  currentLabel,
+  isMenuOpen,
+  onToggleMenu,
+  menuButtonRef,
+  compact = false
+}: AppHeaderProps): JSX.Element {
   const buttonClassName = isMenuOpen ? "hamburger-button open" : "hamburger-button";
   const menuAriaLabel = isMenuOpen ? "メニューを閉じる" : "メニューを開く";
 
@@ -23,6 +32,7 @@ export function AppHeader({ currentLabel, isMenuOpen, onToggleMenu, compact = fa
         aria-label={menuAriaLabel}
         className={buttonClassName}
         onClick={onToggleMenu}
+        ref={menuButtonRef}
         type="button"
       >
         <span />
