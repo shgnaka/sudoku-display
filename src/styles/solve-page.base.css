@@ -202,6 +202,18 @@ button.sudoku-cell[aria-disabled="true"] {
   background: var(--solve-origin-empty-bg);
 }
 
+.origin-given.is-selected {
+  background: var(--solve-origin-given-selected-bg);
+}
+
+.origin-user.is-selected {
+  background: var(--solve-origin-user-selected-bg);
+}
+
+.origin-empty.is-selected {
+  background: var(--solve-origin-empty-selected-bg);
+}
+
 .keyboard-spacer {
   height: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px));
 }

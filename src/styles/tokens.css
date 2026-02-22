@@ -39,12 +39,15 @@
   --solve-cell-border: #c3d0e6;
   --solve-ink-active: #6c94c8;
 
-  --solve-origin-given-fg: #1d3f70;
-  --solve-origin-given-bg: #e9f1ff;
-  --solve-origin-user-fg: #21506f;
-  --solve-origin-user-bg: #e7f5ff;
+  --solve-origin-given-fg: #163e6b;
+  --solve-origin-given-bg: #e2ecff;
+  --solve-origin-user-fg: #6a3a16;
+  --solve-origin-user-bg: #fff0e1;
   --solve-origin-empty-fg: #7083a0;
   --solve-origin-empty-bg: #f7faff;
+  --solve-origin-given-selected-bg: #c9ddff;
+  --solve-origin-user-selected-bg: #ffdcbc;
+  --solve-origin-empty-selected-bg: #e5edf9;
 
   --solve-legend-given-bg: #e9f1ff;
   --solve-legend-given-border: #bfd2ef;
