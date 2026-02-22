@@ -5,12 +5,13 @@ import { useKeyboardInset } from "../useKeyboardInset";
 interface ViewportMock {
   offsetTop: number;
   height: number;
+  width: number;
   addEventListener: (event: "resize" | "scroll", cb: () => void) => void;
   removeEventListener: (event: "resize" | "scroll", cb: () => void) => void;
   emit: (event: "resize" | "scroll") => void;
 }
 
-function createViewportMock(height: number, offsetTop = 0): ViewportMock {
+function createViewportMock(height: number, offsetTop = 0, width = 400): ViewportMock {
   const listeners: Record<"resize" | "scroll", Array<() => void>> = {
     resize: [],
     scroll: []
@@ -19,6 +20,7 @@ function createViewportMock(height: number, offsetTop = 0): ViewportMock {
   return {
     height,
     offsetTop,
+    width,
     addEventListener: (event, cb) => {
       listeners[event].push(cb);
     },
@@ -109,6 +111,33 @@ describe("useKeyboardInset", () => {
     });
 
     expect(result.current).toBe(240);
+  });
+
+  it("re-baselines inset on orientation change when keyboard is hidden", () => {
+    setTouchEnvironment(5, true);
+
+    const viewport = createViewportMock(800, 0, 390);
+    Object.defineProperty(window, "visualViewport", {
+      configurable: true,
+      value: viewport as unknown as VisualViewport
+    });
+
+    const { result } = renderHook(() => useKeyboardInset());
+
+    act(() => {
+      viewport.height = 560;
+      viewport.emit("resize");
+    });
+
+    expect(result.current).toBe(240);
+
+    act(() => {
+      viewport.width = 844;
+      viewport.height = 390;
+      window.dispatchEvent(new Event("orientationchange"));
+    });
+
+    expect(result.current).toBe(0);
   });
 
   it("ignores small viewport deltas below threshold", () => {

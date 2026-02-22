@@ -14,6 +14,7 @@ function isCoarsePointerDevice(): boolean {
 export function useKeyboardInset(): number {
   const [inset, setInset] = useState(0);
   const baselineRef = useRef(0);
+  const orientationRef = useRef<"portrait" | "landscape" | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -31,24 +32,41 @@ export function useKeyboardInset(): number {
       return;
     }
 
-    const updateInset = (): void => {
+    const updateInset = (reason: "init" | "resize" | "scroll" | "orientationchange" = "init"): void => {
       const visibleHeight = viewport.height + viewport.offsetTop;
-      baselineRef.current = Math.max(baselineRef.current, visibleHeight);
+      const orientation = viewport.width >= viewport.height ? "landscape" : "portrait";
+      const orientationChanged = orientationRef.current !== null && orientationRef.current !== orientation;
+
+      const shouldRebaseline =
+        reason === "orientationchange" ||
+        orientationChanged ||
+        baselineRef.current === 0 ||
+        visibleHeight > baselineRef.current ||
+        baselineRef.current - visibleHeight < KEYBOARD_THRESHOLD_PX;
+
+      if (shouldRebaseline) {
+        baselineRef.current = visibleHeight;
+      }
+      orientationRef.current = orientation;
 
       const rawInset = Math.max(0, baselineRef.current - visibleHeight);
       setInset(rawInset >= KEYBOARD_THRESHOLD_PX ? Math.round(rawInset) : 0);
     };
 
-    updateInset();
+    updateInset("init");
 
-    viewport.addEventListener("resize", updateInset);
-    viewport.addEventListener("scroll", updateInset);
-    window.addEventListener("orientationchange", updateInset);
+    const onResize = (): void => updateInset("resize");
+    const onScroll = (): void => updateInset("scroll");
+    const onOrientationChange = (): void => updateInset("orientationchange");
+
+    viewport.addEventListener("resize", onResize);
+    viewport.addEventListener("scroll", onScroll);
+    window.addEventListener("orientationchange", onOrientationChange);
 
     return () => {
-      viewport.removeEventListener("resize", updateInset);
-      viewport.removeEventListener("scroll", updateInset);
-      window.removeEventListener("orientationchange", updateInset);
+      viewport.removeEventListener("resize", onResize);
+      viewport.removeEventListener("scroll", onScroll);
+      window.removeEventListener("orientationchange", onOrientationChange);
     };
   }, []);
 
