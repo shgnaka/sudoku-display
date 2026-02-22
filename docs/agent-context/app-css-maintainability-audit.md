@@ -1,18 +1,22 @@
 # App CSS Maintainability Audit
 
 ## 目的 / 対象読者（coding agent）
-`src/App.css` と `src/styles/solve-page.css` 周辺の保守性を、実装判断がぶれない粒度で共有する。主対象は、UI改善を担当するコーディングエージェント。
+`src/App.css` と Solve 画面CSS群の保守性を、実装判断がぶれない粒度で共有する。主対象は UI 改善を担当するコーディングエージェント。
 
 ## 調査日
 2026-02-22
 
-## 事実確認サマリー
-- 旧監査で前提だった「Solve専用スタイルの `src/App.css` 混在」は、現状では解消済み。
-- 現状の構成は、`src/App.css`（集約）+ `src/styles/app-shell.css` + `src/styles/common-ui.css` + `src/styles/solve-page.css`（集約）+ `src/styles/solve-page.base.css` + `src/styles/solve-page.no-scroll.css`。
-- `solve-no-scroll` 条件セレクタは `src/styles/solve-page.no-scroll.css` へ集約済み。
-- 重複しやすい色・半径・境界線は `src/styles/tokens.css` に共通トークン化済み。
+## 更新日
+2026-02-22
 
-## 旧監査項目の再評価
+## 現状サマリー
+- 旧監査で課題だった「Solve専用スタイルの `src/App.css` 混在」は解消済み（`src/App.css`, `src/styles/solve-page.css`）。
+- フォーカス可視性は `:focus-visible` ベースで実装済み（`src/styles/solve-page.base.css:132`, `src/styles/common-ui.css:86`）。
+- Solve 状態色（`origin-*`, `legend-*`, `backspace`）はトークン化済み（`src/styles/tokens.css:42`, `src/styles/tokens.css:49`, `src/styles/tokens.css:58`）。
+- モバイル凡例は完全非表示ではなく、`solve-no-scroll` 時に summary で折りたたみ表示する構成（`src/styles/solve-page.base.css:211`, `src/styles/solve-page.no-scroll.css:115`）。
+- 768px ブレークポイント同期は App/Solve 両系統で注記済み（`src/styles/app-shell.css:173`, `src/styles/solve-page.base.css:247`, `src/styles/solve-page.no-scroll.css:133`, `src/constants/layout.ts:1`）。
+
+## 旧監査項目の再評価（再基準化）
 
 ### High（旧）
 1. CSS責務分離の不足
@@ -24,63 +28,85 @@
 - 根拠: `src/styles/solve-page.no-scroll.css`
 
 3. トークン不足によるハードコード増加
-- 判定: `部分的に解消`
-- 根拠: `src/styles/tokens.css` に主要トークン追加済み。ただし Solve専用の状態色（例: `origin-*`, `legend-*`, `backspace`）には個別値が残る。
+- 判定: `解消`
+- 根拠: Solve 状態色トークンが追加済み（`src/styles/tokens.css:42`, `src/styles/tokens.css:49`, `src/styles/tokens.css:58`）かつ利用済み（`src/styles/solve-page.base.css:191`, `src/styles/solve-page.base.css:228`）。
 
 ### Medium（旧）
 1. ボタン系スタイルの重複
 - 判定: `解消`
-- 根拠: `btn + modifier` へ統一（`src/styles/common-ui.css` の `.btn`, `.btn--*` と各TSXの `className` 移行）。
+- 根拠: `btn + modifier` へ統一（`src/styles/common-ui.css`）
 
 2. フォーカス表現の適用範囲が限定的
-- 判定: `未対応`
-- 根拠: `.sudoku-cell:focus` はあるが、`:focus-visible` の横断適用は未実施（`src/styles/solve-page.base.css`）。
+- 判定: `解消`
+- 根拠: `:focus-visible` 実装済み（`src/styles/solve-page.base.css:132`, `src/styles/common-ui.css:86`）。
 
 3. レスポンシブ条件の説明不足
-- 判定: `部分的に解消`
-- 根拠: `BREAKPOINT_SYNC_NOTE` は存在（`src/styles/solve-page.no-scroll.css`）。ただし App側メディアクエリとの設計意図は文書化余地あり。
+- 判定: `解消`
+- 根拠: BREAKPOINT 同期注記を App/Solve 側へ配置（`src/styles/app-shell.css:173`, `src/styles/solve-page.base.css:247`, `src/styles/solve-page.no-scroll.css:133`）し、定数と対応付け済み（`src/constants/layout.ts:1`）。
 
 ### Low（旧）
 1. タイポグラフィ規則の分散
 - 判定: `未対応`
-- 根拠: サイズ/行間は複数ファイルで個別指定が残る。
+- 根拠: 文字サイズ/行間は各ファイルで局所指定が残る（例: `src/styles/solve-page.base.css`）。
 
 2. 凡例のモバイル時完全非表示
-- 判定: `未対応`
-- 根拠: `.app-root.solve-no-scroll .solve-legend { display: none; }`（`src/styles/solve-page.no-scroll.css`）。
+- 判定: `解消`
+- 根拠: `solve-no-scroll` 時は summary を表示し、開閉で内容を扱う構成（`src/styles/solve-page.no-scroll.css:115`, `src/styles/solve-page.no-scroll.css:129`）。
 
-## 現在の改善余地（優先度付き）
+## 現在の残課題（優先度・着手条件・完了条件）
 
 ### Medium
-1. フォーカス可視性の統一
-- 問題: `:focus-visible` が未導入で、要素ごとの操作確信性が揃っていない。
-- 参照: `src/styles/solve-page.base.css` (`.sudoku-cell:focus`)
-- 期待効果: キーボード操作時のアクセシビリティ向上。
+1. タイポグラフィトークンの段階的統一
+- 問題: フォントサイズ/行間の指定がページ別に分散し、調整時に差分追跡が必要。
+- 参照: `src/styles/solve-page.base.css`, `src/styles/app-shell.css`, `src/styles/common-ui.css`
+- 着手条件: 次回の UI テキスト調整、または可読性改善タスクを開始する時点。
+- 完了条件:
+  - 主要テキストサイズ/行間を `src/styles/tokens.css` の semantic token へ移管。
+  - 各ページCSSで同義の生値フォント指定を削減し、重複規則を解消。
 
-2. レスポンシブ意図の補強
-- 問題: App側とSolve側でメディアクエリが分かれ、設計意図の参照が分散。
-- 参照: `src/styles/app-shell.css`, `src/styles/solve-page.base.css`, `src/styles/solve-page.no-scroll.css`
-- 期待効果: 変更時の破綻防止。
+2. ブレークポイント運用ルールの明文化
+- 問題: 同期注記はあるが、「新規メディアクエリ追加時の運用手順」が文書化されていない。
+- 参照: `src/styles/app-shell.css:173`, `src/styles/solve-page.base.css:247`, `src/styles/solve-page.no-scroll.css:133`, `src/constants/layout.ts:1`
+- 着手条件: 768px 以外の新規 breakpoint を導入する設計変更が発生した時点。
+- 完了条件:
+  - `docs/agent-context/` 配下に breakpoint 運用メモ（定数起点・コメント方針・チェック観点）を追加。
+  - CSS と TS 定数の同期確認手順を 1 箇所に集約。
+
+3. 色指定の一部が design token を経由していない
+- 問題: ボタン状態色の一部が16進カラー値で直書きされており、配色調整時に変更点が追いづらい。
+- 参照: `src/styles/common-ui.css:99`, `src/styles/common-ui.css:111`, `src/styles/common-ui.css:149`
+- 着手条件: 次回の配色調整またはアクセシビリティ改善（コントラスト見直し）に着手する時点。
+- 完了条件:
+  - 直書きカラーを `src/styles/tokens.css` の semantic token へ移管。
+  - 利用側 CSS で生のカラーコードを削減し、用途名ベース参照へ統一。
 
 ### Low
-1. Solve状態色のトークン化継続
-- 問題: `origin-*`, `legend-*`, `backspace` 系色が局所ハードコード。
-- 参照: `src/styles/solve-page.base.css`
-- 期待効果: テーマ調整の容易化。
+1. 凡例情報の省スペース表現の改善
+- 問題: `solve-no-scroll` で summary は表示されるが、初見ユーザー向けの情報密度はまだ改善余地がある。
+- 参照: `src/styles/solve-page.base.css:211`, `src/styles/solve-page.no-scroll.css:115`
+- 着手条件: モバイル UX 改善のバックログを着手する時点。
+- 完了条件:
+  - summary 文言を短い状態要約へ最適化。
+  - 開閉前でも最低限の意味が伝わることを手動確認（モバイル幅）。
 
-2. モバイル凡例の代替表示
-- 問題: `solve-no-scroll` 時に凡例を非表示。
-- 参照: `src/styles/solve-page.no-scroll.css` (`.solve-legend`)
-- 期待効果: 初見理解性を保ちつつ省スペースを維持。
+2. 余白・サイズ値の生値指定が散在している
+- 問題: `padding/gap/font-size` などの寸法値が多数直書きで、全体調整時の一括変更が難しい。
+- 参照: `src/styles/app-shell.css:176`, `src/styles/app-shell.css:191`, `src/styles/solve-page.no-scroll.css:138`, `src/styles/solve-page.base.css:264`
+- 着手条件: レイアウト微調整を複数画面に跨って行うタスクが発生した時点。
+- 完了条件:
+  - 反復利用される寸法値を `src/styles/tokens.css` に昇格。
+  - 同義の生値指定を削減し、影響範囲をトークン単位で追える状態にする。
 
 ## 非目標（今回やらないこと）
-- Sudokuロジックや状態管理（TypeScript）の仕様変更
+- Sudoku ロジックや状態管理（TypeScript）の仕様変更
 - ルーティングやページ構成の再設計
 - 全ページの全面的なビジュアル刷新
 - 新規デザインシステムの導入
 
 ## 次に実装すべき順序
-1. `:focus-visible` ベースでフォーカスリングを横断適用する。
-2. ブレークポイント設計意図を最小コメントで補強する。
-3. Solve専用状態色を段階的にトークン化する。
-4. モバイル凡例の簡易代替表示（例: 1行要約）を導入する。
+1. タイポグラフィ関連の semantic token を `src/styles/tokens.css` へ追加し、Solve/App で共通利用する。
+2. breakpoint 運用メモを `docs/agent-context/` に追加し、`MOBILE_BREAKPOINT_PX` 起点の同期ルールを明文化する。
+3. モバイル凡例 summary の文言・表示密度を見直し、開閉前理解性を改善する。
+
+## 更新履歴
+- 2026-02-22: ハードコード監査の追記として、カラー直書きと寸法値直書きの改善余地を追加。
