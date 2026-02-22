@@ -34,7 +34,10 @@
   border-radius: var(--radius-md);
   padding: 0.75rem;
   margin-top: 0.7rem;
-  font: 500 var(--font-size-input-mono) / var(--line-height-relaxed) "JetBrains Mono", monospace;
+  font-size: var(--font-size-input-mono);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-mono);
   resize: vertical;
 }
 
@@ -53,7 +56,7 @@
 .generator-controls label {
   display: grid;
   gap: 0.35rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-subtle-strong);
 }
 
@@ -63,7 +66,7 @@
   color: var(--text-strong);
   border-radius: var(--radius-md);
   padding: 0.45rem 0.65rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .btn,
@@ -73,7 +76,7 @@ button {
   color: var(--text-strong);
   border-radius: var(--radius-md);
   padding: 0.48rem 0.75rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
 }
 
@@ -136,7 +139,7 @@ summary:focus-visible {
   border-color: var(--solve-backspace-border);
   background: var(--solve-backspace-bg);
   color: var(--solve-backspace-fg);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .btn--nav {

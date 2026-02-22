@@ -97,7 +97,10 @@
   background: transparent;
   padding: 0;
   text-align: center;
-  font: 700 var(--font-size-cell) / var(--line-height-tight) "JetBrains Mono", monospace;
+  font-size: var(--font-size-cell);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
   color: var(--text-subtle-strong);
 }
 
@@ -113,7 +116,7 @@
   cursor: pointer;
   color: var(--text-subtle-strong);
   font-size: var(--font-size-hint);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .solve-legend-summary::-webkit-details-marker {

@@ -9,6 +9,8 @@
     "build": "npm run wasm:build && tsc -b && vite build",
     "preview": "vite preview",
     "lint:breakpoints": "node tools/lint-breakpoint-sync.mjs",
+    "lint:typography": "node tools/lint-typography-tokens.mjs",
+    "lint:styles": "npm run lint:breakpoints && npm run lint:typography",
     "test": "vitest run",
     "test:watch": "vitest"
   },

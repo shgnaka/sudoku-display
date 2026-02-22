@@ -80,6 +80,12 @@
   --font-size-pad: clamp(0.72rem, 2.8vw, 0.98rem);
   --font-size-nav-mobile: 0.76rem;
 
+  --font-family-sans: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
   --line-height-tight: 1;
   --line-height-relaxed: 1.5;
 
@@ -97,6 +103,6 @@
   --border-width-strong: 3px;
   --control-height-min: 44px;
 
-  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-family: var(--font-family-sans);
   color: var(--text-main);
 }
