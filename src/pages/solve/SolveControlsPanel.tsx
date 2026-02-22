@@ -4,6 +4,7 @@ import { InkToggleBar } from "../../components/InkToggleBar";
 interface SolveControlsPanelProps {
   isReviewMode: boolean;
   isInkMode: boolean;
+  shouldShowLegendGuide: boolean;
   shouldShowInkActions: boolean;
   onToggleReviewMode: () => void;
   onToggleInkMode: () => void;
@@ -14,6 +15,7 @@ interface SolveControlsPanelProps {
 export function SolveControlsPanel({
   isReviewMode,
   isInkMode,
+  shouldShowLegendGuide,
   shouldShowInkActions,
   onToggleReviewMode,
   onToggleInkMode,
@@ -48,6 +50,25 @@ export function SolveControlsPanel({
           <div aria-hidden="true" className="mode-slot-placeholder" />
         )}
       </div>
+      {shouldShowLegendGuide && (
+        <details className="solve-legend">
+          <summary className="solve-legend-summary">マスの色分けを表示</summary>
+          <ul className="solve-legend-list">
+            <li className="solve-legend-item">
+              <span aria-hidden="true" className="solve-legend-chip solve-legend-chip--given" />
+              初期値
+            </li>
+            <li className="solve-legend-item">
+              <span aria-hidden="true" className="solve-legend-chip solve-legend-chip--user" />
+              ユーザー入力
+            </li>
+            <li className="solve-legend-item">
+              <span aria-hidden="true" className="solve-legend-chip solve-legend-chip--empty" />
+              空
+            </li>
+          </ul>
+        </details>
+      )}
     </section>
   );
 }

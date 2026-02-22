@@ -7,13 +7,13 @@
 
 .panel h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.08rem;
+  font-size: var(--font-size-section-title);
 }
 
 .hint {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--font-size-hint);
 }
 
 .visually-hidden {
@@ -34,7 +34,7 @@
   border-radius: var(--radius-md);
   padding: 0.75rem;
   margin-top: 0.7rem;
-  font: 500 0.95rem/1.5 "JetBrains Mono", monospace;
+  font: 500 var(--font-size-input-mono) / var(--line-height-relaxed) "JetBrains Mono", monospace;
   resize: vertical;
 }
 
@@ -96,7 +96,7 @@ summary:focus-visible {
 .btn--active {
   border-color: var(--line-active);
   background: var(--surface-soft-active);
-  color: #143b72;
+  color: var(--text-active);
 }
 
 .btn--inactive {
@@ -108,7 +108,7 @@ summary:focus-visible {
 .btn--danger {
   border-color: var(--line-danger);
   background: var(--surface-danger);
-  color: #7c2020;
+  color: var(--text-danger-strong);
 }
 
 .btn--fill {
@@ -129,7 +129,7 @@ summary:focus-visible {
   min-height: clamp(36px, 8vw, var(--control-height-min));
   min-width: 0;
   padding: 0.2rem;
-  font-size: clamp(0.72rem, 2.8vw, 0.98rem);
+  font-size: var(--font-size-pad);
 }
 
 .btn--backspace {
@@ -146,7 +146,7 @@ summary:focus-visible {
 .error-message {
   margin: 0;
   background: var(--surface-danger-soft);
-  color: #8f1f1f;
+  color: var(--text-danger-alert);
   border: var(--border-width-base) solid var(--line-danger-soft);
   border-radius: var(--radius-md);
   padding: 0.6rem 0.75rem;

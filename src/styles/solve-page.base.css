@@ -18,19 +18,19 @@
 }
 
 .mode-label {
-  line-height: 1;
+  line-height: var(--line-height-tight);
 }
 
 .solve-controls {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-md);
   width: min(100%, 560px);
 }
 
 .solve-toggle-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
+  gap: var(--space-sm);
 }
 
 .solve-mode-slot {
@@ -45,7 +45,7 @@
 .ink-actions-inline {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
+  gap: var(--space-sm);
 }
 
 .solve-board-panel {
@@ -97,8 +97,67 @@
   background: transparent;
   padding: 0;
   text-align: center;
-  font: 700 clamp(0.95rem, 2vw, 1.2rem) / 1 "JetBrains Mono", monospace;
+  font: 700 var(--font-size-cell) / var(--line-height-tight) "JetBrains Mono", monospace;
   color: var(--text-subtle-strong);
+}
+
+.solve-legend {
+  margin: 0;
+  border: var(--border-width-base) solid var(--solve-legend-summary-border);
+  border-radius: var(--radius-md);
+  background: var(--solve-legend-summary-bg);
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+.solve-legend-summary {
+  cursor: pointer;
+  color: var(--text-subtle-strong);
+  font-size: var(--font-size-hint);
+  font-weight: 600;
+}
+
+.solve-legend-summary::-webkit-details-marker {
+  margin-right: var(--space-2xs);
+}
+
+.solve-legend-list {
+  margin: var(--space-3xs) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.solve-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--text-muted);
+  font-size: var(--font-size-hint);
+}
+
+.solve-legend-chip {
+  display: inline-block;
+  width: 0.95rem;
+  height: 0.95rem;
+  border: var(--border-width-base) solid transparent;
+  border-radius: var(--radius-sm);
+  flex: 0 0 auto;
+}
+
+.solve-legend-chip--given {
+  background: var(--solve-legend-given-bg);
+  border-color: var(--solve-legend-given-border);
+}
+
+.solve-legend-chip--user {
+  background: var(--solve-legend-user-bg);
+  border-color: var(--solve-legend-user-border);
+}
+
+.solve-legend-chip--empty {
+  background: var(--solve-legend-empty-bg);
+  border-color: var(--solve-legend-empty-border);
 }
 
 button.sudoku-cell {
@@ -230,6 +289,6 @@ button.sudoku-cell[aria-disabled="true"] {
 
   .solve-number-pad-grid {
     grid-template-columns: repeat(10, minmax(0, 1fr));
-    gap: 0.24rem;
+    gap: var(--space-3xs);
   }
 }

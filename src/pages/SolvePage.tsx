@@ -109,6 +109,7 @@ export function SolvePage(): JSX.Element {
         onClearAllInk={handleClearAllInk}
         onToggleInkMode={toggleInkMode}
         onToggleReviewMode={toggleReviewMode}
+        shouldShowLegendGuide={isMobileViewport}
         shouldShowInkActions={shouldShowInkActions}
       />
 

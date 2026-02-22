@@ -35,8 +35,8 @@ body.solve-no-scroll-body {
   min-height: 100dvh;
   overflow: hidden;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  padding: 0.55rem 0.75rem 0.75rem;
-  gap: 0.45rem;
+  padding: var(--space-solve-mobile-top) var(--space-lg) var(--space-lg);
+  gap: var(--space-sm);
 }
 
 .app-root.solve-no-scroll .content-area {
@@ -48,7 +48,7 @@ body.solve-no-scroll-body {
   min-height: 0;
   height: 100%;
   grid-template-rows: minmax(0, 1fr) auto auto;
-  gap: 0.45rem;
+  gap: var(--space-sm);
 }
 
 .app-root.solve-no-scroll .panel {
@@ -56,8 +56,16 @@ body.solve-no-scroll-body {
 }
 
 .app-root.solve-no-scroll .solve-controls {
-  gap: 0.35rem;
+  gap: var(--space-xs);
   width: min(100%, var(--solve-board-size));
+}
+
+.app-root.solve-no-scroll .solve-legend {
+  padding: var(--space-2xs) var(--space-xs);
+}
+
+.app-root.solve-no-scroll .solve-legend-list {
+  gap: var(--space-3xs);
 }
 
 .app-root.solve-no-scroll .solve-board-panel {
@@ -107,7 +115,7 @@ body.solve-no-scroll-body {
   .app-root.solve-no-scroll {
     --solve-controls-reserved: 11rem;
     --solve-sheet-reserved: 5.1rem;
-    --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + 0.35rem);
-    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.35rem);
+    --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + var(--space-xs));
+    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + var(--space-xs));
   }
 }
