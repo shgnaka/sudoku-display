@@ -83,7 +83,7 @@ export function SolveBoardPanel({
         onToggle={(event) => setIsLegendOpen(event.currentTarget.open)}
         open={isLegendOpen}
       >
-        <summary className="solve-legend-summary">色の意味</summary>
+        <summary className="solve-legend-summary">色の意味: 初期値・ユーザー入力・空マス</summary>
         <div className="solve-legend-items">
           <span className="legend-item legend-given">初期値</span>
           <span className="legend-item legend-user">ユーザー入力</span>

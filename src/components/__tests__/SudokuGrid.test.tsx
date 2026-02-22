@@ -273,7 +273,7 @@ describe("Sudoku UI", () => {
     isMobileViewport = true;
     render(<App />);
 
-    const summary = screen.getByText("色の意味");
+    const summary = screen.getByText("色の意味: 初期値・ユーザー入力・空マス");
     const legend = summary.closest("details") as HTMLDetailsElement;
     expect(legend).not.toBeNull();
     expect(legend).not.toHaveAttribute("open");
