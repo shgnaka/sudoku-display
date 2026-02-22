@@ -6,6 +6,9 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 ## 調査日
 2026-02-22
 
+## 更新日
+2026-02-22
+
 ## 現状要約
 - `SolvePage` はコンテナ役へ整理され、選択制御・表示構築・入力UIが分割済み。
 - solve専用スタイルは `src/styles/solve-page.css`（`solve-page.base.css` + `solve-page.no-scroll.css` の集約）として分離済み。
@@ -14,6 +17,8 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 - `solve-no-scroll` 時の凡例は折りたたみ表示かつ省スペース化され、summary文言を短縮済み。
 - セル `aria-label` は「座標＋状態＋編集可否（理由付き）」へ改善済み。
 - sheet入力時の `aria-live` は状態変化通知中心へ整理し、`aria-label` との重複を低減済み。
+- A11y文言生成は `src/lib/solveA11y.ts` に集約し、`SudokuCell` と `useSolveSelectionController` の重複実装を解消した。
+- sheet `aria-live` は `sheetA11yRevision` により同一文言の再通知が可能な構成へ更新した（`src/pages/SolvePage.tsx`, `src/pages/solve/useSolveSelectionController.ts`）。
 
 ## 監査結果（優先度付き、ファイル:行番号付き）
 
@@ -97,6 +102,7 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 3. 実機差分があれば `aria-label` / `aria-live` の文言を微修正する。
 
 ## 更新履歴
+- 2026-02-22: `src/lib/solveA11y.ts` を追加し、`aria-label` / `aria-live` 文言組み立てを共通化。`sheetA11yRevision` を導入して同一文言の再通知を可能化。関連UIテストを追加。
 - 2026-02-22: 凡例summary文言とチップ密度を調整し、`aria-label` に編集不可理由を追加。sheet `aria-live` 文言を状態変化中心へ整理し、実機確認チェックリストを追記。
 - 2026-02-22: 残課題だった「モバイル時の凡例非表示」「セル `aria-label` の情報不足」を実装反映し、関連UIテストを更新。
 - 2026-02-22: 実装反映版へ全面更新。責務分離/CSS分離/閾値定数化/選択解除イベント整理/Backspace disabled連動を「対応済み」として反映。
