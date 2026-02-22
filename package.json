@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint:breakpoints": "node tools/lint-breakpoint-sync.mjs",
     "lint:typography": "node tools/lint-typography-tokens.mjs",
-    "lint:styles": "npm run lint:breakpoints && npm run lint:typography",
+    "lint:spacing": "node tools/lint-spacing-tokens.mjs",
+    "lint:styles": "npm run lint:breakpoints && npm run lint:typography && npm run lint:spacing",
     "test": "vitest run",
     "test:watch": "vitest"
   },

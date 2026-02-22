@@ -13,7 +13,7 @@ body.solve-no-scroll-body {
   --solve-header-reserved: 3.4rem;
   --solve-controls-reserved: 10.2rem;
   --solve-sheet-reserved: 5.2rem;
-  --solve-bottom-reserved: 1rem;
+  --solve-bottom-reserved: var(--space-xl);
   --solve-board-size: clamp(
     var(--solve-board-min-size),
     min(
@@ -52,7 +52,7 @@ body.solve-no-scroll-body {
 }
 
 .app-root.solve-no-scroll .panel {
-  padding: 0.6rem;
+  padding: var(--space-md-60);
 }
 
 .app-root.solve-no-scroll .solve-controls {
@@ -116,6 +116,6 @@ body.solve-no-scroll-body {
     --solve-controls-reserved: 11rem;
     --solve-sheet-reserved: 5.1rem;
     --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + var(--space-xs));
-    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + var(--space-xs));
+    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0) + var(--space-xs));
   }
 }
