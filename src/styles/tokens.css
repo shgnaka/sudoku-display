@@ -1,0 +1,50 @@
+:root {
+  --keyboard-inset: 0px;
+  --mobile-tabbar-height: 4.3rem;
+
+  --menu-btn-width: 46px;
+  --menu-btn-height: 42px;
+  --menu-offset: 8px;
+  --menu-reserved-top: calc(env(safe-area-inset-top, 0px) + var(--menu-offset) + var(--menu-btn-height));
+
+  --app-bg-start: #f7fbff;
+  --app-bg-mid: #edf4ff;
+  --app-bg-end: #f8fafc;
+
+  --panel-bg: #ffffffd1;
+  --panel-border: #d2deef;
+
+  --text-main: #132036;
+  --text-muted: #47556a;
+  --text-strong: #1f2d47;
+  --text-subtle-strong: #22324d;
+  --focus: #52a1ff;
+
+  --surface-default: #ffffff;
+  --surface-soft: #f6f9ff;
+  --surface-soft-active: #eaf3ff;
+  --surface-drawer: #f8fbff;
+  --surface-tabbar: #f3f7ffef;
+  --surface-danger: #fff3f3;
+  --surface-danger-soft: #ffe8e8;
+
+  --line-default: #9eb1d3;
+  --line-soft: #bdcae0;
+  --line-drawer: #cdd9ea;
+  --line-tabbar: #cbd7ea;
+  --line-active: #7ca6e3;
+  --line-danger: #db9c9c;
+  --line-danger-soft: #f3bbbb;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --border-width-base: 1px;
+  --border-width-strong: 3px;
+  --control-height-min: 44px;
+
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  color: var(--text-main);
+}

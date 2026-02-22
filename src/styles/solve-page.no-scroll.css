@@ -1,0 +1,122 @@
+body.solve-no-scroll-body {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app-root.solve-no-scroll {
+  /* Keep a small guard band for Chromium subpixel rounding on mobile. */
+  --solve-inline-size: 100%;
+  --solve-inline-guard: 2px;
+  --solve-safe-inline-size: calc(var(--solve-inline-size) - var(--solve-inline-guard));
+  /* 9 x 28px cell minimum + 2 x 3px outer border = 258px */
+  --solve-board-min-size: 258px;
+  --solve-header-reserved: 3.4rem;
+  --solve-controls-reserved: 10.8rem;
+  --solve-sheet-reserved: 5.2rem;
+  --solve-bottom-reserved: 1rem;
+  --solve-board-size: clamp(
+    var(--solve-board-min-size),
+    min(
+      var(--solve-safe-inline-size),
+      calc(
+        100dvh
+          - var(--solve-header-reserved)
+          - var(--solve-controls-reserved)
+          - var(--solve-sheet-reserved)
+          - var(--solve-bottom-reserved)
+          - env(safe-area-inset-top, 0px)
+          - env(safe-area-inset-bottom, 0px)
+      )
+    ),
+    var(--solve-safe-inline-size)
+  );
+  max-width: none;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 0.55rem 0.75rem 0.75rem;
+  gap: 0.45rem;
+}
+
+.app-root.solve-no-scroll .content-area {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-root.solve-no-scroll .solve-page {
+  min-height: 0;
+  height: 100%;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 0.45rem;
+}
+
+.app-root.solve-no-scroll .panel {
+  padding: 0.6rem;
+}
+
+.app-root.solve-no-scroll .solve-controls {
+  gap: 0.35rem;
+  width: min(100%, var(--solve-board-size));
+}
+
+.app-root.solve-no-scroll .solve-board-panel {
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: start;
+  justify-items: center;
+}
+
+.app-root.solve-no-scroll .board-panel-header {
+  width: min(100%, var(--solve-board-size));
+  margin-bottom: 0.25rem;
+}
+
+.app-root.solve-no-scroll .board-slot {
+  min-width: 0;
+  min-height: 0;
+  width: min(100%, var(--solve-board-size));
+  height: 100%;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+}
+
+.app-root.solve-no-scroll .board-wrap {
+  min-width: 0;
+  width: var(--board-fit-size, min(100%, var(--solve-board-size)));
+  height: var(--board-fit-size, min(100%, var(--solve-board-size)));
+  max-inline-size: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+  align-self: center;
+}
+
+.app-root.solve-no-scroll .sudoku-grid {
+  height: 100%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.app-root.solve-no-scroll .solve-input-sheet-slot {
+  width: min(100%, var(--solve-board-size));
+}
+
+.app-root.solve-no-scroll .solve-legend {
+  display: none;
+}
+
+/* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
+@media (max-width: 768px) {
+  .app-root.solve-no-scroll {
+    --solve-controls-reserved: 11.6rem;
+    --solve-sheet-reserved: 5.1rem;
+    --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + 0.35rem);
+    padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.35rem);
+  }
+}

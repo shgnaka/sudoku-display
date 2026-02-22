@@ -1,0 +1,209 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, var(--app-bg-start), var(--app-bg-mid) 45%, var(--app-bg-end));
+}
+
+body.review-scroll-lock {
+  overscroll-behavior: none;
+}
+
+.app-root {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 1.5rem;
+  display: grid;
+  gap: 1rem;
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-height: var(--menu-reserved-top);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 1.95rem);
+}
+
+.header-current {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.hamburger-button {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--menu-offset));
+  right: calc(env(safe-area-inset-right, 0px) + var(--menu-offset));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--menu-btn-width);
+  height: var(--menu-btn-height);
+  border: var(--border-width-base) solid var(--line-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+  padding: 0;
+  cursor: pointer;
+  z-index: 45;
+  transition: background-color 0.18s ease;
+}
+
+.hamburger-button span {
+  position: absolute;
+  width: 22px;
+  height: 2px;
+  background: var(--text-subtle-strong);
+  transition: transform 0.22s ease, opacity 0.16s ease;
+}
+
+.hamburger-button span:nth-child(1) {
+  transform: translateY(-6px);
+}
+
+.hamburger-button span:nth-child(2) {
+  transform: translateY(0);
+}
+
+.hamburger-button span:nth-child(3) {
+  transform: translateY(6px);
+}
+
+.hamburger-button.open span:nth-child(1) {
+  transform: translateY(0) rotate(45deg);
+}
+
+.hamburger-button.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-button.open span:nth-child(3) {
+  transform: translateY(0) rotate(-45deg);
+}
+
+.content-area {
+  min-width: 0;
+  padding-bottom: 0;
+}
+
+.solve-page,
+.manage-page,
+.help-page,
+.storage-page,
+.notfound-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(360px, 80vw);
+  background: var(--surface-drawer);
+  border-left: var(--border-width-base) solid var(--line-drawer);
+  transform: translateX(100%);
+  transition: transform 0.24s ease;
+  z-index: 40;
+  padding: 1rem;
+}
+
+.side-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 28, 44, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 35;
+}
+
+.drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.drawer-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.drawer-nav {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.drawer-nav button {
+  width: 100%;
+  text-align: left;
+}
+
+.drawer-nav button.active {
+  border-color: var(--line-active);
+  background: var(--surface-soft-active);
+  color: #143b72;
+}
+
+.bottom-tab-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-root {
+    padding: 0.75rem 0.75rem calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .app-header {
+    margin-bottom: 0.2rem;
+  }
+
+  .bottom-tab-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+    padding: 0.45rem 0.45rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+    background: var(--surface-tabbar);
+    border-top: var(--border-width-base) solid var(--line-tabbar);
+    z-index: 25;
+  }
+
+  .bottom-tab-bar button {
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.35rem;
+    font-size: 0.76rem;
+  }
+
+  .bottom-tab-bar button.active {
+    border-color: var(--line-active);
+    background: var(--surface-soft-active);
+    color: #143b72;
+  }
+}
