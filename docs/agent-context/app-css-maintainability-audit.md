@@ -18,6 +18,8 @@
 - breakpoint 運用手順は `docs/agent-context/layout-breakpoint-operation-audit.md` に追加済み。
 - typography token は `font-size/line-height/font-weight/font-family` まで統一済み（`src/styles/tokens.css`, `src/styles/common-ui.css`, `src/styles/solve-page.base.css`）。
 - typography 運用チェックは `npm run lint:typography` で実行可能（`tools/lint-typography-tokens.mjs`, `package.json`）。
+- spacing token は頻出値（2回以上登場）を中心に拡張済み（`src/styles/tokens.css`, `src/styles/common-ui.css`, `src/styles/app-shell.css`, `src/styles/solve-page.no-scroll.css`）。
+- spacing 運用チェックは `npm run lint:spacing` で実行可能（`tools/lint-spacing-tokens.mjs`, `package.json`）。
 
 ## 旧監査項目の再評価（再基準化）
 
@@ -59,13 +61,13 @@
 ## 現在の残課題（優先度・着手条件・完了条件）
 
 ### Low
-1. 余白・サイズ値の生値指定が散在している
-- 問題: 頻出値のトークン化は開始したが、`padding/gap` などの生値指定がまだ残る。
-- 参照: `src/styles/tokens.css:86`, `src/styles/app-shell.css:176`, `src/styles/solve-page.no-scroll.css:38`, `src/styles/common-ui.css:35`
+1. 単発の余白・サイズ生値が一部残っている
+- 問題: 頻出値（2回以上）の token 化は完了したが、単発値（例: `0.48rem`, `0.32rem`, `1.25rem`）は意図的に据え置いている。
+- 参照: `src/styles/common-ui.css`, `src/styles/app-shell.css`, `src/styles/solve-page.base.css`
 - 着手条件: レイアウト微調整を複数画面に跨って行うタスクが発生した時点。
 - 完了条件:
-  - 反復利用される寸法値を `src/styles/tokens.css` に昇格。
-  - 同義の生値指定を削減し、影響範囲をトークン単位で追える状態にする。
+  - 単発値のうち再利用されるものを `src/styles/tokens.css` へ昇格。
+  - `lint:spacing` の禁止値セットと token を同期し、再発防止を維持する。
 
 ## 非目標（今回やらないこと）
 - Sudoku ロジックや状態管理（TypeScript）の仕様変更
@@ -78,6 +80,7 @@
 2. 凡例UIの開閉前後で理解しやすい文言・配置を実機幅で調整する。
 
 ## 更新履歴
+- 2026-02-22: spacing token を頻出値（2回以上）へ拡張し、`lint:spacing` を追加。
 - 2026-02-22: typography token を `font-size/line-height/font-weight/font-family` まで統一し、`lint:typography` を追加。
 - 2026-02-22: ハードコード監査の追記として、カラー直書きと寸法値直書きの改善余地を追加。
 - 2026-02-22: タイポグラフィ/カラー/spacing のトークン化、モバイル凡例導線、breakpoint 運用メモ追加を反映。
