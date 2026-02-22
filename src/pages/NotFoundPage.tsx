@@ -1,3 +1,5 @@
+import { NOT_FOUND_MESSAGES } from "../constants/messages";
+
 interface NotFoundPageProps {
   onBackToSolve: () => void;
 }
@@ -6,12 +8,10 @@ export function NotFoundPage({ onBackToSolve }: NotFoundPageProps): JSX.Element 
   return (
     <div className="notfound-page">
       <section className="panel notfound-panel">
-        <h2>ページが見つかりません</h2>
-        <p className="hint">
-          指定されたURLは存在しないか、移動された可能性があります。数独を続けるには解くページに戻ってください。
-        </p>
+        <h2>{NOT_FOUND_MESSAGES.title}</h2>
+        <p className="hint">{NOT_FOUND_MESSAGES.hint}</p>
         <button className="btn" onClick={onBackToSolve} type="button">
-          解くへ戻る
+          {NOT_FOUND_MESSAGES.backToSolve}
         </button>
       </section>
     </div>

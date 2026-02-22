@@ -1,4 +1,5 @@
 import type { Board, CellData } from "../types/sudoku";
+import { SUDOKU_SIZE } from "../constants/sudokuDomain";
 
 export type ParseResult =
   | { ok: true; board: Board }
@@ -23,10 +24,10 @@ export function parseSudokuText(input: string): ParseResult {
 
   const candidateLines = rawLines.filter((line) => /[1-9.]/.test(line));
 
-  if (candidateLines.length !== 9) {
+  if (candidateLines.length !== SUDOKU_SIZE) {
     return {
       ok: false,
-      error: `数独データ行は9行必要です（現在: ${candidateLines.length}行）。`
+      error: `数独データ行は${SUDOKU_SIZE}行必要です（現在: ${candidateLines.length}行）。`
     };
   }
 
@@ -44,10 +45,10 @@ export function parseSudokuText(input: string): ParseResult {
 
     const tokens = line.match(CELL_TOKEN_RE) ?? [];
 
-    if (tokens.length !== 9) {
+    if (tokens.length !== SUDOKU_SIZE) {
       return {
         ok: false,
-        error: `${rowIndex + 1}行目のセル数が9ではありません（現在: ${tokens.length}）。`
+        error: `${rowIndex + 1}行目のセル数が${SUDOKU_SIZE}ではありません（現在: ${tokens.length}）。`
       };
     }
 

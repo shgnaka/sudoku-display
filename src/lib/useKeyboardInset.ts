@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
-const KEYBOARD_THRESHOLD_PX = 80;
+import { KEYBOARD_THRESHOLD_PX } from "../constants/uiTuning";
 
 function isCoarsePointerDevice(): boolean {
   const hasTouch = typeof navigator !== "undefined" && navigator.maxTouchPoints > 0;

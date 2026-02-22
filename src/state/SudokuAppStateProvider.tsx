@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { DEFAULT_SUDOKU_DIFFICULTY } from "../constants/difficulty";
-import { DEFAULT_PUZZLE_TEXT } from "../lib/defaultPuzzle";
+import { DEFAULT_ACTIVE_BLOCK_ID } from "../constants/ink";
+import { SUDOKU_SIZE } from "../constants/sudokuDomain";
+import { DEFAULT_PUZZLE_FALLBACK_TEXT, loadDefaultPuzzleText } from "../lib/defaultPuzzle";
 import { clearGameState, loadGameState, saveGameState } from "../lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "../lib/inkModel";
 import { clearInkState, loadInkState, saveInkState } from "../lib/inkStorage";
@@ -79,27 +81,28 @@ function solveModeReducer(state: SolveModeState, action: SolveModeAction): Solve
 }
 
 function emptyBoard(): Board {
-  return Array.from({ length: 9 }, () =>
-    Array.from({ length: 9 }, () => ({ value: null, origin: "empty" as const }))
+  return Array.from({ length: SUDOKU_SIZE }, () =>
+    Array.from({ length: SUDOKU_SIZE }, () => ({ value: null, origin: "empty" as const }))
   );
 }
 
-function getDefaultBoard(): Board {
-  const parsed = parseSudokuText(DEFAULT_PUZZLE_TEXT);
+function getDefaultBoard(defaultPuzzleText: string): Board {
+  const parsed = parseSudokuText(defaultPuzzleText);
   return parsed.ok ? parsed.board : emptyBoard();
 }
 
 export function SudokuAppStateProvider({ children }: { children: ReactNode }): JSX.Element {
   const persistedGame = useMemo(() => loadGameState(), []);
-  const [rawInput, setRawInput] = useState(persistedGame?.rawInput ?? DEFAULT_PUZZLE_TEXT);
-  const [board, setBoard] = useState<Board>(() => persistedGame?.board ?? getDefaultBoard());
+  const [defaultPuzzleText, setDefaultPuzzleText] = useState(DEFAULT_PUZZLE_FALLBACK_TEXT);
+  const [rawInput, setRawInput] = useState(persistedGame?.rawInput ?? DEFAULT_PUZZLE_FALLBACK_TEXT);
+  const [board, setBoard] = useState<Board>(() => persistedGame?.board ?? getDefaultBoard(DEFAULT_PUZZLE_FALLBACK_TEXT));
   const [errorMessage, setErrorMessage] = useState("");
   const [generationError, setGenerationError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [difficulty, setDifficulty] = useState<SudokuDifficulty>(DEFAULT_SUDOKU_DIFFICULTY);
   const [modeState, dispatchMode] = useReducer(solveModeReducer, initialSolveModeState);
   const [isGridEditing, setIsGridEditing] = useState(false);
-  const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");
+  const [activeBlockId, setActiveBlockId] = useState<BlockId>(DEFAULT_ACTIVE_BLOCK_ID);
   const [inkState, setInkState] = useState<InkState>(() => createEmptyInkState());
   const shouldKeepPersistedBoardRef = useRef(Boolean(persistedGame));
   const isInkMode = modeState.mode === "ink";
@@ -108,6 +111,27 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
   useEffect(() => {
     setInkState(loadInkState());
   }, []);
+
+  useEffect(() => {
+    if (persistedGame || import.meta.env.MODE === "test") {
+      return;
+    }
+
+    let cancelled = false;
+
+    void loadDefaultPuzzleText().then((loadedText) => {
+      if (cancelled) {
+        return;
+      }
+
+      setDefaultPuzzleText(loadedText);
+      setRawInput((current) => (current === DEFAULT_PUZZLE_FALLBACK_TEXT ? loadedText : current));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [persistedGame]);
 
   useEffect(() => {
     saveInkState(inkState);
@@ -184,8 +208,8 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
 
   const resetGameData = (): void => {
     clearGameState();
-    setRawInput(DEFAULT_PUZZLE_TEXT);
-    setBoard(getDefaultBoard());
+    setRawInput(defaultPuzzleText);
+    setBoard(getDefaultBoard(defaultPuzzleText));
     setErrorMessage("");
     setGenerationError("");
     dispatchMode({ type: "EXIT_REVIEW" });
@@ -201,8 +225,8 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
   const clearAllStoredData = (): void => {
     clearGameState();
     clearInkState();
-    setRawInput(DEFAULT_PUZZLE_TEXT);
-    setBoard(getDefaultBoard());
+    setRawInput(defaultPuzzleText);
+    setBoard(getDefaultBoard(defaultPuzzleText));
     setInkState(clearAll());
     setErrorMessage("");
     setGenerationError("");

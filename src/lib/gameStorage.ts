@@ -1,5 +1,6 @@
 import type { Board, CellData, CellOrigin } from "../types/sudoku";
 import { STORAGE_KEYS } from "../constants/storageKeys";
+import { SUDOKU_MAX_VALUE, SUDOKU_MIN_VALUE, SUDOKU_SIZE } from "../constants/sudokuDomain";
 
 const STORAGE_KEY = STORAGE_KEYS.game;
 
@@ -30,16 +31,21 @@ function isValidCell(cell: unknown): cell is CellData {
     return true;
   }
 
-  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 9;
+  return (
+    typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= SUDOKU_MIN_VALUE &&
+    value <= SUDOKU_MAX_VALUE
+  );
 }
 
 function isValidBoard(board: unknown): board is Board {
-  if (!Array.isArray(board) || board.length !== 9) {
+  if (!Array.isArray(board) || board.length !== SUDOKU_SIZE) {
     return false;
   }
 
   for (const row of board) {
-    if (!Array.isArray(row) || row.length !== 9) {
+    if (!Array.isArray(row) || row.length !== SUDOKU_SIZE) {
       return false;
     }
 

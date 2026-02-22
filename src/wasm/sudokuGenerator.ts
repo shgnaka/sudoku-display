@@ -1,4 +1,5 @@
 import { DEFAULT_SUDOKU_DIFFICULTY, SUDOKU_DIFFICULTIES } from "../constants/difficulty";
+import { SUDOKU_GENERATOR_MODULE_PATH } from "../constants/wasm";
 import type { SudokuDifficulty } from "../constants/difficulty";
 
 export interface GeneratedSudoku {
@@ -37,9 +38,7 @@ function createSeed(): bigint {
 
 async function loadModule(): Promise<WasmSudokuModule> {
   if (!modulePromise) {
-    const modulePath = `${import.meta.env.BASE_URL}wasm/pkg/sudoku_generator.js`;
-
-    modulePromise = import(/* @vite-ignore */ modulePath).then(async (module) => {
+    modulePromise = import(/* @vite-ignore */ SUDOKU_GENERATOR_MODULE_PATH).then(async (module) => {
       const wasmModule = module as WasmSudokuModule;
       await wasmModule.default();
       return wasmModule;

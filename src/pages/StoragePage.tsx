@@ -1,10 +1,11 @@
 import { useSudokuAppState } from "../state/SudokuAppStateProvider";
+import { STORAGE_MESSAGES } from "../constants/messages";
 
 export function StoragePage(): JSX.Element {
   const { resetGameData, clearInkData, clearAllStoredData } = useSudokuAppState();
 
   const handleClearGame = (): void => {
-    if (!window.confirm("盤面データを初期化します。よろしいですか？")) {
+    if (!window.confirm(STORAGE_MESSAGES.confirm.clearGame)) {
       return;
     }
 
@@ -12,7 +13,7 @@ export function StoragePage(): JSX.Element {
   };
 
   const handleClearInk = (): void => {
-    if (!window.confirm("手書きメモを削除します。よろしいですか？")) {
+    if (!window.confirm(STORAGE_MESSAGES.confirm.clearInk)) {
       return;
     }
 
@@ -20,7 +21,7 @@ export function StoragePage(): JSX.Element {
   };
 
   const handleClearAll = (): void => {
-    if (!window.confirm("保存データをすべて削除します。よろしいですか？")) {
+    if (!window.confirm(STORAGE_MESSAGES.confirm.clearAll)) {
       return;
     }
 
@@ -30,17 +31,17 @@ export function StoragePage(): JSX.Element {
   return (
     <div className="storage-page">
       <section className="panel">
-        <h2>保存データ管理</h2>
-        <p className="hint">ローカルストレージに保存されている盤面と手書きメモを削除できます。</p>
+        <h2>{STORAGE_MESSAGES.title}</h2>
+        <p className="hint">{STORAGE_MESSAGES.hint}</p>
         <div className="storage-actions">
           <button className="btn" onClick={handleClearGame} type="button">
-            盤面データを初期化
+            {STORAGE_MESSAGES.actions.clearGame}
           </button>
           <button className="btn" onClick={handleClearInk} type="button">
-            手書きメモを削除
+            {STORAGE_MESSAGES.actions.clearInk}
           </button>
           <button className="btn btn--danger" onClick={handleClearAll} type="button">
-            すべて削除
+            {STORAGE_MESSAGES.actions.clearAll}
           </button>
         </div>
       </section>

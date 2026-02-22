@@ -1,5 +1,6 @@
 import type { FocusEvent, MouseEvent } from "react";
 import type { CellData } from "../types/sudoku";
+import { SUDOKU_MAX_VALUE, SUDOKU_MIN_VALUE } from "../constants/sudokuDomain";
 
 type SudokuCellInputMode = "keyboard" | "sheet";
 
@@ -70,7 +71,7 @@ export function SudokuCell({
     }
 
     const parsed = Number(rawValue);
-    if (Number.isInteger(parsed) && parsed >= 1 && parsed <= 9) {
+    if (Number.isInteger(parsed) && parsed >= SUDOKU_MIN_VALUE && parsed <= SUDOKU_MAX_VALUE) {
       onChange(row, col, parsed);
     }
   };

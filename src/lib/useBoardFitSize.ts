@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { RefObject } from "react";
-
-const DEFAULT_MIN_BOARD_SIZE = 258;
+import { DEFAULT_MIN_BOARD_SIZE } from "../constants/uiTuning";
 
 export function computeBoardFitSize(width: number, height: number, minSize: number): number {
   if (width <= 0 || height <= 0) {

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import { INK_STROKE_COLOR, INK_STROKE_WIDTH } from "../constants/uiTuning";
 import { BLOCK_IDS } from "../types/ink";
 import type { BlockId, InkPoint, InkState, Stroke } from "../types/ink";
 
@@ -17,11 +18,18 @@ interface DrawingSession {
   points: InkPoint[];
 }
 
-const STROKE_COLOR = "#1f2d47";
-const STROKE_WIDTH = 2;
-
 function clampUnit(value: number): number {
   return Math.min(1, Math.max(0, value));
+}
+
+function createCanvasRefMap(): Record<BlockId, HTMLCanvasElement | null> {
+  return BLOCK_IDS.reduce(
+    (acc, blockId) => {
+      acc[blockId] = null;
+      return acc;
+    },
+    {} as Record<BlockId, HTMLCanvasElement | null>
+  );
 }
 
 function getPointerType(event: ReactPointerEvent<HTMLDivElement>): string {
@@ -73,17 +81,7 @@ export function InkOverlay({
   onActiveBlockChange,
   onCommitStroke
 }: InkOverlayProps): JSX.Element {
-  const canvasRefs = useRef<Record<BlockId, HTMLCanvasElement | null>>({
-    "0-0": null,
-    "0-1": null,
-    "0-2": null,
-    "1-0": null,
-    "1-1": null,
-    "1-2": null,
-    "2-0": null,
-    "2-1": null,
-    "2-2": null
-  });
+  const canvasRefs = useRef<Record<BlockId, HTMLCanvasElement | null>>(createCanvasRefMap());
   const [drawingSession, setDrawingSession] = useState<DrawingSession | null>(null);
 
   const redraw = useMemo(
@@ -213,8 +211,8 @@ export function InkOverlay({
 
     onCommitStroke(drawingSession.blockId, {
       points: drawingSession.points,
-      color: STROKE_COLOR,
-      width: STROKE_WIDTH,
+      color: INK_STROKE_COLOR,
+      width: INK_STROKE_WIDTH,
       ts: Date.now()
     });
 
