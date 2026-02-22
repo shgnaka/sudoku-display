@@ -27,16 +27,17 @@ function isValidCell(cell: unknown): cell is CellData {
     return false;
   }
 
-  if (value === null) {
-    return true;
-  }
-
-  return (
+  const hasValidNumericValue =
     typeof value === "number" &&
     Number.isInteger(value) &&
     value >= SUDOKU_MIN_VALUE &&
-    value <= SUDOKU_MAX_VALUE
-  );
+    value <= SUDOKU_MAX_VALUE;
+
+  if (origin === "empty") {
+    return value === null;
+  }
+
+  return hasValidNumericValue;
 }
 
 function isValidBoard(board: unknown): board is Board {

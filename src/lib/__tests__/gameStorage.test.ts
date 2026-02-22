@@ -20,6 +20,15 @@ function createBoard() {
   );
 }
 
+function createMalformedBoard() {
+  return createBoard().map((row) => row.map((cell) => ({ ...cell }))) as Array<
+    Array<{
+      value: unknown;
+      origin: unknown;
+    }>
+  >;
+}
+
 describe("gameStorage", () => {
   beforeEach(() => {
     window.localStorage.clear();
@@ -44,6 +53,51 @@ describe("gameStorage", () => {
 
   it("returns null when json is broken", () => {
     window.localStorage.setItem(STORAGE_KEY, "{broken}");
+
+    expect(loadGameState()).toBeNull();
+  });
+
+  it("rejects given cell with null value", () => {
+    const board = createMalformedBoard();
+    board[0][0] = { value: null, origin: "given" };
+
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        rawInput: "x",
+        board
+      })
+    );
+
+    expect(loadGameState()).toBeNull();
+  });
+
+  it("rejects user cell with null value", () => {
+    const board = createMalformedBoard();
+    board[0][2] = { value: null, origin: "user" };
+
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        rawInput: "x",
+        board
+      })
+    );
+
+    expect(loadGameState()).toBeNull();
+  });
+
+  it("rejects empty cell with numeric value", () => {
+    const board = createMalformedBoard();
+    board[1][1] = { value: 5, origin: "empty" };
+
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        rawInput: "x",
+        board
+      })
+    );
 
     expect(loadGameState()).toBeNull();
   });
