@@ -170,8 +170,8 @@ body.review-scroll-lock {
   display: none;
 }
 
-/* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
-@media (max-width: 768px) {
+/* BREAKPOINT_SYNC_NOTE: keep __MOBILE_BREAKPOINT_PX__ resolved from MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
+@media (max-width: __MOBILE_BREAKPOINT_PX__) {
   .app-root {
     padding: var(--space-lg) var(--space-lg) calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0));
   }

@@ -280,8 +280,8 @@ button.sudoku-cell[aria-disabled="true"] {
   height: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px));
 }
 
-/* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
-@media (max-width: 768px) {
+/* BREAKPOINT_SYNC_NOTE: keep __MOBILE_BREAKPOINT_PX__ resolved from MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
+@media (max-width: __MOBILE_BREAKPOINT_PX__) {
   .solve-controls {
     width: 100%;
   }

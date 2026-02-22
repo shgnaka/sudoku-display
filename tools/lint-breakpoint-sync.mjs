@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-const MOBILE_MEDIA_QUERY = "@media (max-width: 768px)";
+const MOBILE_BREAKPOINT_TOKEN = "__MOBILE_BREAKPOINT_PX__";
+const MOBILE_MEDIA_QUERY = `@media (max-width: ${MOBILE_BREAKPOINT_TOKEN})`;
+const FORBIDDEN_MOBILE_MEDIA_QUERY = "@media (max-width: 768px)";
 const SHEET_MEDIA_QUERY = "@media (max-width: 1024px)";
 const NOTE_TAG = "BREAKPOINT_SYNC_NOTE";
 const NOTE_CONST = "MOBILE_BREAKPOINT_PX";
@@ -63,6 +65,10 @@ for (const filePath of cssFiles) {
     if (missing.length > 0) {
       violations.push(`${repoPath}:${i + 1} missing sync note parts: ${missing.join(", ")}`);
     }
+  }
+
+  if (source.includes(FORBIDDEN_MOBILE_MEDIA_QUERY)) {
+    violations.push(`${repoPath}: found forbidden hardcoded mobile query ${FORBIDDEN_MOBILE_MEDIA_QUERY}`);
   }
 
   if (source.includes(SHEET_MEDIA_QUERY)) {
