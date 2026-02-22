@@ -20,6 +20,10 @@ function clickNav(label: string): void {
   fireEvent.click(buttons[0]);
 }
 
+function cellLabel(row: number, col: number): RegExp {
+  return new RegExp(`^${row}行${col}列、`);
+}
+
 describe("Sudoku UI", () => {
   let isMobileViewport = false;
   let isSheetInputViewport = false;
@@ -86,17 +90,30 @@ describe("Sudoku UI", () => {
     expect(window.location.hash).toBe("#/manage");
   });
 
+  it("uses readable aria-label with coordinate and state", () => {
+    render(<App />);
+
+    const givenCell = screen.getByLabelText(cellLabel(1, 1));
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
+
+    expect(givenCell).toHaveAttribute("aria-label", "1行1列、初期値、編集不可");
+    expect(editableCell).toHaveAttribute("aria-label", "1行3列、空、編集可能");
+
+    fireEvent.change(editableCell, { target: { value: "4" } });
+    expect(editableCell).toHaveAttribute("aria-label", "1行3列、ユーザー入力、編集可能");
+  });
+
   it("keeps given cells read-only", () => {
     render(<App />);
 
-    const givenCell = screen.getByLabelText("r1c1") as HTMLInputElement;
+    const givenCell = screen.getByLabelText(cellLabel(1, 1)) as HTMLInputElement;
     expect(givenCell.readOnly).toBe(true);
   });
 
   it("allows editing empty cells and marks as user", () => {
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     expect(editableCell.readOnly).toBe(false);
 
     fireEvent.change(editableCell, { target: { value: "4" } });
@@ -108,7 +125,7 @@ describe("Sudoku UI", () => {
   it("selects all text when an editable cell gets focus", () => {
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     fireEvent.change(editableCell, { target: { value: "4" } });
 
     fireEvent.focus(editableCell);
@@ -120,7 +137,7 @@ describe("Sudoku UI", () => {
   it("keeps full selection after mouse up on an editable cell", () => {
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     fireEvent.change(editableCell, { target: { value: "4" } });
 
     fireEvent.focus(editableCell);
@@ -143,14 +160,14 @@ describe("Sudoku UI", () => {
     clickNav("解く");
 
     await waitFor(() => {
-      expect((screen.getByLabelText("r1c1") as HTMLInputElement).value).toBe("5");
+      expect((screen.getByLabelText(cellLabel(1, 1)) as HTMLInputElement).value).toBe("5");
     });
   });
 
   it("keeps user input after reload", () => {
     const first = render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.value).toBe("4");
 
@@ -158,7 +175,7 @@ describe("Sudoku UI", () => {
 
     render(<App />);
 
-    const restoredCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const restoredCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     expect(restoredCell.value).toBe("4");
     expect(restoredCell.className).toContain("origin-user");
   });
@@ -166,7 +183,7 @@ describe("Sudoku UI", () => {
   it("disables grid interaction in review mode", () => {
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.value).toBe("4");
 
@@ -252,6 +269,19 @@ describe("Sudoku UI", () => {
     expect(within(tab).queryByRole("button", { name: "ヘルプ" })).not.toBeInTheDocument();
   });
 
+  it("keeps legend available as collapsible content in solve-no-scroll layout", () => {
+    isMobileViewport = true;
+    render(<App />);
+
+    const summary = screen.getByText("色の意味");
+    const legend = summary.closest("details") as HTMLDetailsElement;
+    expect(legend).not.toBeNull();
+    expect(legend).not.toHaveAttribute("open");
+
+    fireEvent.click(summary);
+    expect(legend).toHaveAttribute("open");
+  });
+
   it("limits mobile drawer items to storage and help", () => {
     isMobileViewport = true;
     isSheetInputViewport = true;
@@ -326,7 +356,7 @@ describe("Sudoku UI", () => {
 
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3") as HTMLInputElement;
+    const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell.className).toContain("origin-user");
 
@@ -336,10 +366,10 @@ describe("Sudoku UI", () => {
     clickNav("解く");
 
     await waitFor(() => {
-      expect(screen.getByLabelText("r1c1")).toHaveValue("1");
+      expect(screen.getByLabelText(cellLabel(1, 1))).toHaveValue("1");
     });
 
-    expect(screen.getByLabelText("r1c3")).toHaveValue("3");
+    expect(screen.getByLabelText(cellLabel(1, 3))).toHaveValue("3");
     expect(generateSudokuMock).toHaveBeenCalledTimes(1);
   });
 
@@ -362,7 +392,7 @@ describe("Sudoku UI", () => {
     expect(screen.queryAllByRole("textbox")).toHaveLength(0);
     expect(document.querySelector(".solve-input-sheet-slot")).toBeInTheDocument();
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
 
@@ -395,9 +425,9 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    fireEvent.click(screen.getByLabelText("r1c3"));
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
-    expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
+    expect(screen.getByLabelText(cellLabel(1, 3))).toHaveTextContent("4");
 
     fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
 
@@ -408,7 +438,7 @@ describe("Sudoku UI", () => {
 
     fireEvent.click(numberButton);
     fireEvent.click(backspaceButton);
-    expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
+    expect(screen.getByLabelText(cellLabel(1, 3))).toHaveTextContent("4");
   });
 
   it("supports backspace on selected sheet cell and disables it without selection", () => {
@@ -420,7 +450,7 @@ describe("Sudoku UI", () => {
 
     fireEvent.click(backspaceButton);
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(backspaceButton).not.toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
@@ -434,7 +464,7 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(editableCell.className).toContain("is-selected");
 
@@ -446,7 +476,7 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(editableCell.className).toContain("is-selected");
 
@@ -462,11 +492,11 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(editableCell.className).toContain("is-selected");
 
-    fireEvent.click(screen.getByLabelText("r1c1"));
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 1)));
     expect(editableCell.className).not.toContain("is-selected");
   });
 
@@ -474,7 +504,7 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    const editableCell = screen.getByLabelText("r1c3");
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(editableCell.className).toContain("is-selected");
 
@@ -493,7 +523,7 @@ describe("Sudoku UI", () => {
     isSheetInputViewport = true;
     render(<App />);
 
-    fireEvent.click(screen.getByLabelText("r1c3"));
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
     expect(screen.getByText("1行3列を選択。現在は空です。")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));

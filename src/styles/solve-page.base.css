@@ -202,6 +202,14 @@ button.sudoku-cell[aria-disabled="true"] {
 
 .legend {
   margin-top: 0.8rem;
+  width: min(100%, 560px);
+}
+
+.solve-legend-summary {
+  display: none;
+}
+
+.solve-legend-items {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;

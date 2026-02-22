@@ -16,6 +16,18 @@ interface SudokuCellProps {
   onSelect?: (row: number, col: number, isEditable: boolean) => void;
 }
 
+function getCellStateLabel(cell: CellData): string {
+  if (cell.origin === "given") {
+    return "初期値";
+  }
+
+  if (cell.origin === "user") {
+    return "ユーザー入力";
+  }
+
+  return "空";
+}
+
 export function SudokuCell({
   cell,
   row,
@@ -33,6 +45,7 @@ export function SudokuCell({
     .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
   const isEditable = cell.origin !== "given" && !disabled;
+  const ariaLabel = `${row + 1}行${col + 1}列、${getCellStateLabel(cell)}、${isEditable ? "編集可能" : "編集不可"}`;
 
   const handleChange = (rawValue: string): void => {
     if (isReadOnly) {
@@ -78,7 +91,7 @@ export function SudokuCell({
   if (inputMode === "sheet") {
     return (
       <button
-        aria-label={`r${row + 1}c${col + 1}`}
+        aria-label={ariaLabel}
         aria-disabled={isReadOnly}
         className={className}
         data-col={col}
@@ -94,7 +107,7 @@ export function SudokuCell({
 
   return (
     <input
-      aria-label={`r${row + 1}c${col + 1}`}
+      aria-label={ariaLabel}
       className={className}
       data-col={col}
       data-row={row}

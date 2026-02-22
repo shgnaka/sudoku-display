@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { CSSProperties, RefObject } from "react";
 import { InkOverlay } from "../../components/InkOverlay";
 import { SudokuGrid } from "../../components/SudokuGrid";
@@ -12,6 +13,7 @@ interface SolveBoardPanelProps {
   inputMode: "keyboard" | "sheet";
   isReviewMode: boolean;
   isInkMode: boolean;
+  isNoScrollLayout: boolean;
   activeBlockId: BlockId;
   inkState: InkState;
   selectedCell: SelectedCell | null;
@@ -30,6 +32,7 @@ export function SolveBoardPanel({
   inputMode,
   isReviewMode,
   isInkMode,
+  isNoScrollLayout,
   activeBlockId,
   inkState,
   selectedCell,
@@ -40,6 +43,12 @@ export function SolveBoardPanel({
   onActiveBlockChange,
   onCommitStroke
 }: SolveBoardPanelProps): JSX.Element {
+  const [isLegendOpen, setIsLegendOpen] = useState(!isNoScrollLayout);
+
+  useEffect(() => {
+    setIsLegendOpen(!isNoScrollLayout);
+  }, [isNoScrollLayout]);
+
   return (
     <section className="panel solve-board-panel">
       <div className="board-panel-header">
@@ -69,11 +78,18 @@ export function SolveBoardPanel({
           />
         </div>
       </div>
-      <div className="legend solve-legend">
-        <span className="legend-item legend-given">初期値</span>
-        <span className="legend-item legend-user">ユーザー入力</span>
-        <span className="legend-item legend-empty">空マス</span>
-      </div>
+      <details
+        className="legend solve-legend"
+        onToggle={(event) => setIsLegendOpen(event.currentTarget.open)}
+        open={isLegendOpen}
+      >
+        <summary className="solve-legend-summary">色の意味</summary>
+        <div className="solve-legend-items">
+          <span className="legend-item legend-given">初期値</span>
+          <span className="legend-item legend-user">ユーザー入力</span>
+          <span className="legend-item legend-empty">空マス</span>
+        </div>
+      </details>
     </section>
   );
 }

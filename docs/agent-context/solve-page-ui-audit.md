@@ -8,9 +8,11 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 
 ## 現状要約
 - `SolvePage` はコンテナ役へ整理され、選択制御・表示構築・入力UIが分割済み。
-- solve専用スタイルは `src/styles/solve-page.css` に分離され、`src/App.css` には全体/共通スタイルが主に残っている。
+- solve専用スタイルは `src/styles/solve-page.css`（`solve-page.base.css` + `solve-page.no-scroll.css` の集約）として分離済み。
 - 画面幅判定は `src/constants/layout.ts` の定数を参照する形へ一元化済み。
 - sheet入力時の数字キーとBackspaceは同条件でdisabled化され、操作可能状態の一貫性が改善済み。
+- `solve-no-scroll` 時の凡例は折りたたみ表示へ変更し、情報非表示状態を解消済み。
+- セル `aria-label` は `r1c1` 形式から「座標＋状態＋編集可否」へ改善済み。
 
 ## 監査結果（優先度付き、ファイル:行番号付き）
 
@@ -41,6 +43,16 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 - 根拠: `src/components/SolveNumberPad.tsx:1`, `src/components/SolveNumberPad.tsx:33`, `src/pages/solve/SolveInputSection.tsx:26`, `src/pages/SolvePage.tsx:59`
 - 補足: `inputDisabled` を数字キー/Backspaceの両方に適用。
 
+3. モバイル時の凡例非表示
+- 状態: 対応済み
+- 根拠: `src/pages/solve/SolveBoardPanel.tsx:73`, `src/styles/solve-page.base.css:203`, `src/styles/solve-page.no-scroll.css:110`, `src/components/__tests__/SudokuGrid.test.tsx:270`
+- 補足: `solve-no-scroll` でも `details/summary` による折りたたみ凡例を表示し、意味情報への到達性を維持。
+
+4. セルラベルの読み上げ情報量
+- 状態: 対応済み
+- 根拠: `src/components/SudokuCell.tsx:19`, `src/components/SudokuCell.tsx:46`, `src/components/__tests__/SudokuGrid.test.tsx:89`
+- 補足: `aria-label` を「1行3列、空、編集可能」のような人間可読文言へ統一。
+
 #### 2-1. 事実確認（Backspace挙動・現行）
 - Backspaceボタンには `disabled={backspaceDisabled}` が付与される。
   - 根拠: `src/components/SolveNumberPad.tsx:33`
@@ -63,15 +75,7 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 | keyboard | 任意 | 非表示 | 非表示 | number pad自体が非表示 |
 
 ### 残課題（次フェーズ）
-1. モバイル時の凡例非表示
-- 問題: `solve-no-scroll` 時に凡例を完全に非表示にしている。
-- 根拠: `src/styles/solve-page.css:357`
-- 期待効果: 色の意味理解を維持しつつ、省スペース表示の改善案を検討できる。
-
-2. セルラベルの読み上げ情報量
-- 問題: `aria-label` が `r1c1` 形式で、意味が直感的ではない。
-- 根拠: `src/components/SudokuCell.tsx:81`, `src/components/SudokuCell.tsx:97`
-- 期待効果: スクリーンリーダー利用時の理解速度を改善できる。
+- 現時点では本監査で挙げた優先項目（凡例代替表示 / セル `aria-label` 改善）は対応済み。
 
 ## 非目標（今回やらないこと）
 - 盤面ロジック（解答判定、生成アルゴリズム）の変更
@@ -80,10 +84,11 @@ SolveページのUI改善を行う際に、現行実装の状態（対応済み/
 - ナビゲーション構造そのものの再設計
 
 ## 次に実装すべき順序（未対応項目）
-1. モバイル時の凡例代替表示（簡略ラベル、折りたたみ、アイコン+ツールチップ等）を設計する。
-2. セル `aria-label` を人間可読な文言へ変更し、関連UIテストを追加する。
-3. 上記2項目のa11y観点の回帰確認（キーボード操作、読み上げ順、状態通知）を行う。
+1. 凡例折りたたみの文言・表示密度（`summary` 表記、チップの省スペース化）を実機で調整する。
+2. セル `aria-label` の文言妥当性をスクリーンリーダー実機（VoiceOver/TalkBack）で確認する。
+3. a11y回帰確認を継続し、必要に応じて `aria-live` 文言との重複を整理する。
 
 ## 更新履歴
+- 2026-02-22: 残課題だった「モバイル時の凡例非表示」「セル `aria-label` の情報不足」を実装反映し、関連UIテストを更新。
 - 2026-02-22: 実装反映版へ全面更新。責務分離/CSS分離/閾値定数化/選択解除イベント整理/Backspace disabled連動を「対応済み」として反映。
 - 2026-02-22: 数字入力UIの「Backspace常時押下可能/no-op」について、事実確認と状態別レポートを追記。
