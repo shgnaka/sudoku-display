@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import type { RefObject } from "react";
-import type { Board } from "../../types/sudoku";
 
 export interface SelectedCell {
   row: number;
@@ -8,7 +7,6 @@ export interface SelectedCell {
 }
 
 interface UseSolveSelectionControllerArgs {
-  board: Board;
   inputMode: "keyboard" | "sheet";
   isInkMode: boolean;
   isReviewMode: boolean;
@@ -25,7 +23,6 @@ interface UseSolveSelectionControllerResult {
 }
 
 export function useSolveSelectionController({
-  board,
   inputMode,
   isInkMode,
   isReviewMode,
@@ -47,14 +44,9 @@ export function useSolveSelectionController({
 
   const describeCurrentCell = useCallback(
     (row: number, col: number): string => {
-      const cell = board[row]?.[col];
-      if (!cell || cell.value === null) {
-        return `${row + 1}行${col + 1}列を選択。現在は空です。`;
-      }
-
-      return `${row + 1}行${col + 1}列を選択。現在の値は ${cell.value} です。`;
+      return `${row + 1}行${col + 1}列を選択しました。`;
     },
-    [board]
+    []
   );
 
   useEffect(() => {

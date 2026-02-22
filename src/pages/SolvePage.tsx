@@ -48,7 +48,6 @@ export function SolvePage(): JSX.Element {
     handleNumberPadInput,
     handleNumberPadBackspace
   } = useSolveSelectionController({
-    board,
     inputMode,
     isInkMode,
     isReviewMode,

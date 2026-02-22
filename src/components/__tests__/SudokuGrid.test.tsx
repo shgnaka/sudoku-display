@@ -96,11 +96,14 @@ describe("Sudoku UI", () => {
     const givenCell = screen.getByLabelText(cellLabel(1, 1));
     const editableCell = screen.getByLabelText(cellLabel(1, 3)) as HTMLInputElement;
 
-    expect(givenCell).toHaveAttribute("aria-label", "1行1列、初期値、編集不可");
+    expect(givenCell).toHaveAttribute("aria-label", "1行1列、初期値、編集不可（初期値）");
     expect(editableCell).toHaveAttribute("aria-label", "1行3列、空、編集可能");
 
     fireEvent.change(editableCell, { target: { value: "4" } });
     expect(editableCell).toHaveAttribute("aria-label", "1行3列、ユーザー入力、編集可能");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+    expect(editableCell).toHaveAttribute("aria-label", "1行3列、ユーザー入力、編集不可（確認モード）");
   });
 
   it("keeps given cells read-only", () => {
@@ -273,7 +276,7 @@ describe("Sudoku UI", () => {
     isMobileViewport = true;
     render(<App />);
 
-    const summary = screen.getByText("色の意味: 初期値・ユーザー入力・空マス");
+    const summary = screen.getByText("マスの色分けを表示");
     const legend = summary.closest("details") as HTMLDetailsElement;
     expect(legend).not.toBeNull();
     expect(legend).not.toHaveAttribute("open");
@@ -524,7 +527,7 @@ describe("Sudoku UI", () => {
     render(<App />);
 
     fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
-    expect(screen.getByText("1行3列を選択。現在は空です。")).toBeInTheDocument();
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
     expect(screen.getByText("1行3列を 4 にしました。")).toBeInTheDocument();

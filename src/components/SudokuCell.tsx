@@ -28,6 +28,18 @@ function getCellStateLabel(cell: CellData): string {
   return "空";
 }
 
+function getEditabilityLabel(cell: CellData, disabled: boolean): string {
+  if (cell.origin === "given") {
+    return "編集不可（初期値）";
+  }
+
+  if (disabled) {
+    return "編集不可（確認モード）";
+  }
+
+  return "編集可能";
+}
+
 export function SudokuCell({
   cell,
   row,
@@ -45,7 +57,7 @@ export function SudokuCell({
     .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
   const isEditable = cell.origin !== "given" && !disabled;
-  const ariaLabel = `${row + 1}行${col + 1}列、${getCellStateLabel(cell)}、${isEditable ? "編集可能" : "編集不可"}`;
+  const ariaLabel = `${row + 1}行${col + 1}列、${getCellStateLabel(cell)}、${getEditabilityLabel(cell, disabled)}`;
 
   const handleChange = (rawValue: string): void => {
     if (isReadOnly) {

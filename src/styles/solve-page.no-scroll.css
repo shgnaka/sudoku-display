@@ -109,25 +109,34 @@ body.solve-no-scroll-body {
 
 .app-root.solve-no-scroll .solve-legend {
   width: min(100%, var(--solve-board-size));
-  margin-top: 0.45rem;
+  margin-top: 0.35rem;
 }
 
 .app-root.solve-no-scroll .solve-legend-summary {
   display: inline-flex;
   align-items: center;
-  min-height: 1.9rem;
-  padding: 0.12rem 0.55rem;
+  min-height: 1.72rem;
+  padding: 0.08rem 0.48rem;
   border-radius: var(--radius-pill);
   border: var(--border-width-base) solid var(--solve-legend-summary-border);
   background: var(--solve-legend-summary-bg);
   color: var(--text-subtle-strong);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .app-root.solve-no-scroll .solve-legend[open] .solve-legend-summary {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.app-root.solve-no-scroll .solve-legend .solve-legend-items {
+  gap: 0.28rem;
+}
+
+.app-root.solve-no-scroll .solve-legend .legend-item {
+  padding: 0.12rem 0.5rem;
+  font-size: 0.74rem;
 }
 
 /* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
