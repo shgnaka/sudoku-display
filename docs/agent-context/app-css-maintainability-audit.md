@@ -30,7 +30,7 @@
 
 3. トークン不足によるハードコード増加
 - 判定: `解消`
-- 根拠: Solve 状態色トークンが追加済み（`src/styles/tokens.css:42`, `src/styles/tokens.css:61`）かつ利用済み（`src/styles/solve-page.base.css:190`, `src/styles/common-ui.css:135`）。
+- 根拠: Solve 状態色トークンが追加済み（`src/styles/tokens.css:42`, `src/styles/tokens.css:61`）かつ利用済み（`src/styles/solve-page.base.css:249`, `src/styles/common-ui.css:135`）。
 
 ### Medium（旧）
 1. ボタン系スタイルの重複
