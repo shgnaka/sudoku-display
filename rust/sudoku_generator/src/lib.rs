@@ -5,6 +5,8 @@ use wasm_bindgen::prelude::*;
 const GRID_LEN: usize = 81;
 const SIZE: usize = 9;
 const BOX_SIZE: usize = 3;
+const MIN_CELL_VALUE: u8 = 1;
+const MAX_CELL_VALUE: u8 = 9;
 const MAX_PUZZLE_ATTEMPTS: usize = 64;
 
 static PANIC_HOOK: Once = Once::new();
@@ -140,7 +142,7 @@ fn find_best_empty_cell(grid: &[u8; GRID_LEN]) -> Option<(usize, [u8; SIZE], usi
         let mut candidates = [0u8; SIZE];
         let mut count = 0usize;
 
-        for value in 1..=9 {
+        for value in MIN_CELL_VALUE..=MAX_CELL_VALUE {
             if is_valid(grid, row, col, value) {
                 candidates[count] = value;
                 count += 1;
@@ -379,5 +381,14 @@ mod tests {
         assert_eq!(first.puzzle, second.puzzle);
         assert_eq!(first.solution, second.solution);
         assert_eq!(first.clues, second.clues);
+    }
+
+    #[test]
+    fn domain_constants_match_contract() {
+        assert_eq!(SIZE, 9);
+        assert_eq!(GRID_LEN, SIZE * SIZE);
+        assert_eq!(BOX_SIZE, 3);
+        assert_eq!(MIN_CELL_VALUE, 1);
+        assert_eq!(MAX_CELL_VALUE, 9);
     }
 }
