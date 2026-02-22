@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { SOLVE_INPUT_SHEET_BREAKPOINT_PX, createMaxWidthMediaQuery } from "../constants/layout";
 
-const SOLVE_INPUT_SHEET_QUERY = "(max-width: 1024px)";
+const SOLVE_INPUT_SHEET_QUERY = createMaxWidthMediaQuery(SOLVE_INPUT_SHEET_BREAKPOINT_PX);
 
 function getIsSheetViewport(): boolean {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") {

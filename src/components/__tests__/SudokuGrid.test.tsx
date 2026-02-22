@@ -391,7 +391,7 @@ describe("Sudoku UI", () => {
     expect(document.querySelector(".solve-number-pad-placeholder")).toBeInTheDocument();
   });
 
-  it("disables number keys while review mode is enabled", () => {
+  it("disables number keys and backspace while review mode is enabled", () => {
     isSheetInputViewport = true;
     render(<App />);
 
@@ -404,24 +404,25 @@ describe("Sudoku UI", () => {
     const numberButton = screen.getByRole("button", { name: "数字 8" });
     const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
     expect(numberButton).toBeDisabled();
-    expect(backspaceButton).not.toBeDisabled();
+    expect(backspaceButton).toBeDisabled();
 
     fireEvent.click(numberButton);
     fireEvent.click(backspaceButton);
     expect(screen.getByLabelText("r1c3")).toHaveTextContent("4");
   });
 
-  it("supports backspace on selected sheet cell and keeps it enabled without selection", () => {
+  it("supports backspace on selected sheet cell and disables it without selection", () => {
     isSheetInputViewport = true;
     render(<App />);
 
     const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
-    expect(backspaceButton).not.toBeDisabled();
+    expect(backspaceButton).toBeDisabled();
 
     fireEvent.click(backspaceButton);
 
     const editableCell = screen.getByLabelText("r1c3");
     fireEvent.click(editableCell);
+    expect(backspaceButton).not.toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
     expect(editableCell).toHaveTextContent("4");
 

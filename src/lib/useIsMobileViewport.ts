@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { MOBILE_BREAKPOINT_PX, createMaxWidthMediaQuery } from "../constants/layout";
 
-const MOBILE_QUERY = "(max-width: 768px)";
+const MOBILE_QUERY = createMaxWidthMediaQuery(MOBILE_BREAKPOINT_PX);
 
 function getIsMobile(): boolean {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
