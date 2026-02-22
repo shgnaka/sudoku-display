@@ -44,6 +44,7 @@ export function SolvePage(): JSX.Element {
   const {
     selectedCell,
     sheetA11yMessage,
+    sheetA11yRevision,
     handleSheetCellSelect,
     handleNumberPadInput,
     handleNumberPadBackspace
@@ -74,7 +75,7 @@ export function SolvePage(): JSX.Element {
   return (
     <div className="solve-page" ref={solvePageRef} style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
       {inputMode === "sheet" && (
-        <p aria-atomic="true" aria-live="polite" className="visually-hidden">
+        <p aria-atomic="true" aria-live="polite" className="visually-hidden" key={sheetA11yRevision}>
           {sheetA11yMessage}
         </p>
       )}

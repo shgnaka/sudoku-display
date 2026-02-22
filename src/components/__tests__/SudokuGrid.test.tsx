@@ -507,6 +507,17 @@ describe("Sudoku UI", () => {
     expect(editableCell.className).not.toContain("is-selected");
   });
 
+  it("announces deselection when tapping a given cell in sheet mode", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 1)));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+  });
+
   it("clears selection when review mode or ink mode gets enabled", () => {
     isSheetInputViewport = true;
     render(<App />);
@@ -538,5 +549,23 @@ describe("Sudoku UI", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "数字を消去" }));
     expect(screen.getByText("1行3列を空にしました。")).toBeInTheDocument();
+  });
+
+  it("announces deselection when review mode or ink mode gets enabled", () => {
+    isSheetInputViewport = true;
+    render(<App />);
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: ON）" }));
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
   });
 });

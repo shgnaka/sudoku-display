@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import type { RefObject } from "react";
+import {
+  buildSelectionAnnouncement,
+  buildSelectionClearedAnnouncement,
+  buildValueChangeAnnouncement
+} from "../../lib/solveA11y";
 
 export interface SelectedCell {
   row: number;
@@ -17,6 +22,7 @@ interface UseSolveSelectionControllerArgs {
 interface UseSolveSelectionControllerResult {
   selectedCell: SelectedCell | null;
   sheetA11yMessage: string;
+  sheetA11yRevision: number;
   handleSheetCellSelect: (row: number, col: number, isEditable: boolean) => void;
   handleNumberPadInput: (value: number) => void;
   handleNumberPadBackspace: () => void;
@@ -31,23 +37,12 @@ export function useSolveSelectionController({
 }: UseSolveSelectionControllerArgs): UseSolveSelectionControllerResult {
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const [sheetA11yMessage, setSheetA11yMessage] = useState("");
+  const [sheetA11yRevision, setSheetA11yRevision] = useState(0);
 
   const announceSheetMessage = useCallback((message: string): void => {
-    setSheetA11yMessage((previous) => {
-      if (previous === message) {
-        return previous;
-      }
-
-      return message;
-    });
+    setSheetA11yMessage(message);
+    setSheetA11yRevision((current) => current + 1);
   }, []);
-
-  const describeCurrentCell = useCallback(
-    (row: number, col: number): string => {
-      return `${row + 1}行${col + 1}列を選択しました。`;
-    },
-    []
-  );
 
   useEffect(() => {
     if (inputMode !== "sheet") {
@@ -57,7 +52,7 @@ export function useSolveSelectionController({
 
     if (isInkMode || isReviewMode) {
       setSelectedCell(null);
-      announceSheetMessage("セル選択を解除しました。");
+      announceSheetMessage(buildSelectionClearedAnnouncement());
     }
   }, [announceSheetMessage, inputMode, isInkMode, isReviewMode]);
 
@@ -82,7 +77,7 @@ export function useSolveSelectionController({
       }
 
       setSelectedCell(null);
-      announceSheetMessage("セル選択を解除しました。");
+      announceSheetMessage(buildSelectionClearedAnnouncement());
     };
 
     root.addEventListener("click", onRootClick, true);
@@ -95,21 +90,21 @@ export function useSolveSelectionController({
     (row: number, col: number, isEditable: boolean): void => {
       if (!isEditable) {
         setSelectedCell(null);
-        announceSheetMessage("セル選択を解除しました。");
+        announceSheetMessage(buildSelectionClearedAnnouncement());
         return;
       }
 
       setSelectedCell((current) => {
         if (current?.row === row && current.col === col) {
-          announceSheetMessage("セル選択を解除しました。");
+          announceSheetMessage(buildSelectionClearedAnnouncement());
           return null;
         }
 
-        announceSheetMessage(describeCurrentCell(row, col));
+        announceSheetMessage(buildSelectionAnnouncement(row, col));
         return { row, col };
       });
     },
-    [announceSheetMessage, describeCurrentCell]
+    [announceSheetMessage]
   );
 
   const handleNumberPadInput = useCallback(
@@ -119,7 +114,9 @@ export function useSolveSelectionController({
       }
 
       onCellChange(selectedCell.row, selectedCell.col, value);
-      announceSheetMessage(`${selectedCell.row + 1}行${selectedCell.col + 1}列を ${value} にしました。`);
+      announceSheetMessage(
+        buildValueChangeAnnouncement({ row: selectedCell.row, col: selectedCell.col, value })
+      );
     },
     [announceSheetMessage, isReviewMode, onCellChange, selectedCell]
   );
@@ -130,12 +127,15 @@ export function useSolveSelectionController({
     }
 
     onCellChange(selectedCell.row, selectedCell.col, null);
-    announceSheetMessage(`${selectedCell.row + 1}行${selectedCell.col + 1}列を空にしました。`);
+    announceSheetMessage(
+      buildValueChangeAnnouncement({ row: selectedCell.row, col: selectedCell.col, value: null })
+    );
   }, [announceSheetMessage, isReviewMode, onCellChange, selectedCell]);
 
   return {
     selectedCell,
     sheetA11yMessage,
+    sheetA11yRevision,
     handleSheetCellSelect,
     handleNumberPadInput,
     handleNumberPadBackspace

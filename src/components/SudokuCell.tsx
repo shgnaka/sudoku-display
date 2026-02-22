@@ -1,6 +1,7 @@
 import type { FocusEvent, MouseEvent } from "react";
 import type { CellData } from "../types/sudoku";
 import { SUDOKU_MAX_VALUE, SUDOKU_MIN_VALUE } from "../constants/sudokuDomain";
+import { buildCellAriaLabel } from "../lib/solveA11y";
 
 type SudokuCellInputMode = "keyboard" | "sheet";
 
@@ -15,30 +16,6 @@ interface SudokuCellProps {
   onBlurCell?: () => void;
   onFocusCell?: () => void;
   onSelect?: (row: number, col: number, isEditable: boolean) => void;
-}
-
-function getCellStateLabel(cell: CellData): string {
-  if (cell.origin === "given") {
-    return "初期値";
-  }
-
-  if (cell.origin === "user") {
-    return "ユーザー入力";
-  }
-
-  return "空";
-}
-
-function getEditabilityLabel(cell: CellData, disabled: boolean): string {
-  if (cell.origin === "given") {
-    return "編集不可（初期値）";
-  }
-
-  if (disabled) {
-    return "編集不可（確認モード）";
-  }
-
-  return "編集可能";
 }
 
 export function SudokuCell({
@@ -58,7 +35,7 @@ export function SudokuCell({
     .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
   const isEditable = cell.origin !== "given" && !disabled;
-  const ariaLabel = `${row + 1}行${col + 1}列、${getCellStateLabel(cell)}、${getEditabilityLabel(cell, disabled)}`;
+  const ariaLabel = buildCellAriaLabel({ cell, row, col, disabled });
 
   const handleChange = (rawValue: string): void => {
     if (isReadOnly) {
