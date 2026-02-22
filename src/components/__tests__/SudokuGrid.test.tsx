@@ -272,17 +272,12 @@ describe("Sudoku UI", () => {
     expect(within(tab).queryByRole("button", { name: "ヘルプ" })).not.toBeInTheDocument();
   });
 
-  it("keeps legend available as collapsible content in solve-no-scroll layout", () => {
+  it("does not render legend in solve-no-scroll layout", () => {
     isMobileViewport = true;
     render(<App />);
 
-    const summary = screen.getByText("マスの色分けを表示");
-    const legend = summary.closest("details") as HTMLDetailsElement;
-    expect(legend).not.toBeNull();
-    expect(legend).not.toHaveAttribute("open");
-
-    fireEvent.click(summary);
-    expect(legend).toHaveAttribute("open");
+    expect(screen.queryByText("マスの色分けを表示")).not.toBeInTheDocument();
+    expect(document.querySelector(".solve-legend")).not.toBeInTheDocument();
   });
 
   it("limits mobile drawer items to storage and help", () => {
@@ -477,13 +472,15 @@ describe("Sudoku UI", () => {
 
   it("deselects a sheet cell when tapping outside grid except number pad", () => {
     isSheetInputViewport = true;
-    render(<App />);
+    const { container } = render(<App />);
 
     const editableCell = screen.getByLabelText(cellLabel(1, 3));
     fireEvent.click(editableCell);
     expect(editableCell.className).toContain("is-selected");
 
-    fireEvent.click(screen.getByText("盤面"));
+    const solvePage = container.querySelector(".solve-page");
+    expect(solvePage).not.toBeNull();
+    fireEvent.click(solvePage as HTMLElement);
     expect(editableCell.className).not.toContain("is-selected");
 
     fireEvent.click(editableCell);

@@ -48,16 +48,15 @@
   gap: 0.45rem;
 }
 
-.board-panel-header {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.35rem;
+.solve-board-panel {
+  display: grid;
+  justify-items: center;
 }
 
-.board-panel-header h2 {
-  margin: 0;
+.board-slot {
+  width: min(100%, 560px);
+  display: grid;
+  place-items: center;
 }
 
 .board-wrap {
@@ -203,55 +202,12 @@ button.sudoku-cell[aria-disabled="true"] {
   background: var(--solve-origin-empty-bg);
 }
 
-.legend {
-  margin-top: 0.8rem;
-  width: min(100%, 560px);
-}
-
-.solve-legend-summary {
-  display: none;
-}
-
-.solve-legend-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.legend-item {
-  border-radius: var(--radius-pill);
-  padding: 0.15rem 0.55rem;
-  font-size: 0.78rem;
-  line-height: 1.3;
-  border: var(--border-width-base) solid transparent;
-}
-
-.legend-given {
-  background: var(--solve-legend-given-bg);
-  border-color: var(--solve-legend-given-border);
-}
-
-.legend-user {
-  background: var(--solve-legend-user-bg);
-  border-color: var(--solve-legend-user-border);
-}
-
-.legend-empty {
-  background: var(--solve-legend-empty-bg);
-  border-color: var(--solve-legend-empty-border);
-}
-
 .keyboard-spacer {
   height: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px));
 }
 
 /* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
 @media (max-width: 768px) {
-  .board-panel-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .solve-controls {
     width: 100%;
   }

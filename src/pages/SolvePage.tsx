@@ -92,7 +92,6 @@ export function SolvePage(): JSX.Element {
         inkState={inkState}
         inputMode={inputMode}
         isInkMode={isInkMode}
-        isNoScrollLayout={isMobileViewport}
         isReviewMode={isReviewMode}
         onActiveBlockChange={setActiveBlockId}
         onCellBlur={() => setIsGridEditing(false)}

@@ -11,7 +11,7 @@ body.solve-no-scroll-body {
   /* 9 x 28px cell minimum + 2 x 3px outer border = 258px */
   --solve-board-min-size: 258px;
   --solve-header-reserved: 3.4rem;
-  --solve-controls-reserved: 10.8rem;
+  --solve-controls-reserved: 10.2rem;
   --solve-sheet-reserved: 5.2rem;
   --solve-bottom-reserved: 1rem;
   --solve-board-size: clamp(
@@ -65,14 +65,9 @@ body.solve-no-scroll-body {
   min-width: 0;
   width: 100%;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  align-items: start;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
   justify-items: center;
-}
-
-.app-root.solve-no-scroll .board-panel-header {
-  width: min(100%, var(--solve-board-size));
-  margin-bottom: 0.25rem;
 }
 
 .app-root.solve-no-scroll .board-slot {
@@ -107,42 +102,10 @@ body.solve-no-scroll-body {
   width: min(100%, var(--solve-board-size));
 }
 
-.app-root.solve-no-scroll .solve-legend {
-  width: min(100%, var(--solve-board-size));
-  margin-top: 0.35rem;
-}
-
-.app-root.solve-no-scroll .solve-legend-summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.72rem;
-  padding: 0.08rem 0.48rem;
-  border-radius: var(--radius-pill);
-  border: var(--border-width-base) solid var(--solve-legend-summary-border);
-  background: var(--solve-legend-summary-bg);
-  color: var(--text-subtle-strong);
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.app-root.solve-no-scroll .solve-legend[open] .solve-legend-summary {
-  margin-bottom: 0.3rem;
-}
-
-.app-root.solve-no-scroll .solve-legend .solve-legend-items {
-  gap: 0.28rem;
-}
-
-.app-root.solve-no-scroll .solve-legend .legend-item {
-  padding: 0.12rem 0.5rem;
-  font-size: 0.74rem;
-}
-
 /* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
 @media (max-width: 768px) {
   .app-root.solve-no-scroll {
-    --solve-controls-reserved: 11.6rem;
+    --solve-controls-reserved: 11rem;
     --solve-sheet-reserved: 5.1rem;
     --solve-bottom-reserved: calc(var(--mobile-tabbar-height) + 0.35rem);
     padding-bottom: calc(var(--mobile-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.35rem);
