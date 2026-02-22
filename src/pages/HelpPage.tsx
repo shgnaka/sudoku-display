@@ -1,4 +1,4 @@
-import { HELP_MESSAGES } from "../constants/messages";
+import { HELP_MESSAGES } from "../constants/messages/help";
 
 export function HelpPage(): JSX.Element {
   return (

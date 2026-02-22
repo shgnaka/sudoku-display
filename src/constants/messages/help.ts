@@ -1,18 +1,3 @@
-export const STORAGE_MESSAGES = {
-  title: "保存データ管理",
-  hint: "ローカルストレージに保存されている盤面と手書きメモを削除できます。",
-  actions: {
-    clearGame: "盤面データを初期化",
-    clearInk: "手書きメモを削除",
-    clearAll: "すべて削除"
-  },
-  confirm: {
-    clearGame: "盤面データを初期化します。よろしいですか？",
-    clearInk: "手書きメモを削除します。よろしいですか？",
-    clearAll: "保存データをすべて削除します。よろしいですか？"
-  }
-} as const;
-
 export const HELP_MESSAGES = {
   title: "使い方",
   hint: "解くページで盤面入力、作問ページで問題準備を行います。",
@@ -36,10 +21,4 @@ export const HELP_MESSAGES = {
   reviewTitle: "確認モード",
   reviewHint:
     "確認モード中は盤面編集・手書き描画に加えて画面移動もロックします。見直し時の誤操作防止に使ってください。"
-} as const;
-
-export const NOT_FOUND_MESSAGES = {
-  title: "ページが見つかりません",
-  hint: "指定されたURLは存在しないか、移動された可能性があります。数独を続けるには解くページに戻ってください。",
-  backToSolve: "解くへ戻る"
 } as const;

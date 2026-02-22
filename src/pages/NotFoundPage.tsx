@@ -1,4 +1,4 @@
-import { NOT_FOUND_MESSAGES } from "../constants/messages";
+import { NOT_FOUND_MESSAGES } from "../constants/messages/notFound";
 
 interface NotFoundPageProps {
   onBackToSolve: () => void;

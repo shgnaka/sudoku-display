@@ -1,5 +1,5 @@
 import { useSudokuAppState } from "../state/SudokuAppStateProvider";
-import { STORAGE_MESSAGES } from "../constants/messages";
+import { STORAGE_MESSAGES } from "../constants/messages/storage";
 
 export function StoragePage(): JSX.Element {
   const { resetGameData, clearInkData, clearAllStoredData } = useSudokuAppState();
