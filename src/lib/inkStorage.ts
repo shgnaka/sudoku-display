@@ -1,12 +1,60 @@
 import { BLOCK_IDS } from "../types/ink";
 import { createEmptyInkState } from "./inkModel";
-import type { InkState } from "../types/ink";
+import type { InkPoint, InkState, Stroke } from "../types/ink";
 import { STORAGE_KEYS } from "../constants/storageKeys";
 
 const STORAGE_KEY = STORAGE_KEYS.ink;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isValidPoint(value: unknown): value is InkPoint {
+  if (!isObject(value)) {
+    return false;
+  }
+
+  if (!isFiniteNumber(value.x) || !isFiniteNumber(value.y)) {
+    return false;
+  }
+
+  if (value.x < 0 || value.x > 1 || value.y < 0 || value.y > 1) {
+    return false;
+  }
+
+  if (value.pressure !== undefined && !isFiniteNumber(value.pressure)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isValidStroke(value: unknown): value is Stroke {
+  if (!isObject(value)) {
+    return false;
+  }
+
+  if (!Array.isArray(value.points) || !value.points.every(isValidPoint)) {
+    return false;
+  }
+
+  if (typeof value.color !== "string") {
+    return false;
+  }
+
+  if (!isFiniteNumber(value.width) || value.width <= 0) {
+    return false;
+  }
+
+  if (!isFiniteNumber(value.ts)) {
+    return false;
+  }
+
+  return true;
 }
 
 function normalizeInkState(value: unknown): InkState {
@@ -18,7 +66,7 @@ function normalizeInkState(value: unknown): InkState {
 
   for (const blockId of BLOCK_IDS) {
     const blockValue = value[blockId];
-    normalized[blockId] = Array.isArray(blockValue) ? blockValue : [];
+    normalized[blockId] = Array.isArray(blockValue) ? blockValue.filter(isValidStroke) : [];
   }
 
   return normalized;

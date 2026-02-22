@@ -39,6 +39,92 @@ describe("inkStorage", () => {
     expect(loadInkState()).toEqual(createEmptyInkState());
   });
 
+  it("drops strokes with invalid points", () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        "0-0": [
+          {
+            points: [{ x: "0.1", y: 0.2 }],
+            color: "#111111",
+            width: 2,
+            ts: 123
+          },
+          {
+            points: [{ x: 1.2, y: 0.2 }],
+            color: "#111111",
+            width: 2,
+            ts: 124
+          }
+        ]
+      })
+    );
+
+    expect(loadInkState()["0-0"]).toEqual([]);
+  });
+
+  it("drops strokes with invalid stroke fields", () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        "1-1": [
+          {
+            points: "invalid",
+            color: "#111111",
+            width: 2,
+            ts: 20
+          },
+          {
+            points: [{ x: 0.3, y: 0.4 }],
+            color: 100,
+            width: 2,
+            ts: 21
+          },
+          {
+            points: [{ x: 0.3, y: 0.4 }],
+            color: "#111111",
+            width: 0,
+            ts: 22
+          },
+          {
+            points: [{ x: 0.3, y: 0.4 }],
+            color: "#111111",
+            width: 2,
+            ts: "x"
+          }
+        ]
+      })
+    );
+
+    expect(loadInkState()["1-1"]).toEqual([]);
+  });
+
+  it("keeps only valid strokes when mixed data is stored", () => {
+    const validStroke = {
+      points: [{ x: 0.3, y: 0.4 }],
+      color: "#111111",
+      width: 2,
+      ts: 10
+    };
+
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        "2-2": [
+          validStroke,
+          {
+            points: [{ x: -0.1, y: 0.2 }],
+            color: "#222222",
+            width: 2,
+            ts: 11
+          }
+        ]
+      })
+    );
+
+    expect(loadInkState()["2-2"]).toEqual([validStroke]);
+  });
+
   it("clears storage", () => {
     const state = createEmptyInkState();
     state["0-0"] = [
