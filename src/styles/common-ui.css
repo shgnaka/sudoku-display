@@ -83,6 +83,16 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button:focus-visible,
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .btn--active {
   border-color: var(--line-active);
   background: var(--surface-soft-active);
@@ -123,9 +133,9 @@ button:disabled {
 }
 
 .btn--backspace {
-  border-color: #8aa2c9;
-  background: #ecf4ff;
-  color: #173e72;
+  border-color: var(--solve-backspace-border);
+  background: var(--solve-backspace-bg);
+  color: var(--solve-backspace-fg);
   font-weight: 700;
 }
 

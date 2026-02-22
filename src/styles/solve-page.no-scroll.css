@@ -118,10 +118,11 @@ body.solve-no-scroll-body {
   min-height: 1.9rem;
   padding: 0.12rem 0.55rem;
   border-radius: var(--radius-pill);
-  border: var(--border-width-base) solid #c7d0e1;
-  background: #f7f9ff;
+  border: var(--border-width-base) solid var(--solve-legend-summary-border);
+  background: var(--solve-legend-summary-bg);
   color: var(--text-subtle-strong);
   font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
 }
 

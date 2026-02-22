@@ -93,7 +93,7 @@
   min-width: 0;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border: var(--border-width-base) solid #c7d0e1;
+  border: var(--border-width-base) solid var(--solve-cell-border);
   border-radius: 0;
   background: transparent;
   padding: 0;
@@ -126,14 +126,17 @@ button.sudoku-cell[aria-disabled="true"] {
 }
 
 .sudoku-cell:focus {
+  outline: none;
+}
+
+.sudoku-cell:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: -2px;
   z-index: 1;
 }
 
 .sudoku-cell.is-selected {
-  outline: 2px solid var(--focus);
-  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--focus);
   z-index: 1;
 }
 
@@ -181,23 +184,23 @@ button.sudoku-cell[aria-disabled="true"] {
 }
 
 .ink-canvas.active {
-  outline: 1px dashed #70a4ff;
+  outline: 1px dashed var(--solve-ink-active);
   outline-offset: -1px;
 }
 
 .origin-given {
-  color: #0f2f6d;
-  background: #eef4ff;
+  color: var(--solve-origin-given-fg);
+  background: var(--solve-origin-given-bg);
 }
 
 .origin-user {
-  color: #0f6649;
-  background: #ebfff3;
+  color: var(--solve-origin-user-fg);
+  background: var(--solve-origin-user-bg);
 }
 
 .origin-empty {
-  color: #b6c1d4;
-  background: #fbfdff;
+  color: var(--solve-origin-empty-fg);
+  background: var(--solve-origin-empty-bg);
 }
 
 .legend {
@@ -223,24 +226,25 @@ button.sudoku-cell[aria-disabled="true"] {
 }
 
 .legend-given {
-  background: #eef4ff;
-  border-color: #c6d9ff;
+  background: var(--solve-legend-given-bg);
+  border-color: var(--solve-legend-given-border);
 }
 
 .legend-user {
-  background: #ebfff3;
-  border-color: #b6f0d0;
+  background: var(--solve-legend-user-bg);
+  border-color: var(--solve-legend-user-border);
 }
 
 .legend-empty {
-  background: #fbfdff;
-  border-color: #dde4f1;
+  background: var(--solve-legend-empty-bg);
+  border-color: var(--solve-legend-empty-border);
 }
 
 .keyboard-spacer {
   height: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px));
 }
 
+/* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
 @media (max-width: 768px) {
   .board-panel-header {
     align-items: flex-start;
