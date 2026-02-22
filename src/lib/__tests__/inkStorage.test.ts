@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { STORAGE_KEYS } from "../../constants/storageKeys";
 import { createEmptyInkState } from "../inkModel";
 import { clearInkState, loadInkState, saveInkState } from "../inkStorage";
 
-const STORAGE_KEY = "sudoku-display:ink:v1";
+const STORAGE_KEY = STORAGE_KEYS.ink;
 
 describe("inkStorage", () => {
   beforeEach(() => {

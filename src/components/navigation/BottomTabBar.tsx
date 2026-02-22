@@ -1,5 +1,5 @@
-import { BOTTOM_TAB_ROUTES } from "../../lib/navigation";
-import type { AppRouteKey } from "../../lib/navigation";
+import { BOTTOM_TAB_ROUTES } from "../../constants/routes";
+import type { AppRouteKey } from "../../constants/routes";
 
 interface BottomTabBarProps {
   currentRoute: AppRouteKey;

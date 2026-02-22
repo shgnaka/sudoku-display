@@ -1,6 +1,11 @@
 import { PuzzleInput } from "../components/PuzzleInput";
+import { SUDOKU_DIFFICULTIES } from "../constants/difficulty";
 import { useSudokuAppState } from "../state/SudokuAppStateProvider";
-import type { SudokuDifficulty } from "../wasm/sudokuGenerator";
+import type { SudokuDifficulty } from "../constants/difficulty";
+
+function formatDifficultyLabel(value: SudokuDifficulty): string {
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+}
 
 export function ManagePage(): JSX.Element {
   const {
@@ -27,9 +32,11 @@ export function ManagePage(): JSX.Element {
               onChange={(event) => setDifficulty(event.target.value as SudokuDifficulty)}
               value={difficulty}
             >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+              {SUDOKU_DIFFICULTIES.map((level) => (
+                <option key={level} value={level}>
+                  {formatDifficultyLabel(level)}
+                </option>
+              ))}
             </select>
           </label>
           <button className="btn" disabled={isGenerating} onClick={() => void handleGeneratePuzzle()} type="button">

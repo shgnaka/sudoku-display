@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { DEFAULT_SUDOKU_DIFFICULTY } from "../constants/difficulty";
 import { DEFAULT_PUZZLE_TEXT } from "../lib/defaultPuzzle";
 import { clearGameState, loadGameState, saveGameState } from "../lib/gameStorage";
 import { appendStroke, clearAll, clearBlock, createEmptyInkState } from "../lib/inkModel";
@@ -8,7 +9,7 @@ import { line81ToPuzzleText } from "../lib/sudokuFormatter";
 import { parseSudokuText } from "../lib/sudokuParser";
 import { setUserCell } from "../lib/sudokuModel";
 import { generateSudoku } from "../wasm/sudokuGenerator";
-import type { SudokuDifficulty } from "../wasm/sudokuGenerator";
+import type { SudokuDifficulty } from "../constants/difficulty";
 import type { BlockId, InkState, Stroke } from "../types/ink";
 import type { Board } from "../types/sudoku";
 
@@ -95,7 +96,7 @@ export function SudokuAppStateProvider({ children }: { children: ReactNode }): J
   const [errorMessage, setErrorMessage] = useState("");
   const [generationError, setGenerationError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [difficulty, setDifficulty] = useState<SudokuDifficulty>("medium");
+  const [difficulty, setDifficulty] = useState<SudokuDifficulty>(DEFAULT_SUDOKU_DIFFICULTY);
   const [modeState, dispatchMode] = useReducer(solveModeReducer, initialSolveModeState);
   const [isGridEditing, setIsGridEditing] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<BlockId>("0-0");

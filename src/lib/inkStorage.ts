@@ -1,8 +1,9 @@
 import { BLOCK_IDS } from "../types/ink";
 import { createEmptyInkState } from "./inkModel";
 import type { InkState } from "../types/ink";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
-const STORAGE_KEY = "sudoku-display:ink:v1";
+const STORAGE_KEY = STORAGE_KEYS.ink;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;

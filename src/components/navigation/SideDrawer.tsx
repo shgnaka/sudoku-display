@@ -1,4 +1,4 @@
-import type { AppRouteKey, NavRoute } from "../../lib/navigation";
+import type { AppRouteKey, NavRoute } from "../../constants/routes";
 
 interface SideDrawerProps {
   isOpen: boolean;

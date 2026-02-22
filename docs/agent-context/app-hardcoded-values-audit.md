@@ -18,19 +18,22 @@
 
 ### High
 1. ルート文字列とフォールバック遷移先の直書き
-- 問題: `#/solve` などのルート文字列が複数箇所に存在し、追加・変更時に不整合が発生しやすい。
-- 根拠: `src/lib/navigation.ts:2`, `src/lib/navigation.ts:3`, `src/lib/navigation.ts:4`, `src/lib/navigation.ts:5`, `src/lib/navigation.ts:34`, `src/lib/navigation.ts:38`
+- 問題: ルート定義自体は集約されていたが、フォールバック遷移先（`#/solve`）とルート参照元が `navigation.ts` へ暗黙集中しており、責務分離が弱い。
+- 根拠: `src/lib/navigation.ts:1`, `src/lib/navigation.ts:18`, `src/lib/navigation.ts:22`
 - 期待効果: ルート変更の影響範囲が明確になり、遷移不具合の混入を抑制できる。
+- 実装メモ（2026-02-22）: `src/constants/routes.ts` を追加し、`APP_ROUTES` / `DEFAULT_ROUTE_HASH` / `MOBILE_DRAWER_ROUTES` を集約した。
 
 2. localStorage キーの重複定義
 - 問題: 保存キーがモジュール単位で個別定義され、命名規則の統一やバージョン更新時に漏れが生じる。
-- 根拠: `src/lib/gameStorage.ts:3`, `src/lib/inkStorage.ts:5`
+- 根拠: `src/lib/gameStorage.ts:4`, `src/lib/inkStorage.ts:6`
 - 期待効果: 保存スキーマ変更時の移行設計と影響調査が容易になる。
+- 実装メモ（2026-02-22）: `src/constants/storageKeys.ts:1` を追加し、`game` / `ink` キー参照を共通化した（キー値は据え置き）。
 
 3. 難易度値と選択肢の多重管理
 - 問題: `easy/medium/hard` が TypeScript 型、UI 選択肢、Rust 側 difficulty 判定に分散し、同期コストが高い。
-- 根拠: `src/wasm/sudokuGenerator.ts:1`, `src/pages/ManagePage.tsx:30`, `rust/sudoku_generator/src/lib.rs:96`
+- 根拠: `src/constants/difficulty.ts:1`, `src/pages/ManagePage.tsx:36`, `rust/sudoku_generator/src/lib.rs:96`
 - 期待効果: 難易度仕様変更時の修正箇所を最小化し、TS/Rust 間の齟齬を予防できる。
+- 実装メモ（2026-02-22）: `src/constants/difficulty.ts:1` を追加し、TS側の difficulty 型と選択肢を単一ソース化した。Rust 側は既存仕様を維持。
 
 ### Medium
 1. 数独ドメイン定数の分散（9, 81, 1..9）
@@ -65,17 +68,18 @@
 - 期待効果: 配置変更時の修正方針が明確になり、環境差分による読み込み不具合を減らせる。
 
 ## 非目標（今回やらないこと）
-- 実コードの定数集約リファクタリング
+- Medium/Low 項目を含む実コード全体の定数集約リファクタリング
 - ルーティング方式（hash/router）自体の再設計
 - i18n 基盤の導入
 - Rust 生成アルゴリズム自体の仕様変更
 
 ## 次に実装すべき順序
-1. `src/constants` に `routes` と `storageKeys` の集約先を追加し、参照を段階的に置換する。
-2. 難易度仕様を TS/Rust で突合できる形に整理し、UI 選択肢との同期テストを追加する。
+1. `src/constants` に `routes` / `storageKeys` / `difficulty` の集約先を維持し、追加値は必ず定数経由で参照する。
+2. 難易度仕様の TS/Rust 整合をテストで継続検証し、変更時の受け入れ条件を明文化する。
 3. 数独ドメイン定数（サイズ・値域）を共通化し、parser/formatter/model の参照を統一する。
 4. UI 閾値・描画設定を専用定数へ集約し、端末別の回帰確認項目を定義する。
 5. 文言と既定パズルデータの外出し方針を決め、段階的に移行する。
 
 ## 更新履歴（任意）
 - 2026-02-22: 初版作成。非CSSのハードコード改善余地を優先度付きで整理。
+- 2026-02-22: High のうち `routes` / `storageKeys` / `difficulty` の集約を実装済み状態に更新。

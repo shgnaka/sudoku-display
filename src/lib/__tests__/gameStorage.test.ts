@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { STORAGE_KEYS } from "../../constants/storageKeys";
 import { loadGameState, saveGameState } from "../gameStorage";
 
-const STORAGE_KEY = "sudoku-display:game:v1";
+const STORAGE_KEY = STORAGE_KEYS.game;
 
 function createBoard() {
   return Array.from({ length: 9 }, (_, row) =>

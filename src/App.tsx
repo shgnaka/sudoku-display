@@ -3,7 +3,8 @@ import "./App.css";
 import { AppHeader } from "./components/navigation/AppHeader";
 import { BottomTabBar } from "./components/navigation/BottomTabBar";
 import { SideDrawer } from "./components/navigation/SideDrawer";
-import { APP_ROUTES, MOBILE_DRAWER_ROUTES, getRouteHash, normalizeRouteHash } from "./lib/navigation";
+import { APP_ROUTES, DEFAULT_ROUTE_KEY, MOBILE_DRAWER_ROUTES } from "./constants/routes";
+import { getRouteHash, normalizeRouteHash } from "./lib/navigation";
 import { useIsMobileViewport } from "./lib/useIsMobileViewport";
 import { HelpPage } from "./pages/HelpPage";
 import { ManagePage } from "./pages/ManagePage";
@@ -11,11 +12,11 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { SolvePage } from "./pages/SolvePage";
 import { StoragePage } from "./pages/StoragePage";
 import { SudokuAppStateProvider } from "./state/SudokuAppStateProvider";
-import type { AppRouteKey } from "./lib/navigation";
+import type { AppRouteKey } from "./constants/routes";
 
 function readCurrentRoute(): AppRouteKey {
   if (typeof window === "undefined") {
-    return "solve";
+    return DEFAULT_ROUTE_KEY;
   }
 
   return normalizeRouteHash(window.location.hash);
@@ -34,8 +35,8 @@ function AppBody(): JSX.Element {
     }
 
     if (!window.location.hash) {
-      window.history.replaceState(null, "", getRouteHash("solve"));
-      setCurrentRoute("solve");
+      window.history.replaceState(null, "", getRouteHash(DEFAULT_ROUTE_KEY));
+      setCurrentRoute(DEFAULT_ROUTE_KEY);
     }
 
     const syncRoute = (): void => {

@@ -1,6 +1,7 @@
 import type { Board, CellData, CellOrigin } from "../types/sudoku";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
-const STORAGE_KEY = "sudoku-display:game:v1";
+const STORAGE_KEY = STORAGE_KEYS.game;
 
 export interface PersistedGameState {
   rawInput: string;

@@ -1,4 +1,5 @@
-export type SudokuDifficulty = "easy" | "medium" | "hard";
+import { DEFAULT_SUDOKU_DIFFICULTY, SUDOKU_DIFFICULTIES } from "../constants/difficulty";
+import type { SudokuDifficulty } from "../constants/difficulty";
 
 export interface GeneratedSudoku {
   puzzle: Uint8Array;
@@ -22,6 +23,7 @@ interface WasmSudokuModule {
 }
 
 let modulePromise: Promise<WasmSudokuModule> | null = null;
+const SUDOKU_DIFFICULTY_SET = new Set<string>(SUDOKU_DIFFICULTIES);
 
 function createSeed(): bigint {
   if (typeof window !== "undefined" && window.crypto?.getRandomValues) {
@@ -49,11 +51,11 @@ async function loadModule(): Promise<WasmSudokuModule> {
 
 function normalizeDifficulty(value: string): SudokuDifficulty {
   const normalized = value.toLowerCase();
-  if (normalized === "easy" || normalized === "medium" || normalized === "hard") {
-    return normalized;
+  if (SUDOKU_DIFFICULTY_SET.has(normalized)) {
+    return normalized as SudokuDifficulty;
   }
 
-  return "medium";
+  return DEFAULT_SUDOKU_DIFFICULTY;
 }
 
 export async function generateSudoku(
