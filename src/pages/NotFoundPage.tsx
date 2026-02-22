@@ -10,7 +10,7 @@ export function NotFoundPage({ onBackToSolve }: NotFoundPageProps): JSX.Element 
         <p className="hint">
           指定されたURLは存在しないか、移動された可能性があります。数独を続けるには解くページに戻ってください。
         </p>
-        <button onClick={onBackToSolve} type="button">
+        <button className="btn" onClick={onBackToSolve} type="button">
           解くへ戻る
         </button>
       </section>

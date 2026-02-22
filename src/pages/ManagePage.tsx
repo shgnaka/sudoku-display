@@ -32,7 +32,7 @@ export function ManagePage(): JSX.Element {
               <option value="hard">Hard</option>
             </select>
           </label>
-          <button disabled={isGenerating} onClick={() => void handleGeneratePuzzle()} type="button">
+          <button className="btn" disabled={isGenerating} onClick={() => void handleGeneratePuzzle()} type="button">
             {isGenerating ? "生成中..." : "新しい問題を生成"}
           </button>
         </div>

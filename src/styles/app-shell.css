@@ -157,15 +157,13 @@ body.review-scroll-lock {
   gap: 0.5rem;
 }
 
-.drawer-nav button {
+.drawer-nav .btn--nav {
   width: 100%;
   text-align: left;
 }
 
-.drawer-nav button.active {
-  border-color: var(--line-active);
-  background: var(--surface-soft-active);
-  color: #143b72;
+.drawer-nav .btn--nav.btn--active {
+  text-align: left;
 }
 
 .bottom-tab-bar {
@@ -195,15 +193,14 @@ body.review-scroll-lock {
     z-index: 25;
   }
 
-  .bottom-tab-bar button {
+  .bottom-tab-bar .btn--nav {
     border-radius: var(--radius-sm);
     padding: 0.5rem 0.35rem;
     font-size: 0.76rem;
+    text-align: center;
   }
 
-  .bottom-tab-bar button.active {
-    border-color: var(--line-active);
-    background: var(--surface-soft-active);
-    color: #143b72;
+  .bottom-tab-bar .btn--nav.btn--active {
+    text-align: center;
   }
 }

@@ -26,7 +26,7 @@ export function SolveControlsPanel({
         <button
           aria-label={`確認モード切替（現在: ${isReviewMode ? "ON" : "OFF"}）`}
           aria-pressed={isReviewMode}
-          className={isReviewMode ? "mode-toggle-button on" : "mode-toggle-button off"}
+          className={isReviewMode ? "btn btn--mode-toggle btn--active" : "btn btn--mode-toggle btn--inactive"}
           onClick={onToggleReviewMode}
           type="button"
         >

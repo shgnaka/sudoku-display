@@ -11,7 +11,7 @@ export function BottomTabBar({ currentRoute, onNavigate }: BottomTabBarProps): J
     <nav aria-label="ページナビゲーション" className="bottom-tab-bar">
       {BOTTOM_TAB_ROUTES.map((route) => (
         <button
-          className={route.key === currentRoute ? "active" : ""}
+          className={route.key === currentRoute ? "btn btn--nav btn--active" : "btn btn--nav btn--inactive"}
           key={route.key}
           onClick={() => onNavigate(route.key)}
           type="button"

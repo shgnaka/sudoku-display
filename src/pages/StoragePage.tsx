@@ -33,13 +33,13 @@ export function StoragePage(): JSX.Element {
         <h2>保存データ管理</h2>
         <p className="hint">ローカルストレージに保存されている盤面と手書きメモを削除できます。</p>
         <div className="storage-actions">
-          <button onClick={handleClearGame} type="button">
+          <button className="btn" onClick={handleClearGame} type="button">
             盤面データを初期化
           </button>
-          <button onClick={handleClearInk} type="button">
+          <button className="btn" onClick={handleClearInk} type="button">
             手書きメモを削除
           </button>
-          <button className="danger" onClick={handleClearAll} type="button">
+          <button className="btn btn--danger" onClick={handleClearAll} type="button">
             すべて削除
           </button>
         </div>

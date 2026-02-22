@@ -21,7 +21,7 @@ export function SideDrawer({ isOpen, currentRoute, routes, onClose, onNavigate }
             {routes.map((route) => (
               <li key={route.key}>
                 <button
-                  className={currentRoute === route.key ? "active" : ""}
+                  className={currentRoute === route.key ? "btn btn--nav btn--active" : "btn btn--nav btn--inactive"}
                   onClick={() => onNavigate(route.key)}
                   type="button"
                 >

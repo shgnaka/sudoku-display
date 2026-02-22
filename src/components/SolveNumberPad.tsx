@@ -19,6 +19,7 @@ export function SolveNumberPad({
         {NUMBER_KEYS.map((value) => (
           <button
             aria-label={`数字 ${value}`}
+            className="btn btn--pad"
             disabled={numberDisabled}
             key={value}
             onClick={() => onNumber(value)}
@@ -29,7 +30,7 @@ export function SolveNumberPad({
         ))}
         <button
           aria-label="数字を消去"
-          className="backspace"
+          className="btn btn--pad btn--backspace"
           disabled={backspaceDisabled}
           onClick={onBackspace}
           type="button"

@@ -4,16 +4,6 @@
   align-items: center;
 }
 
-.mode-toggle-button {
-  width: 100%;
-  min-height: var(--control-height-min);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.6rem;
-}
-
 .mode-state-dot {
   width: 0.62rem;
   height: 0.62rem;
@@ -29,18 +19,6 @@
 
 .mode-label {
   line-height: 1;
-}
-
-.mode-toggle-button.on {
-  border-color: var(--line-active);
-  background: var(--surface-soft-active);
-  color: #143b72;
-}
-
-.mode-toggle-button.off {
-  border-color: var(--line-default);
-  background: var(--surface-soft);
-  color: var(--text-strong);
 }
 
 .solve-controls {
@@ -68,11 +46,6 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
-}
-
-.ink-actions-inline button {
-  width: 100%;
-  min-height: var(--control-height-min);
 }
 
 .board-panel-header {
@@ -185,20 +158,6 @@ button.sudoku-cell[aria-disabled="true"] {
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 0.32rem;
   width: 100%;
-}
-
-.solve-number-pad button {
-  min-height: clamp(36px, 8vw, var(--control-height-min));
-  min-width: 0;
-  padding: 0.2rem;
-  font-size: clamp(0.72rem, 2.8vw, 0.98rem);
-}
-
-.solve-number-pad .backspace {
-  border-color: #8aa2c9;
-  background: #ecf4ff;
-  color: #173e72;
-  font-weight: 700;
 }
 
 .ink-overlay {

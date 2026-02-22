@@ -66,6 +66,7 @@
   font-weight: 600;
 }
 
+.btn,
 button {
   border: var(--border-width-base) solid var(--line-default);
   background: var(--surface-soft);
@@ -76,15 +77,60 @@ button {
   cursor: pointer;
 }
 
+.btn:disabled,
 button:disabled {
   opacity: 0.65;
   cursor: not-allowed;
 }
 
-button.danger {
+.btn--active {
+  border-color: var(--line-active);
+  background: var(--surface-soft-active);
+  color: #143b72;
+}
+
+.btn--inactive {
+  border-color: var(--line-default);
+  background: var(--surface-soft);
+  color: var(--text-strong);
+}
+
+.btn--danger {
   border-color: var(--line-danger);
   background: var(--surface-danger);
   color: #7c2020;
+}
+
+.btn--fill {
+  width: 100%;
+}
+
+.btn--mode-toggle {
+  width: 100%;
+  min-height: var(--control-height-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.btn--pad {
+  min-height: clamp(36px, 8vw, var(--control-height-min));
+  min-width: 0;
+  padding: 0.2rem;
+  font-size: clamp(0.72rem, 2.8vw, 0.98rem);
+}
+
+.btn--backspace {
+  border-color: #8aa2c9;
+  background: #ecf4ff;
+  color: #173e72;
+  font-weight: 700;
+}
+
+.btn--nav {
+  width: 100%;
 }
 
 .error-message {

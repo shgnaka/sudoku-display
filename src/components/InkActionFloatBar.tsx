@@ -6,10 +6,10 @@ interface InkActionFloatBarProps {
 export function InkActionFloatBar({ onClearActiveBlock, onClearAll }: InkActionFloatBarProps): JSX.Element {
   return (
     <section className="ink-actions-inline" role="region" aria-label="手書き操作">
-      <button onClick={onClearActiveBlock} type="button">
+      <button className="btn btn--fill" onClick={onClearActiveBlock} type="button">
         ブロック消去
       </button>
-      <button className="danger" onClick={onClearAll} type="button">
+      <button className="btn btn--danger btn--fill" onClick={onClearAll} type="button">
         全消去
       </button>
     </section>

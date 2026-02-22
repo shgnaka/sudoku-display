@@ -29,8 +29,8 @@
 
 ### Medium（旧）
 1. ボタン系スタイルの重複
-- 判定: `未対応`
-- 根拠: `button`（`src/styles/common-ui.css`）と `mode-toggle-button` / `solve-number-pad button`（`src/styles/solve-page.base.css`）で重複定義あり。
+- 判定: `解消`
+- 根拠: `btn + modifier` へ統一（`src/styles/common-ui.css` の `.btn`, `.btn--*` と各TSXの `className` 移行）。
 
 2. フォーカス表現の適用範囲が限定的
 - 判定: `未対応`
@@ -52,17 +52,12 @@
 ## 現在の改善余地（優先度付き）
 
 ### Medium
-1. ボタンバリアント統合
-- 問題: 基本ボタンと Solve専用ボタンに共通定義が分散。
-- 参照: `src/styles/common-ui.css` (`button`), `src/styles/solve-page.base.css` (`.mode-toggle-button`, `.solve-number-pad button`)
-- 期待効果: 見た目差分を意図的に管理しやすくなる。
-
-2. フォーカス可視性の統一
+1. フォーカス可視性の統一
 - 問題: `:focus-visible` が未導入で、要素ごとの操作確信性が揃っていない。
 - 参照: `src/styles/solve-page.base.css` (`.sudoku-cell:focus`)
 - 期待効果: キーボード操作時のアクセシビリティ向上。
 
-3. レスポンシブ意図の補強
+2. レスポンシブ意図の補強
 - 問題: App側とSolve側でメディアクエリが分かれ、設計意図の参照が分散。
 - 参照: `src/styles/app-shell.css`, `src/styles/solve-page.base.css`, `src/styles/solve-page.no-scroll.css`
 - 期待効果: 変更時の破綻防止。
@@ -85,8 +80,7 @@
 - 新規デザインシステムの導入
 
 ## 次に実装すべき順序
-1. ボタンバリアントを「基底 + 修飾子」で再編し、Solve側の重複を削減する。
-2. `:focus-visible` ベースでフォーカスリングを横断適用する。
-3. ブレークポイント設計意図を最小コメントで補強する。
-4. Solve専用状態色を段階的にトークン化する。
-5. モバイル凡例の簡易代替表示（例: 1行要約）を導入する。
+1. `:focus-visible` ベースでフォーカスリングを横断適用する。
+2. ブレークポイント設計意図を最小コメントで補強する。
+3. Solve専用状態色を段階的にトークン化する。
+4. モバイル凡例の簡易代替表示（例: 1行要約）を導入する。
