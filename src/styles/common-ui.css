@@ -169,6 +169,7 @@ summary:focus-visible {
   max-width: 680px;
 }
 
+/* BREAKPOINT_SYNC_NOTE: keep this 768px value aligned with MOBILE_BREAKPOINT_PX in src/constants/layout.ts. */
 @media (max-width: 768px) {
   .panel {
     padding: 0.75rem;
