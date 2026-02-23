@@ -32,7 +32,8 @@ npm run dev
 npm run build
 ```
 
-`npm run build` は内部で `npm run wasm:build` を実行し、`public/wasm/pkg` に生成物を配置します。
+`npm run build` は内部で `npm run wasm:build` と `npm run wasm:verify` を実行し、`public/wasm/pkg` に生成物を配置します。
+`npm run wasm:verify` は `__wbindgen_externrefs` が grow 可能な externref テーブルへ正しくバインドされているかを検証します。`WebAssembly.Table.grow(): failed to grow table by 4` が出る場合は、まずこのコマンドで WASM 生成物を確認してください。
 
 ## 公開URL
 
