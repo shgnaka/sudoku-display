@@ -73,4 +73,22 @@ describe("parseSudokuText", () => {
     const result = parseSudokuText(input);
     expect(result.ok).toBe(false);
   });
+
+  it("returns dedicated error when digit 0 is included", () => {
+    const malformed = `0 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9`;
+    const result = parseSudokuText(malformed);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toMatch(/不正な数字 0/);
+    }
+  });
 });

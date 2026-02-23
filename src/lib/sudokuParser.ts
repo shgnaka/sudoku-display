@@ -5,8 +5,8 @@ export type ParseResult =
   | { ok: true; board: Board }
   | { ok: false; error: string };
 
-const CELL_TOKEN_RE = /[1-9.]/g;
-const ALLOWED_LINE_RE = /^[1-9.\s|+\-]+$/;
+const CELL_TOKEN_RE = /[0-9.]/g;
+const ALLOWED_LINE_RE = /^[0-9.\s|+\-]+$/;
 
 function toCellData(token: string): CellData {
   if (token === ".") {
