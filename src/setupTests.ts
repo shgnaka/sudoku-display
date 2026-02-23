@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
+import { resetBrowserEnv } from "./test-utils/browserMocks";
 
 if (typeof window !== "undefined") {
   Object.defineProperty(window, "scrollTo", {
@@ -29,9 +30,5 @@ if (typeof HTMLCanvasElement !== "undefined") {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
-
-  if (typeof window !== "undefined") {
-    window.localStorage.clear();
-    window.location.hash = "#/solve";
-  }
+  resetBrowserEnv();
 });

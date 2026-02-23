@@ -1,39 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useKeyboardInset } from "../useKeyboardInset";
-
-interface ViewportMock {
-  offsetTop: number;
-  height: number;
-  width: number;
-  addEventListener: (event: "resize" | "scroll", cb: () => void) => void;
-  removeEventListener: (event: "resize" | "scroll", cb: () => void) => void;
-  emit: (event: "resize" | "scroll") => void;
-}
-
-function createViewportMock(height: number, offsetTop = 0, width = 400): ViewportMock {
-  const listeners: Record<"resize" | "scroll", Array<() => void>> = {
-    resize: [],
-    scroll: []
-  };
-
-  return {
-    height,
-    offsetTop,
-    width,
-    addEventListener: (event, cb) => {
-      listeners[event].push(cb);
-    },
-    removeEventListener: (event, cb) => {
-      listeners[event] = listeners[event].filter((listener) => listener !== cb);
-    },
-    emit: (event) => {
-      for (const cb of listeners[event]) {
-        cb();
-      }
-    }
-  };
-}
+import {
+  createMockVisualViewport,
+  installMockMatchMedia,
+  installMockVisualViewport
+} from "../../test-utils/browserMocks";
 
 function setTouchEnvironment(touchPoints: number, coarsePointer: boolean): void {
   Object.defineProperty(navigator, "maxTouchPoints", {
@@ -41,24 +13,13 @@ function setTouchEnvironment(touchPoints: number, coarsePointer: boolean): void 
     value: touchPoints
   });
 
-  Object.defineProperty(window, "matchMedia", {
-    configurable: true,
-    value: vi.fn().mockImplementation(() => ({
-      matches: coarsePointer,
-      media: "(pointer: coarse)",
-      onchange: null,
-      addListener: () => undefined,
-      removeListener: () => undefined,
-      addEventListener: () => undefined,
-      removeEventListener: () => undefined,
-      dispatchEvent: () => false
-    }))
-  });
+  installMockMatchMedia(() => ({
+    matches: coarsePointer,
+    media: "(pointer: coarse)"
+  }));
 }
 
 describe("useKeyboardInset", () => {
-  const originalVisualViewport = window.visualViewport;
-
   beforeEach(() => {
     Object.defineProperty(window, "innerHeight", {
       configurable: true,
@@ -66,21 +27,11 @@ describe("useKeyboardInset", () => {
     });
   });
 
-  afterEach(() => {
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: originalVisualViewport
-    });
-  });
-
   it("returns 0 on non-touch/coarse devices", () => {
     setTouchEnvironment(0, false);
 
-    const viewport = createViewportMock(800);
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    const viewport = createMockVisualViewport(800);
+    installMockVisualViewport(viewport);
 
     const { result } = renderHook(() => useKeyboardInset());
 
@@ -95,11 +46,8 @@ describe("useKeyboardInset", () => {
   it("computes keyboard inset from visual viewport on touch devices", () => {
     setTouchEnvironment(5, true);
 
-    const viewport = createViewportMock(800);
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    const viewport = createMockVisualViewport(800);
+    installMockVisualViewport(viewport);
 
     const { result } = renderHook(() => useKeyboardInset());
 
@@ -116,11 +64,8 @@ describe("useKeyboardInset", () => {
   it("re-baselines inset on orientation change when keyboard is hidden", () => {
     setTouchEnvironment(5, true);
 
-    const viewport = createViewportMock(800, 0, 390);
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    const viewport = createMockVisualViewport(800, 0, 390);
+    installMockVisualViewport(viewport);
 
     const { result } = renderHook(() => useKeyboardInset());
 
@@ -143,11 +88,8 @@ describe("useKeyboardInset", () => {
   it("ignores small viewport deltas below threshold", () => {
     setTouchEnvironment(5, true);
 
-    const viewport = createViewportMock(800);
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    const viewport = createMockVisualViewport(800);
+    installMockVisualViewport(viewport);
 
     const { result } = renderHook(() => useKeyboardInset());
 
@@ -162,10 +104,7 @@ describe("useKeyboardInset", () => {
   it("returns 0 when visualViewport is not available", () => {
     setTouchEnvironment(5, true);
 
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: undefined
-    });
+    installMockVisualViewport(undefined);
 
     const { result } = renderHook(() => useKeyboardInset());
 
@@ -175,13 +114,10 @@ describe("useKeyboardInset", () => {
   it("cleans up viewport listeners on unmount", () => {
     setTouchEnvironment(5, true);
 
-    const viewport = createViewportMock(800);
+    const viewport = createMockVisualViewport(800);
     const removeSpy = vi.spyOn(viewport, "removeEventListener");
 
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    installMockVisualViewport(viewport);
 
     const { unmount } = renderHook(() => useKeyboardInset());
     unmount();

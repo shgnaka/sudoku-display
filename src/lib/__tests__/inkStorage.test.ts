@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { STORAGE_KEYS } from "../../constants/storageKeys";
 import { createEmptyInkState } from "../inkModel";
 import { clearInkState, loadInkState, saveInkState } from "../inkStorage";
+import { clearStorage, seedStorage } from "../../test-utils/browserMocks";
 
 const STORAGE_KEY = STORAGE_KEYS.ink;
 
 describe("inkStorage", () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    clearStorage();
   });
 
   it("returns empty state when storage is empty", () => {
@@ -34,7 +35,7 @@ describe("inkStorage", () => {
   });
 
   it("falls back safely when stored json is broken", () => {
-    window.localStorage.setItem(STORAGE_KEY, "{broken}");
+    seedStorage(STORAGE_KEY, "{broken}");
 
     expect(loadInkState()).toEqual(createEmptyInkState());
   });
@@ -93,7 +94,7 @@ describe("inkStorage", () => {
       }
     }
   ])("$name", ({ blockId, payload }) => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    seedStorage(STORAGE_KEY, JSON.stringify(payload));
 
     expect(loadInkState()[blockId]).toEqual([]);
   });
@@ -106,7 +107,7 @@ describe("inkStorage", () => {
       ts: 10
     };
 
-    window.localStorage.setItem(
+    seedStorage(
       STORAGE_KEY,
       JSON.stringify({
         "2-2": [

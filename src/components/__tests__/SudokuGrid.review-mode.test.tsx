@@ -1,6 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { cellLabel, renderApp, resetAppTestState } from "../../test-utils/renderApp";
+import { setWindowScrollY, spyWindowScrollTo } from "../../test-utils/browserMocks";
 
 describe("Sudoku UI review mode", () => {
   beforeEach(() => {
@@ -29,22 +30,14 @@ describe("Sudoku UI review mode", () => {
   });
 
   it("locks page movement only while review mode is enabled", () => {
-    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      writable: true,
-      value: 120
-    });
+    const scrollSpy = spyWindowScrollTo();
+    setWindowScrollY(120);
 
     renderApp();
 
     fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
 
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      writable: true,
-      value: 580
-    });
+    setWindowScrollY(580);
     fireEvent.scroll(window);
 
     expect(scrollSpy).toHaveBeenCalledWith(0, 120);

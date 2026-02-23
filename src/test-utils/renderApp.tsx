@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { RenderResult } from "@testing-library/react";
 import { vi } from "vitest";
 import App from "../App";
-import { installResponsiveMatchMedia, setLocationHash } from "./browserMocks";
+import { clearStorage, installResponsiveMatchMedia, setHashRoute } from "./browserMocks";
 
 const { generateSudokuMock, keyboardInsetState } = vi.hoisted(() => ({
   generateSudokuMock: vi.fn(),
@@ -30,8 +30,8 @@ interface RenderAppOptions {
 }
 
 export function resetAppTestState(): void {
-  window.localStorage.clear();
-  setLocationHash("#/solve");
+  clearStorage();
+  setHashRoute("#/solve");
   generateSudokuMock.mockReset();
   keyboardInsetState.value = 0;
   viewportState.isMobile = false;
@@ -41,7 +41,7 @@ export function resetAppTestState(): void {
 
 export function renderApp(options: RenderAppOptions = {}): RenderResult {
   if (options.route !== undefined) {
-    setLocationHash(options.route);
+    setHashRoute(options.route);
   }
   if (options.isMobile !== undefined) {
     viewportState.isMobile = options.isMobile;

@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { clickNav, renderApp, resetAppTestState } from "../../test-utils/renderApp";
+import { spyWindowScrollTo } from "../../test-utils/browserMocks";
 
 describe("Sudoku UI routing", () => {
   beforeEach(() => {
@@ -96,7 +97,7 @@ describe("Sudoku UI routing", () => {
   });
 
   it("resets window scroll to top when navigating to solve", () => {
-    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollSpy = spyWindowScrollTo();
     renderApp({ route: "#/manage" });
 
     expect(screen.getByRole("heading", { name: "問題生成（Rust + WASM）" })).toBeInTheDocument();

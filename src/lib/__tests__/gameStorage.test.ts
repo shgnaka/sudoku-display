@@ -5,12 +5,13 @@ import {
   createMalformedBoardFixture,
   createPersistedGameStateFixture
 } from "../../test-utils/storageFixtures";
+import { clearStorage, seedStorage } from "../../test-utils/browserMocks";
 
 const STORAGE_KEY = STORAGE_KEYS.game;
 
 describe("gameStorage", () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    clearStorage();
   });
 
   it("saves and loads raw input + board", () => {
@@ -55,10 +56,7 @@ describe("gameStorage", () => {
       })()
     }
   ])("$name", ({ rawStorage }) => {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      rawStorage
-    );
+    seedStorage(STORAGE_KEY, rawStorage);
 
     expect(loadGameState()).toBeNull();
   });

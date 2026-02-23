@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { SudokuAppStateProvider, useSudokuAppState } from "../SudokuAppStateProvider";
+import { clearStorage } from "../../test-utils/browserMocks";
 
 function wrapper({ children }: { children: ReactNode }): JSX.Element {
   return <SudokuAppStateProvider>{children}</SudokuAppStateProvider>;
@@ -9,7 +10,7 @@ function wrapper({ children }: { children: ReactNode }): JSX.Element {
 
 describe("SudokuAppStateProvider mode machine", () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    clearStorage();
   });
 
   it("toggles ink mode between normal and ink", () => {

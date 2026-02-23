@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   MOBILE_BREAKPOINT_PX,
   SOLVE_INPUT_SHEET_BREAKPOINT_PX,
@@ -7,38 +7,19 @@ import {
 } from "../../constants/layout";
 import { useIsMobileViewport } from "../useIsMobileViewport";
 import { useSolveInputSheetViewport } from "../useSolveInputSheetViewport";
+import { installMockMatchMedia } from "../../test-utils/browserMocks";
 
 describe("viewport breakpoint sync", () => {
-  const originalMatchMedia = window.matchMedia;
-
-  afterEach(() => {
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: originalMatchMedia
-    });
-  });
-
   it("builds stable max-width media queries from shared constants", () => {
     expect(createMaxWidthMediaQuery(MOBILE_BREAKPOINT_PX)).toBe("(max-width: 768px)");
     expect(createMaxWidthMediaQuery(SOLVE_INPUT_SHEET_BREAKPOINT_PX)).toBe("(max-width: 1024px)");
   });
 
   it("useIsMobileViewport subscribes with the shared mobile query", () => {
-    const matchMediaMock = vi.fn().mockImplementation(() => ({
+    const matchMediaMock = installMockMatchMedia(() => ({
       matches: false,
-      media: "",
-      onchange: null,
-      addListener: () => undefined,
-      removeListener: () => undefined,
-      addEventListener: () => undefined,
-      removeEventListener: () => undefined,
-      dispatchEvent: () => false
+      media: ""
     }));
-
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: matchMediaMock
-    });
 
     renderHook(() => useIsMobileViewport());
 
@@ -46,21 +27,10 @@ describe("viewport breakpoint sync", () => {
   });
 
   it("useSolveInputSheetViewport subscribes with the shared sheet query", () => {
-    const matchMediaMock = vi.fn().mockImplementation(() => ({
+    const matchMediaMock = installMockMatchMedia(() => ({
       matches: true,
-      media: "",
-      onchange: null,
-      addListener: () => undefined,
-      removeListener: () => undefined,
-      addEventListener: () => undefined,
-      removeEventListener: () => undefined,
-      dispatchEvent: () => false
+      media: ""
     }));
-
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: matchMediaMock
-    });
 
     renderHook(() => useSolveInputSheetViewport());
 

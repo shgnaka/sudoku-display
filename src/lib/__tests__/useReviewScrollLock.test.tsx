@@ -1,40 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { useReviewScrollLock } from "../useReviewScrollLock";
-
-function mockVisualViewport() {
-  const listeners: Record<"resize" | "scroll", Array<() => void>> = {
-    resize: [],
-    scroll: []
-  };
-
-  return {
-    addEventListener: (event: "resize" | "scroll", cb: () => void) => {
-      listeners[event].push(cb);
-    },
-    removeEventListener: (event: "resize" | "scroll", cb: () => void) => {
-      listeners[event] = listeners[event].filter((listener) => listener !== cb);
-    },
-    emit: (event: "resize" | "scroll") => {
-      for (const cb of listeners[event]) {
-        cb();
-      }
-    }
-  };
-}
+import {
+  createMockVisualViewport,
+  installMockVisualViewport,
+  setWindowScrollY,
+  spyWindowScrollTo
+} from "../../test-utils/browserMocks";
 
 describe("useReviewScrollLock", () => {
   beforeEach(() => {
     document.body.className = "";
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      writable: true,
-      value: 120
-    });
+    setWindowScrollY(120);
   });
 
   it("does not lock movement when disabled", () => {
-    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollSpy = spyWindowScrollTo();
 
     renderHook(() => useReviewScrollLock(false));
 
@@ -49,20 +30,13 @@ describe("useReviewScrollLock", () => {
   });
 
   it("locks scroll and touch/wheel movement when enabled", () => {
-    const viewport = mockVisualViewport();
-    Object.defineProperty(window, "visualViewport", {
-      configurable: true,
-      value: viewport as unknown as VisualViewport
-    });
+    const viewport = createMockVisualViewport(800);
+    installMockVisualViewport(viewport);
 
-    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollSpy = spyWindowScrollTo();
     renderHook(() => useReviewScrollLock(true));
 
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      writable: true,
-      value: 540
-    });
+    setWindowScrollY(540);
 
     act(() => {
       window.dispatchEvent(new Event("scroll"));
@@ -86,7 +60,7 @@ describe("useReviewScrollLock", () => {
   });
 
   it("releases lock after disable", () => {
-    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollSpy = spyWindowScrollTo();
     const { rerender } = renderHook(({ enabled }) => useReviewScrollLock(enabled), {
       initialProps: { enabled: true }
     });
