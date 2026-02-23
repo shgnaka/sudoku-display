@@ -49,6 +49,7 @@ body.solve-no-scroll-body {
   height: 100%;
   grid-template-rows: minmax(0, 1fr) auto auto;
   gap: var(--space-sm);
+  justify-items: center;
 }
 
 .app-root.solve-no-scroll .panel {

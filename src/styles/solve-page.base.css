@@ -25,6 +25,7 @@
   display: grid;
   gap: var(--space-md);
   width: min(100%, 560px);
+  margin-inline: auto;
 }
 
 .solve-toggle-row {
@@ -146,6 +147,7 @@ button.sudoku-cell[aria-disabled="true"] {
   --solve-sheet-height: 5.2rem;
   height: calc(var(--solve-sheet-height) + env(safe-area-inset-bottom, 0px));
   width: min(100%, 560px);
+  margin-inline: auto;
 }
 
 .solve-number-pad,

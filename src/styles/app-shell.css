@@ -104,6 +104,10 @@ body.review-scroll-lock {
   gap: var(--space-xl);
 }
 
+.solve-page {
+  justify-items: center;
+}
+
 .side-drawer {
   position: fixed;
   top: 0;
