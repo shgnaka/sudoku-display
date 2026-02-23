@@ -104,65 +104,6 @@
   color: var(--text-subtle-strong);
 }
 
-.solve-legend {
-  margin: 0;
-  border: var(--border-width-base) solid var(--solve-legend-summary-border);
-  border-radius: var(--radius-md);
-  background: var(--solve-legend-summary-bg);
-  padding: var(--space-2xs) var(--space-sm);
-}
-
-.solve-legend-summary {
-  cursor: pointer;
-  color: var(--text-subtle-strong);
-  font-size: var(--font-size-hint);
-  font-weight: var(--font-weight-semibold);
-}
-
-.solve-legend-summary::-webkit-details-marker {
-  margin-right: var(--space-2xs);
-}
-
-.solve-legend-list {
-  margin: var(--space-3xs) 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: var(--space-2xs);
-}
-
-.solve-legend-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--text-muted);
-  font-size: var(--font-size-hint);
-}
-
-.solve-legend-chip {
-  display: inline-block;
-  width: 0.95rem;
-  height: 0.95rem;
-  border: var(--border-width-base) solid transparent;
-  border-radius: var(--radius-sm);
-  flex: 0 0 auto;
-}
-
-.solve-legend-chip--given {
-  background: var(--solve-legend-given-bg);
-  border-color: var(--solve-legend-given-border);
-}
-
-.solve-legend-chip--user {
-  background: var(--solve-legend-user-bg);
-  border-color: var(--solve-legend-user-border);
-}
-
-.solve-legend-chip--empty {
-  background: var(--solve-legend-empty-bg);
-  border-color: var(--solve-legend-empty-border);
-}
-
 button.sudoku-cell {
   cursor: pointer;
 }

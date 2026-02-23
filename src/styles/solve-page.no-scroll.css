@@ -60,14 +60,6 @@ body.solve-no-scroll-body {
   width: min(100%, var(--solve-board-size));
 }
 
-.app-root.solve-no-scroll .solve-legend {
-  padding: var(--space-2xs) var(--space-xs);
-}
-
-.app-root.solve-no-scroll .solve-legend-list {
-  gap: var(--space-3xs);
-}
-
 .app-root.solve-no-scroll .solve-board-panel {
   min-height: 0;
   min-width: 0;

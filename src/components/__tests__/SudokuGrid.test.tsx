@@ -272,15 +272,15 @@ describe("Sudoku UI", () => {
     expect(within(tab).queryByRole("button", { name: "ヘルプ" })).not.toBeInTheDocument();
   });
 
-  it("renders compact legend in solve-no-scroll layout", () => {
+  it("does not render legend in solve-no-scroll layout", () => {
     isMobileViewport = true;
     render(<App />);
 
-    expect(screen.getByText("マスの色分けを表示")).toBeInTheDocument();
-    expect(document.querySelector(".solve-legend")).toBeInTheDocument();
+    expect(screen.queryByText("マスの色分けを表示")).not.toBeInTheDocument();
+    expect(document.querySelector(".solve-legend")).not.toBeInTheDocument();
   });
 
-  it("does not render compact legend in desktop layout", () => {
+  it("does not render legend in desktop layout", () => {
     render(<App />);
 
     expect(screen.queryByText("マスの色分けを表示")).not.toBeInTheDocument();
