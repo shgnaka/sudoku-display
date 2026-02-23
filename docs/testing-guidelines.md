@@ -4,7 +4,7 @@
 - Use `getByRole` / `findByRole` first.
 - Use `getByLabelText` for form controls.
 - Use `getByText` for user-visible messages.
-- Use `querySelector` only when there is no accessible selector.
+- For UI tests, do not use `querySelector`/`querySelectorAll`; use role/label/text or explicit `data-testid`.
 
 ## Test naming
 - Prefer: `条件_操作_期待`.
@@ -16,7 +16,7 @@
 
 ## Avoid implementation coupling
 - Prefer assertions on behavior (`disabled`, `readOnly`, aria labels, visible text).
-- Avoid asserting CSS classes unless class is part of externally required behavior.
+- Do not assert CSS classes in UI tests unless the class is part of a documented public contract.
 
 ## Shared setup
 - Use `src/test-utils/renderApp.tsx` for app-level rendering and viewport/hash setup.

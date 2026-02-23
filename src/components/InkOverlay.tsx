@@ -239,6 +239,7 @@ export function InkOverlay({
             data-block-id={blockId}
             data-block-col={col}
             data-block-row={row}
+            data-testid={`ink-canvas-${blockId}`}
             key={blockId}
             ref={(node) => {
               canvasRefs.current[blockId] = node;

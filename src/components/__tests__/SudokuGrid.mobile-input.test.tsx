@@ -29,13 +29,13 @@ describe("Sudoku UI mobile sheet input", () => {
   });
 
   it("keeps sheet slot reserved when number pad is hidden in ink mode", () => {
-    const { container } = renderApp({ isSheetInput: true });
+    renderApp({ isSheetInput: true });
 
     expect(screen.getByRole("region", { name: "数字入力" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
 
-    expect(container.querySelector(".solve-input-sheet-slot")).toBeInTheDocument();
-    expect(container.querySelector(".solve-number-pad-placeholder")).toBeInTheDocument();
+    expect(screen.getByTestId("solve-input-sheet-slot")).toBeInTheDocument();
+    expect(screen.getByTestId("solve-number-pad-placeholder")).toBeInTheDocument();
   });
 
   it("disables number keys and backspace while review mode is enabled", () => {
@@ -86,7 +86,7 @@ describe("Sudoku UI mobile sheet input", () => {
   });
 
   it("deselects a sheet cell when tapping outside grid except number pad", () => {
-    const { container } = renderApp({ isSheetInput: true });
+    renderApp({ isSheetInput: true });
 
     const editableCell = screen.getByLabelText(cellLabel(1, 3));
     const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
@@ -94,9 +94,7 @@ describe("Sudoku UI mobile sheet input", () => {
     fireEvent.click(editableCell);
     expect(backspaceButton).not.toBeDisabled();
 
-    const solvePage = container.querySelector(".solve-page");
-    expect(solvePage).not.toBeNull();
-    fireEvent.click(solvePage as HTMLElement);
+    fireEvent.click(screen.getByTestId("solve-page"));
     expect(backspaceButton).toBeDisabled();
 
     fireEvent.click(editableCell);

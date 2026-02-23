@@ -73,7 +73,12 @@ export function SolvePage(): JSX.Element {
   }, [inputMode, setIsGridEditing]);
 
   return (
-    <div className="solve-page" ref={solvePageRef} style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}>
+    <div
+      className="solve-page"
+      data-testid="solve-page"
+      ref={solvePageRef}
+      style={{ "--keyboard-inset": `${keyboardInset}px` } as CSSProperties}
+    >
       {inputMode === "sheet" && (
         <p aria-atomic="true" aria-live="polite" className="visually-hidden" key={sheetA11yRevision}>
           {sheetA11yMessage}

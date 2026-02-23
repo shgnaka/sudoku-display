@@ -5,7 +5,9 @@ import { createEmptyInkState } from "../../lib/inkModel";
 import type { BlockId, Stroke } from "../../types/ink";
 
 function mockCanvasRects(root: HTMLElement): void {
-  const canvases = root.querySelectorAll("canvas");
+  const canvases = Array.from(root.children).filter(
+    (element): element is HTMLCanvasElement => element instanceof HTMLCanvasElement
+  );
   canvases.forEach((canvas) => {
     Object.defineProperty(canvas, "getBoundingClientRect", {
       configurable: true,
@@ -64,7 +66,7 @@ describe("InkOverlay", () => {
 
     const root = getByTestId("ink-overlay");
     mockCanvasRects(root);
-    const canvas = root.querySelector("canvas[data-block-id='0-0']") as HTMLCanvasElement;
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
 
     firePointer(canvas, "pointerdown", { pointerId: 10, pointerType: "pen", clientX: 10, clientY: 10 });
     firePointer(canvas, "pointermove", { pointerId: 10, pointerType: "pen", clientX: 20, clientY: 20 });
@@ -90,7 +92,7 @@ describe("InkOverlay", () => {
 
     const root = getByTestId("ink-overlay");
     mockCanvasRects(root);
-    const canvas = root.querySelector("canvas[data-block-id='0-0']") as HTMLCanvasElement;
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
 
     firePointer(canvas, "pointerdown", {
       pointerId: 12,
@@ -125,7 +127,7 @@ describe("InkOverlay", () => {
 
     const root = getByTestId("ink-overlay");
     mockCanvasRects(root);
-    const canvas = root.querySelector("canvas[data-block-id='0-0']") as HTMLCanvasElement;
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
 
     firePointer(canvas, "pointerdown", {
       pointerId: 22,

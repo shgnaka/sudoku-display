@@ -20,7 +20,7 @@ export function SolveInputSection({
   }
 
   return (
-    <section className="solve-input-sheet-slot">
+    <section className="solve-input-sheet-slot" data-testid="solve-input-sheet-slot">
       {!isInkMode ? (
         <SolveNumberPad
           backspaceDisabled={inputDisabled}
@@ -29,7 +29,7 @@ export function SolveInputSection({
           onNumber={onNumber}
         />
       ) : (
-        <div aria-hidden="true" className="solve-number-pad-placeholder" />
+        <div aria-hidden="true" className="solve-number-pad-placeholder" data-testid="solve-number-pad-placeholder" />
       )}
     </section>
   );
