@@ -13,6 +13,7 @@
     "lint:typography": "node tools/lint-typography-tokens.mjs",
     "lint:spacing": "node tools/lint-spacing-tokens.mjs",
     "lint:styles": "npm run lint:breakpoints && npm run lint:typography && npm run lint:spacing",
+    "test:critical": "vitest run src/lib/__tests__/sudokuParser.test.ts src/lib/__tests__/gameStorage.test.ts src/lib/__tests__/inkStorage.test.ts src/state/__tests__/SudokuAppStateProvider.test.tsx",
     "test": "vitest run",
     "test:watch": "vitest"
   },

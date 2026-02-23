@@ -39,10 +39,11 @@ describe("inkStorage", () => {
     expect(loadInkState()).toEqual(createEmptyInkState());
   });
 
-  it("drops strokes with invalid points", () => {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
+  it.each([
+    {
+      name: "drops strokes with invalid points",
+      blockId: "0-0",
+      payload: {
         "0-0": [
           {
             points: [{ x: "0.1", y: 0.2 }],
@@ -57,16 +58,12 @@ describe("inkStorage", () => {
             ts: 124
           }
         ]
-      })
-    );
-
-    expect(loadInkState()["0-0"]).toEqual([]);
-  });
-
-  it("drops strokes with invalid stroke fields", () => {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
+      }
+    },
+    {
+      name: "drops strokes with invalid stroke fields",
+      blockId: "1-1",
+      payload: {
         "1-1": [
           {
             points: "invalid",
@@ -93,10 +90,12 @@ describe("inkStorage", () => {
             ts: "x"
           }
         ]
-      })
-    );
+      }
+    }
+  ])("$name", ({ blockId, payload }) => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 
-    expect(loadInkState()["1-1"]).toEqual([]);
+    expect(loadInkState()[blockId]).toEqual([]);
   });
 
   it("keeps only valid strokes when mixed data is stored", () => {

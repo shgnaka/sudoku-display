@@ -28,13 +28,14 @@ describe("parseSudokuText", () => {
     expect(result.board[0][2]).toEqual({ value: null, origin: "empty" });
   });
 
-  it("fails when row count is not 9", () => {
-    const result = parseSudokuText("1 2 3");
-    expect(result.ok).toBe(false);
-  });
-
-  it("fails when a line has non-9 cell count", () => {
-    const malformed = `1 2 3 4 5 6 7 8
+  it.each([
+    {
+      name: "fails when row count is not 9",
+      input: "1 2 3"
+    },
+    {
+      name: "fails when a line has non-9 cell count",
+      input: `1 2 3 4 5 6 7 8
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
@@ -42,14 +43,11 @@ describe("parseSudokuText", () => {
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
-1 2 3 4 5 6 7 8 9`;
-    const result = parseSudokuText(malformed);
-
-    expect(result.ok).toBe(false);
-  });
-
-  it("fails when digit 0 exists", () => {
-    const malformed = `0 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9`
+    },
+    {
+      name: "fails when digit 0 exists",
+      input: `0 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
@@ -57,14 +55,11 @@ describe("parseSudokuText", () => {
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
-1 2 3 4 5 6 7 8 9`;
-    const result = parseSudokuText(malformed);
-
-    expect(result.ok).toBe(false);
-  });
-
-  it("fails when invalid characters exist", () => {
-    const malformed = `1 2 3 4 5 6 7 8 a
+1 2 3 4 5 6 7 8 9`
+    },
+    {
+      name: "fails when invalid characters exist",
+      input: `1 2 3 4 5 6 7 8 a
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
@@ -72,9 +67,10 @@ describe("parseSudokuText", () => {
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
-1 2 3 4 5 6 7 8 9`;
-    const result = parseSudokuText(malformed);
-
+1 2 3 4 5 6 7 8 9`
+    }
+  ])("$name", ({ input }) => {
+    const result = parseSudokuText(input);
     expect(result.ok).toBe(false);
   });
 });

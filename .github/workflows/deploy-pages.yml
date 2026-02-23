@@ -42,6 +42,9 @@ jobs:
       - name: Lint styles
         run: npm run lint:styles
 
+      - name: Run critical TypeScript tests
+        run: npm run test:critical
+
       - name: Run TypeScript tests
         run: npm run test
 

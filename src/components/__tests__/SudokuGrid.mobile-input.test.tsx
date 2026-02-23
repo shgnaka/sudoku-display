@@ -1,0 +1,178 @@
+import { fireEvent, screen, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
+import { cellLabel, renderApp, resetAppTestState } from "../../test-utils/renderApp";
+
+describe("Sudoku UI mobile sheet input", () => {
+  beforeEach(() => {
+    resetAppTestState();
+  });
+
+  it("uses number pad input on sheet viewport", () => {
+    renderApp({ isSheetInput: true });
+
+    expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
+    fireEvent.click(editableCell);
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+
+    expect(editableCell).toHaveTextContent("4");
+  });
+
+  it("keeps number pad in a single row with 1-9 and backspace", () => {
+    renderApp({ isSheetInput: true });
+
+    const pad = screen.getByRole("region", { name: "数字入力" });
+    const keys = within(pad).getAllByRole("button");
+    expect(keys).toHaveLength(10);
+    expect(within(pad).getByRole("button", { name: "数字を消去" })).toBeInTheDocument();
+  });
+
+  it("keeps sheet slot reserved when number pad is hidden in ink mode", () => {
+    const { container } = renderApp({ isSheetInput: true });
+
+    expect(screen.getByRole("region", { name: "数字入力" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+
+    expect(container.querySelector(".solve-input-sheet-slot")).toBeInTheDocument();
+    expect(container.querySelector(".solve-number-pad-placeholder")).toBeInTheDocument();
+  });
+
+  it("disables number keys and backspace while review mode is enabled", () => {
+    renderApp({ isSheetInput: true });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(screen.getByLabelText(cellLabel(1, 3))).toHaveTextContent("4");
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+
+    const numberButton = screen.getByRole("button", { name: "数字 8" });
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+    expect(numberButton).toBeDisabled();
+    expect(backspaceButton).toBeDisabled();
+
+    fireEvent.click(numberButton);
+    fireEvent.click(backspaceButton);
+    expect(screen.getByLabelText(cellLabel(1, 3))).toHaveTextContent("4");
+  });
+
+  it("supports backspace on selected sheet cell and disables it without selection", () => {
+    renderApp({ isSheetInput: true });
+
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+    expect(backspaceButton).toBeDisabled();
+
+    fireEvent.click(backspaceButton);
+
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
+    fireEvent.click(editableCell);
+    expect(backspaceButton).not.toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(editableCell).toHaveTextContent("4");
+
+    fireEvent.click(backspaceButton);
+    expect(editableCell).toHaveTextContent("");
+  });
+
+  it("deselects a sheet cell when tapping the same cell again", () => {
+    renderApp({ isSheetInput: true });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+  });
+
+  it("deselects a sheet cell when tapping outside grid except number pad", () => {
+    const { container } = renderApp({ isSheetInput: true });
+
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+
+    fireEvent.click(editableCell);
+    expect(backspaceButton).not.toBeDisabled();
+
+    const solvePage = container.querySelector(".solve-page");
+    expect(solvePage).not.toBeNull();
+    fireEvent.click(solvePage as HTMLElement);
+    expect(backspaceButton).toBeDisabled();
+
+    fireEvent.click(editableCell);
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(backspaceButton).not.toBeDisabled();
+  });
+
+  it("deselects current sheet selection when tapping a given cell", () => {
+    renderApp({ isSheetInput: true });
+
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(backspaceButton).not.toBeDisabled();
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 1)));
+    expect(backspaceButton).toBeDisabled();
+  });
+
+  it("announces deselection when tapping a given cell in sheet mode", () => {
+    renderApp({ isSheetInput: true });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 1)));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+  });
+
+  it("clears selection when review mode or ink mode gets enabled", () => {
+    renderApp({ isSheetInput: true });
+
+    const editableCell = screen.getByLabelText(cellLabel(1, 3));
+    const backspaceButton = screen.getByRole("button", { name: "数字を消去" });
+
+    fireEvent.click(editableCell);
+    expect(backspaceButton).not.toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+    expect(backspaceButton).toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: ON）" }));
+    fireEvent.click(editableCell);
+    expect(backspaceButton).not.toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+    expect(screen.queryByRole("button", { name: "数字を消去" })).not.toBeInTheDocument();
+  });
+
+  it("announces selection and input updates through aria-live in sheet mode", () => {
+    renderApp({ isSheetInput: true });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "数字 4" }));
+    expect(screen.getByText("1行3列を 4 にしました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "数字を消去" }));
+    expect(screen.getByText("1行3列を空にしました。")).toBeInTheDocument();
+  });
+
+  it("announces deselection when review mode or ink mode gets enabled", () => {
+    renderApp({ isSheetInput: true });
+
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: OFF）" }));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "確認モード切替（現在: ON）" }));
+    fireEvent.click(screen.getByLabelText(cellLabel(1, 3)));
+    expect(screen.getByText("1行3列を選択しました。")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+    expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+  });
+});
