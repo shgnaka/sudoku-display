@@ -55,6 +55,15 @@
   --solve-backspace-bg: #e9f2ff;
   --solve-backspace-border: #88a4cc;
   --solve-backspace-fg: #1e426f;
+  --solve-number-pad-bg: #f3f7ff;
+  --solve-number-pad-border: #b5c5e4;
+  --solve-number-pad-focus-border: #4b7bd1;
+  --solve-number-pad-key-bg: #ffffff;
+  --solve-number-pad-key-border: #d1d8ea;
+  --solve-number-pad-key-muted: #8290ad;
+  --solve-number-pad-key-focus-bg: #4b7bd1;
+  --solve-number-pad-key-focus-fg: #ffffff;
+  --solve-number-pad-key-shadow: 0 8px 18px rgba(75, 123, 209, 0.18);
 
   --radius-sm: 8px;
   --radius-md: 10px;

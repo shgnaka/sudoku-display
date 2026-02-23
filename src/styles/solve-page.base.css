@@ -158,6 +158,16 @@ button.sudoku-cell[aria-disabled="true"] {
 .solve-number-pad {
   display: flex;
   align-items: stretch;
+  background: var(--solve-number-pad-bg);
+  border: var(--border-width-base) solid var(--solve-number-pad-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xs);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.solve-number-pad:focus-within {
+  border-color: var(--solve-number-pad-focus-border);
+  box-shadow: var(--solve-number-pad-key-shadow);
 }
 
 .solve-number-pad-grid {
@@ -165,6 +175,36 @@ button.sudoku-cell[aria-disabled="true"] {
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 0.32rem;
   width: 100%;
+}
+
+.solve-number-pad-grid .btn--pad {
+  border-color: var(--solve-number-pad-key-border);
+  background: var(--solve-number-pad-key-bg);
+  color: var(--text-strong);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: none;
+}
+
+.solve-number-pad-grid .btn--pad:hover:not(:disabled) {
+  background: var(--surface-soft);
+}
+
+.solve-number-pad-grid .btn--pad:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.solve-number-pad-grid .btn--pad:focus-visible {
+  border-color: var(--solve-number-pad-key-focus-bg);
+  background: var(--solve-number-pad-key-focus-bg);
+  color: var(--solve-number-pad-key-focus-fg);
+  box-shadow: var(--solve-number-pad-key-shadow);
+}
+
+.solve-number-pad-grid .btn--pad:disabled {
+  color: var(--solve-number-pad-key-muted);
+  opacity: 0.8;
+  cursor: not-allowed;
 }
 
 .ink-overlay {
