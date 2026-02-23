@@ -9,7 +9,7 @@ async function loadSubject(options: LoadSubjectOptions = {}) {
   vi.resetModules();
   const generatedDifficulty = options.generatedDifficulty ?? "hard";
   const initModule = vi.fn(async () => undefined);
-  const generateSudokuRaw = vi.fn((difficulty: string, seed: bigint) => ({
+  const generateSudokuRaw = vi.fn((_difficulty: string, seed: bigint) => ({
     clues: 31,
     difficulty: generatedDifficulty,
     seed,
@@ -20,14 +20,10 @@ async function loadSubject(options: LoadSubjectOptions = {}) {
   vi.doMock("../../constants/wasm", () => ({
     SUDOKU_GENERATOR_MODULE_PATH: "virtual:mock-sudoku-generator"
   }));
-  vi.doMock(
-    "virtual:mock-sudoku-generator",
-    () => ({
-      default: initModule,
-      generate_sudoku: generateSudokuRaw
-    }),
-    { virtual: true }
-  );
+  vi.doMock("virtual:mock-sudoku-generator", () => ({
+    default: initModule,
+    generate_sudoku: generateSudokuRaw
+  }));
 
   const subject = await import("../sudokuGenerator");
   return { ...subject, initModule, generateSudokuRaw };

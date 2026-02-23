@@ -135,7 +135,7 @@ describe("gameStorage", () => {
       name: "rejects non-object cell",
       rawStorage: (() => {
         const board = createMalformedBoardFixture();
-        board[0][0] = 1;
+        (board as unknown as unknown[][])[0][0] = 1;
         return JSON.stringify({ rawInput: "x", board });
       })()
     }

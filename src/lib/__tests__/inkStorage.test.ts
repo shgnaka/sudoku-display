@@ -3,6 +3,7 @@ import { STORAGE_KEYS } from "../../constants/storageKeys";
 import { createEmptyInkState } from "../inkModel";
 import { clearInkState, loadInkState, saveInkState } from "../inkStorage";
 import { clearStorage, seedStorage } from "../../test-utils/browserMocks";
+import type { BlockId } from "../../types/ink";
 
 const STORAGE_KEY = STORAGE_KEYS.ink;
 
@@ -63,7 +64,11 @@ describe("inkStorage", () => {
     expect(loadInkState()).toEqual(createEmptyInkState());
   });
 
-  it.each([
+  it.each<{
+    name: string;
+    blockId: BlockId;
+    payload: unknown;
+  }>([
     {
       name: "drops non-object point",
       blockId: "0-0",
