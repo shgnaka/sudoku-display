@@ -13,12 +13,12 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       all: true,
-      include: [
-        "src/lib/sudokuParser.ts",
-        "src/lib/gameStorage.ts",
-        "src/lib/inkStorage.ts",
-        "src/state/**/*.ts",
-        "src/state/**/*.tsx"
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/main.tsx",
+        "src/vite-env.d.ts"
       ],
       thresholds: {
         lines: 95,
