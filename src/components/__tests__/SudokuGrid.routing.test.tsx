@@ -38,6 +38,18 @@ describe("Sudoku UI routing", () => {
     expect(window.location.hash).toBe("#/manage");
   });
 
+  it("renders help page on help route", () => {
+    renderApp({ route: "#/help" });
+
+    expect(screen.getByRole("heading", { name: "使い方" })).toBeInTheDocument();
+  });
+
+  it("renders storage page on storage route", () => {
+    renderApp({ route: "#/storage" });
+
+    expect(screen.getByRole("heading", { name: "保存データ管理" })).toBeInTheDocument();
+  });
+
   it("shows only solve and manage in bottom tab bar", () => {
     renderApp({ isMobile: true, isSheetInput: true });
 
@@ -85,6 +97,15 @@ describe("Sudoku UI routing", () => {
     expect(screen.queryByRole("button", { name: "閉じる" })).not.toBeInTheDocument();
   });
 
+  it("closes drawer when menu toggle is pressed again", () => {
+    renderApp();
+
+    fireEvent.click(screen.getByRole("button", { name: "メニューを開く" }));
+    fireEvent.click(screen.getByRole("button", { name: "メニューを閉じる" }));
+
+    expect(screen.getByRole("button", { name: "メニューを開く" })).toBeInTheDocument();
+  });
+
   it("closes drawer on Escape key press", () => {
     renderApp();
 
@@ -106,6 +127,15 @@ describe("Sudoku UI routing", () => {
 
     expect(scrollSpy).toHaveBeenCalledWith(0, 0);
     scrollSpy.mockRestore();
+  });
+
+  it("does not rewrite hash when navigating to current route", () => {
+    renderApp({ route: "#/solve" });
+
+    const initialHash = window.location.hash;
+    clickNav("解く");
+
+    expect(window.location.hash).toBe(initialHash);
   });
 
   it("navigates from not found page back to solve", async () => {
