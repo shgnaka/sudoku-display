@@ -8,6 +8,21 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
-    globals: true
+    globals: true,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: [
+        "src/lib/sudokuParser.ts",
+        "src/lib/gameStorage.ts",
+        "src/lib/inkStorage.ts",
+        "src/state/**/*.ts",
+        "src/state/**/*.tsx"
+      ],
+      thresholds: {
+        lines: 95,
+        branches: 90
+      }
+    }
   }
 });

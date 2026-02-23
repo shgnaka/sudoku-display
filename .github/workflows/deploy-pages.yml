@@ -45,6 +45,9 @@ jobs:
       - name: Run critical TypeScript tests
         run: npm run test:critical
 
+      - name: Run TypeScript coverage
+        run: npm run test:coverage
+
       - name: Run TypeScript tests
         run: npm run test
 
