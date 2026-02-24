@@ -56,6 +56,12 @@ npm run build
 - 初期値セルは編集不可
 - 入力形式が不正な場合はエラー表示し、最後の有効盤面を維持（詳細は「入力テキスト形式」参照）
 
+## タップハイライト設定
+
+- モバイル向けの UA タップハイライト色は `src/styles/tokens.css` の `--tap-highlight-color` で制御します。
+- 既定値は `--tap-highlight-color-soft`（薄い青）です。
+- 実行時に `document.documentElement.dataset.tapHighlight = "off"` を設定すると透明化、`"strong"` で強調表示に切り替わります。
+
 ## 既定パズルの差し替え運用
 
 - 既定問題は `public/puzzles/default.txt` から読み込みます。差し替える場合はこのファイルを更新してください。
