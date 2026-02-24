@@ -38,8 +38,8 @@
   --line-active: #7ca6e3;
   --line-danger: #db9c9c;
   --line-danger-soft: #f3bbbb;
-  --tap-feedback-overlay-soft: rgba(82, 161, 255, 0.16);
-  --tap-feedback-overlay-strong: rgba(82, 161, 255, 0.28);
+  --tap-feedback-overlay-soft: rgba(47, 121, 226, 0.28);
+  --tap-feedback-overlay-strong: rgba(31, 102, 207, 0.42);
   --tap-feedback-overlay: var(--tap-feedback-overlay-soft);
   --tap-feedback-inset-width: 2px;
 

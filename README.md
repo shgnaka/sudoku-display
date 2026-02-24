@@ -59,7 +59,7 @@ npm run build
 ## タップハイライト設定
 
 - モバイルのタップフィードバックは UA 既定表示を透明化し、アプリ側の inset ハイライトで描画します。
-- 強度は `src/styles/tokens.css` の `--tap-feedback-overlay` で制御し、既定値は `--tap-feedback-overlay-soft`（薄い青）です。
+- 強度は `src/styles/tokens.css` の `--tap-feedback-overlay` で制御し、既定値は `--tap-feedback-overlay-soft`（見やすさ重視の青）です。
 - 実行時に `document.documentElement.dataset.tapHighlight = "off"` で無効化、`"strong"` で強調表示へ切り替わります。
 
 ## 既定パズルの差し替え運用
