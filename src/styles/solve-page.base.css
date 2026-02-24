@@ -165,11 +165,6 @@ button.sudoku-cell[aria-disabled="true"] {
   transition: border-color 0.12s ease;
 }
 
-.solve-number-pad:focus-within {
-  border-color: var(--solve-number-pad-focus-border);
-  box-shadow: var(--solve-number-pad-shadow);
-}
-
 .solve-number-pad-grid {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
@@ -193,13 +188,6 @@ button.sudoku-cell[aria-disabled="true"] {
   transform: none;
 }
 
-.solve-number-pad-grid .btn--pad:focus-visible {
-  border-color: var(--solve-number-pad-key-focus-bg);
-  background: var(--solve-number-pad-key-focus-bg);
-  color: var(--solve-number-pad-key-focus-fg);
-  box-shadow: 0 0 0 2px var(--solve-number-pad-key-focus-bg);
-}
-
 .solve-number-pad-grid .btn--pad:disabled {
   color: var(--solve-number-pad-key-muted);
   opacity: 0.8;
@@ -212,16 +200,8 @@ button.sudoku-cell[aria-disabled="true"] {
     transition: none;
   }
 
-  .solve-number-pad:focus-within {
-    box-shadow: none;
-  }
-
   .solve-number-pad-grid .btn--pad:active:not(:disabled) {
     transform: none;
-  }
-
-  .solve-number-pad-grid .btn--pad:focus-visible {
-    box-shadow: 0 0 0 2px var(--solve-number-pad-key-focus-bg);
   }
 }
 
