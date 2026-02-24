@@ -160,14 +160,14 @@ button.sudoku-cell[aria-disabled="true"] {
   align-items: stretch;
   background: var(--solve-number-pad-bg);
   border: var(--border-width-base) solid var(--solve-number-pad-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xs);
+  border-radius: var(--solve-number-pad-radius);
+  padding: var(--solve-number-pad-padding);
   transition: border-color 0.12s ease;
 }
 
 .solve-number-pad:focus-within {
   border-color: var(--solve-number-pad-focus-border);
-  box-shadow: 0 3px 8px rgba(75, 123, 209, 0.12);
+  box-shadow: var(--solve-number-pad-shadow);
 }
 
 .solve-number-pad-grid {

@@ -58,6 +58,9 @@
   --solve-number-pad-bg: #f3f7ff;
   --solve-number-pad-border: #b5c5e4;
   --solve-number-pad-focus-border: #4b7bd1;
+  --solve-number-pad-radius: var(--radius-lg);
+  --solve-number-pad-padding: var(--space-xs);
+  --solve-number-pad-shadow: 0 3px 8px rgba(75, 123, 209, 0.12);
   --solve-number-pad-key-bg: #ffffff;
   --solve-number-pad-key-border: #d1d8ea;
   --solve-number-pad-key-muted: #8290ad;
