@@ -38,9 +38,10 @@
   --line-active: #7ca6e3;
   --line-danger: #db9c9c;
   --line-danger-soft: #f3bbbb;
-  --tap-highlight-color-soft: rgba(82, 161, 255, 0.16);
-  --tap-highlight-color-strong: rgba(82, 161, 255, 0.28);
-  --tap-highlight-color: var(--tap-highlight-color-soft);
+  --tap-feedback-overlay-soft: rgba(82, 161, 255, 0.16);
+  --tap-feedback-overlay-strong: rgba(82, 161, 255, 0.28);
+  --tap-feedback-overlay: var(--tap-feedback-overlay-soft);
+  --tap-feedback-inset-width: 2px;
 
   --solve-cell-border: #c3d0e6;
   --solve-ink-active: #6c94c8;
@@ -112,9 +113,9 @@
 }
 
 :root[data-tap-highlight="off"] {
-  --tap-highlight-color: transparent;
+  --tap-feedback-overlay: transparent;
 }
 
 :root[data-tap-highlight="strong"] {
-  --tap-highlight-color: var(--tap-highlight-color-strong);
+  --tap-feedback-overlay: var(--tap-feedback-overlay-strong);
 }
