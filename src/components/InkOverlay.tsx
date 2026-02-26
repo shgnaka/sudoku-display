@@ -18,6 +18,22 @@ interface DrawingSession {
   points: InkPoint[];
 }
 
+function isTouchPrimaryEnvironment(): boolean {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+
+  return navigator.maxTouchPoints > 0;
+}
+
+function isDrawingPointer(pointerType: string, touchPrimaryEnvironment: boolean): boolean {
+  if (pointerType === "pen") {
+    return true;
+  }
+
+  return pointerType === "mouse" && !touchPrimaryEnvironment;
+}
+
 function clampUnit(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
@@ -83,6 +99,7 @@ export function InkOverlay({
 }: InkOverlayProps): JSX.Element {
   const canvasRefs = useRef<Record<BlockId, HTMLCanvasElement | null>>(createCanvasRefMap());
   const [drawingSession, setDrawingSession] = useState<DrawingSession | null>(null);
+  const touchPrimaryEnvironment = useMemo(() => isTouchPrimaryEnvironment(), []);
 
   const redraw = useMemo(
     () => (blockId: BlockId) => {
@@ -147,7 +164,7 @@ export function InkOverlay({
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
     const pointerType = getPointerType(event);
-    if (!isInkMode || (pointerType !== "pen" && pointerType !== "mouse")) {
+    if (!isInkMode || !isDrawingPointer(pointerType, touchPrimaryEnvironment)) {
       return;
     }
 
@@ -205,6 +222,17 @@ export function InkOverlay({
   const commitDrawing = (event: ReactPointerEvent<HTMLDivElement>): void => {
     if (!drawingSession || drawingSession.pointerId !== event.pointerId) {
       return;
+    }
+
+    const canvas = canvasRefs.current[drawingSession.blockId];
+    if (canvas) {
+      try {
+        if (canvas.hasPointerCapture(event.pointerId)) {
+          canvas.releasePointerCapture(event.pointerId);
+        }
+      } catch {
+        // Some browsers may reject pointer capture release in edge cases.
+      }
     }
 
     event.preventDefault();
