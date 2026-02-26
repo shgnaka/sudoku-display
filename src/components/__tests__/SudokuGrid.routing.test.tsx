@@ -72,6 +72,26 @@ describe("Sudoku UI routing", () => {
     expect(screen.queryByText("マスの色分けを表示")).not.toBeInTheDocument();
   });
 
+  it("does not apply solve-no-scroll on iPad-like devices", () => {
+    Object.defineProperty(window.navigator, "userAgent", {
+      configurable: true,
+      value: "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X)"
+    });
+    Object.defineProperty(window.navigator, "platform", {
+      configurable: true,
+      value: "iPad"
+    });
+    Object.defineProperty(window.navigator, "maxTouchPoints", {
+      configurable: true,
+      value: 5
+    });
+
+    renderApp({ isMobile: true });
+
+    expect(document.querySelector(".app-root.solve-no-scroll")).toBeNull();
+    expect(document.body.classList.contains("solve-no-scroll-body")).toBe(false);
+  });
+
   it("limits mobile drawer items to storage and help", () => {
     renderApp({ isMobile: true, isSheetInput: true });
 

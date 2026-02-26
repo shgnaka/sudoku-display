@@ -21,6 +21,12 @@ export interface MockVisualViewport {
 
 const originalMatchMedia = typeof window !== "undefined" ? window.matchMedia : undefined;
 const originalVisualViewport = typeof window !== "undefined" ? window.visualViewport : undefined;
+const originalUserAgentDescriptor =
+  typeof navigator !== "undefined" ? Object.getOwnPropertyDescriptor(window.navigator, "userAgent") : undefined;
+const originalPlatformDescriptor =
+  typeof navigator !== "undefined" ? Object.getOwnPropertyDescriptor(window.navigator, "platform") : undefined;
+const originalMaxTouchPointsDescriptor =
+  typeof navigator !== "undefined" ? Object.getOwnPropertyDescriptor(window.navigator, "maxTouchPoints") : undefined;
 
 export function installMockMatchMedia(
   resolver: (query: string) => MatchMediaConfig = () => ({ matches: false })
@@ -125,6 +131,18 @@ export function resetBrowserEnv(): void {
     configurable: true,
     value: originalVisualViewport
   });
+
+  if (originalUserAgentDescriptor) {
+    Object.defineProperty(window.navigator, "userAgent", originalUserAgentDescriptor);
+  }
+
+  if (originalPlatformDescriptor) {
+    Object.defineProperty(window.navigator, "platform", originalPlatformDescriptor);
+  }
+
+  if (originalMaxTouchPointsDescriptor) {
+    Object.defineProperty(window.navigator, "maxTouchPoints", originalMaxTouchPointsDescriptor);
+  }
 
   setWindowScrollY(0);
   setHashRoute("#/solve");

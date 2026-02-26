@@ -6,6 +6,7 @@ import { SideDrawer } from "./components/navigation/SideDrawer";
 import { APP_ROUTES, DEFAULT_ROUTE_KEY, MOBILE_DRAWER_ROUTES } from "./constants/routes";
 import { getRouteHash, normalizeRouteHash } from "./lib/navigation";
 import { useIsMobileViewport } from "./lib/useIsMobileViewport";
+import { useShouldUseSolveNoScroll } from "./lib/useShouldUseSolveNoScroll";
 import { HelpPage } from "./pages/HelpPage";
 import { ManagePage } from "./pages/ManagePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -28,7 +29,7 @@ function AppBody(): JSX.Element {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const isMobile = useIsMobileViewport();
   const isSolveRoute = currentRoute === "solve";
-  const shouldUseSolveNoScroll = isSolveRoute && isMobile;
+  const shouldUseSolveNoScroll = useShouldUseSolveNoScroll(isSolveRoute);
 
   useEffect(() => {
     if (typeof window === "undefined") {
