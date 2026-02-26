@@ -215,7 +215,6 @@ button.sudoku-cell[aria-disabled="true"] {
 }
 
 .ink-overlay.ink-enabled {
-  touch-action: none;
 }
 
 .ink-canvas {
@@ -227,6 +226,7 @@ button.sudoku-cell[aria-disabled="true"] {
 
 .ink-overlay.ink-enabled .ink-canvas {
   pointer-events: auto;
+  touch-action: none;
 }
 
 .ink-canvas.active {

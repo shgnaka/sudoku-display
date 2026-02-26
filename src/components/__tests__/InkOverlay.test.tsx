@@ -1,5 +1,5 @@
 import { createEvent, fireEvent, render } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InkOverlay } from "../InkOverlay";
 import { createEmptyInkState } from "../../lib/inkModel";
 import type { BlockId, Stroke } from "../../types/ink";
@@ -52,6 +52,28 @@ function firePointer(
 }
 
 describe("InkOverlay", () => {
+  const originalMaxTouchPoints = Object.getOwnPropertyDescriptor(window.navigator, "maxTouchPoints");
+
+  function setMaxTouchPoints(value: number): void {
+    Object.defineProperty(window.navigator, "maxTouchPoints", {
+      configurable: true,
+      value
+    });
+  }
+
+  beforeEach(() => {
+    setMaxTouchPoints(0);
+  });
+
+  afterEach(() => {
+    if (originalMaxTouchPoints) {
+      Object.defineProperty(window.navigator, "maxTouchPoints", originalMaxTouchPoints);
+      return;
+    }
+
+    Reflect.deleteProperty(window.navigator, "maxTouchPoints");
+  });
+
   it("commits stroke for pen when ink mode is enabled", () => {
     const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
     const onActiveBlockChange = vi.fn<(blockId: BlockId) => void>();
@@ -111,6 +133,61 @@ describe("InkOverlay", () => {
     firePointer(canvas, "pointerup", { pointerId: 12, pointerType: "touch", clientX: 20, clientY: 20 });
 
     expect(onCommitStroke).not.toHaveBeenCalled();
+  });
+
+  it("does not draw for mouse input on touch-capable devices", () => {
+    setMaxTouchPoints(5);
+
+    const onCommitStroke = vi.fn();
+    const onActiveBlockChange = vi.fn();
+
+    const { getByTestId } = render(
+      <InkOverlay
+        activeBlockId="0-0"
+        inkState={createEmptyInkState()}
+        isInkMode
+        onActiveBlockChange={onActiveBlockChange}
+        onCommitStroke={onCommitStroke}
+      />
+    );
+
+    const root = getByTestId("ink-overlay");
+    mockCanvasRects(root);
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
+
+    firePointer(canvas, "pointerdown", { pointerId: 13, pointerType: "mouse", clientX: 10, clientY: 10 });
+    firePointer(canvas, "pointerup", { pointerId: 13, pointerType: "mouse", clientX: 20, clientY: 20 });
+
+    expect(onActiveBlockChange).not.toHaveBeenCalled();
+    expect(onCommitStroke).not.toHaveBeenCalled();
+  });
+
+  it("commits stroke for pen on touch-capable devices", () => {
+    setMaxTouchPoints(5);
+
+    const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
+    const onActiveBlockChange = vi.fn<(blockId: BlockId) => void>();
+
+    const { getByTestId } = render(
+      <InkOverlay
+        activeBlockId="0-0"
+        inkState={createEmptyInkState()}
+        isInkMode
+        onActiveBlockChange={onActiveBlockChange}
+        onCommitStroke={onCommitStroke}
+      />
+    );
+
+    const root = getByTestId("ink-overlay");
+    mockCanvasRects(root);
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
+
+    firePointer(canvas, "pointerdown", { pointerId: 14, pointerType: "pen", clientX: 10, clientY: 10 });
+    firePointer(canvas, "pointermove", { pointerId: 14, pointerType: "pen", clientX: 20, clientY: 20 });
+    firePointer(canvas, "pointerup", { pointerId: 14, pointerType: "pen", clientX: 20, clientY: 20 });
+
+    expect(onActiveBlockChange).toHaveBeenCalledWith("0-0");
+    expect(onCommitStroke).toHaveBeenCalledTimes(1);
   });
 
   it("does not draw when ink mode is disabled", () => {
