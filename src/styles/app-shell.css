@@ -4,7 +4,10 @@
 
 body {
   margin: 0;
+  /* Viewport-unit fallback: prefer stable/dynamic units when available. */
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   background: radial-gradient(circle at top left, var(--app-bg-start), var(--app-bg-mid) 45%, var(--app-bg-end));
 }
 
@@ -19,6 +22,8 @@ body.review-scroll-lock {
   display: grid;
   gap: var(--space-xl);
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
 }
 
 .app-header {
@@ -113,6 +118,8 @@ body.review-scroll-lock {
   top: 0;
   right: 0;
   height: 100vh;
+  height: 100svh;
+  height: 100dvh;
   width: min(360px, 80vw);
   background: var(--surface-drawer);
   border-left: var(--border-width-base) solid var(--line-drawer);
