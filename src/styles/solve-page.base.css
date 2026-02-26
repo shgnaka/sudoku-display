@@ -63,6 +63,7 @@
 .board-wrap {
   position: relative;
   width: min(100%, 560px);
+  aspect-ratio: 1 / 1;
 }
 
 .board-wrap.review-locked {
@@ -84,6 +85,8 @@
   grid-template-columns: repeat(9, minmax(28px, 1fr));
   min-width: 0;
   width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
   border: var(--border-width-strong) solid var(--text-strong);
   background: var(--surface-default);
 }

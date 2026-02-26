@@ -100,6 +100,32 @@ describe("InkOverlay", () => {
     expect(onCommitStroke).toHaveBeenCalledTimes(1);
   });
 
+  it("ignores pointer moves outside drawing canvas bounds", () => {
+    const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
+
+    const { getByTestId } = render(
+      <InkOverlay
+        activeBlockId="0-0"
+        inkState={createEmptyInkState()}
+        isInkMode
+        onActiveBlockChange={vi.fn()}
+        onCommitStroke={onCommitStroke}
+      />
+    );
+
+    const root = getByTestId("ink-overlay");
+    mockCanvasRects(root);
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
+
+    firePointer(canvas, "pointerdown", { pointerId: 11, pointerType: "pen", clientX: 10, clientY: 10 });
+    firePointer(canvas, "pointermove", { pointerId: 11, pointerType: "pen", clientX: -20, clientY: -20 });
+    firePointer(canvas, "pointerup", { pointerId: 11, pointerType: "pen", clientX: -20, clientY: -20 });
+
+    expect(onCommitStroke).toHaveBeenCalledTimes(1);
+    const [, stroke] = onCommitStroke.mock.calls[0];
+    expect(stroke.points).toHaveLength(1);
+  });
+
   it("does not draw for touch input", () => {
     const onCommitStroke = vi.fn();
     const onActiveBlockChange = vi.fn();
