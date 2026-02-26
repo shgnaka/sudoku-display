@@ -64,6 +64,16 @@ function toLocalPoint(event: ReactPointerEvent<HTMLDivElement>, target: HTMLElem
   };
 }
 
+function isPointInsideElement(event: ReactPointerEvent<HTMLDivElement>, target: HTMLElement): boolean {
+  const rect = target.getBoundingClientRect();
+  return (
+    event.clientX >= rect.left &&
+    event.clientX <= rect.right &&
+    event.clientY >= rect.top &&
+    event.clientY <= rect.bottom
+  );
+}
+
 function drawStroke(ctx: CanvasRenderingContext2D, stroke: Stroke, width: number, height: number): void {
   if (stroke.points.length === 0) {
     return;
@@ -177,19 +187,21 @@ export function InkOverlay({
     onActiveBlockChange(blockId);
 
     const canvas = canvasRefs.current[blockId];
-    if (canvas) {
-      try {
-        canvas.setPointerCapture(event.pointerId);
-      } catch {
-        // Some browsers may reject pointer capture in edge cases.
-      }
+    if (!canvas) {
+      return;
+    }
+
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch {
+      // Some browsers may reject pointer capture in edge cases.
     }
 
     event.preventDefault();
     setDrawingSession({
       blockId,
       pointerId: event.pointerId,
-      points: [toLocalPoint(event, target)]
+      points: [toLocalPoint(event, canvas)]
     });
   };
 
@@ -198,15 +210,14 @@ export function InkOverlay({
       return;
     }
 
-    const target = event.target as HTMLElement;
-    const blockId = target.dataset.blockId as BlockId | undefined;
-    if (!blockId || blockId !== drawingSession.blockId) {
+    const canvas = canvasRefs.current[drawingSession.blockId];
+    if (!canvas || !isPointInsideElement(event, canvas)) {
       return;
     }
 
     event.preventDefault();
 
-    const point = toLocalPoint(event, target);
+    const point = toLocalPoint(event, canvas);
     setDrawingSession((current) => {
       if (!current || current.pointerId !== event.pointerId) {
         return current;
