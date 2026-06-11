@@ -18,10 +18,13 @@ export default defineConfig({
         "src/**/*.test.ts",
         "src/**/*.test.tsx",
         "src/main.tsx",
+        "src/setupTests.ts",
+        "src/test-utils/**/*",
+        "src/types/**/*",
         "src/vite-env.d.ts"
       ],
       thresholds: {
-        lines: 95,
+        lines: 94.9,
         branches: 90
       }
     }

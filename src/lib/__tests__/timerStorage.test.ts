@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { clearStorage } from "../../test-utils/browserMocks";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { clearStorage, seedStorage } from "../../test-utils/browserMocks";
 import {
   clearPuzzleTimers,
   loadPuzzleTimer,
@@ -45,5 +45,35 @@ describe("timerStorage", () => {
     savePuzzleTimer("first", { elapsedMs: 1_000, status: "completed", startedAt: null });
     clearPuzzleTimers();
     expect(loadPuzzleTimer("first")).toBeNull();
+  });
+
+  it("filters invalid timer records and skips invalid writes", () => {
+    seedStorage(
+      "sudoku-display:timers:v1",
+      JSON.stringify({
+        valid: { elapsedMs: 1_000, status: "paused", startedAt: null },
+        badElapsed: { elapsedMs: -1, status: "paused", startedAt: null },
+        badStatus: { elapsedMs: 1_000, status: "stopped", startedAt: null },
+        badShape: null
+      })
+    );
+
+    expect(loadPuzzleTimer("valid")).toEqual({
+      elapsedMs: 1_000,
+      status: "paused",
+      startedAt: null
+    });
+    expect(loadPuzzleTimer("badElapsed")).toBeNull();
+    expect(loadPuzzleTimer("badStatus")).toBeNull();
+    expect(loadPuzzleTimer("badShape")).toBeNull();
+
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+    savePuzzleTimer("", { elapsedMs: 1_000, status: "running", startedAt: 0 });
+    savePuzzleTimer("ignored", { elapsedMs: -1, status: "running", startedAt: 0 } as never);
+    removePuzzleTimer("");
+    removePuzzleTimer("missing");
+
+    expect(setItemSpy).not.toHaveBeenCalled();
+    setItemSpy.mockRestore();
   });
 });
