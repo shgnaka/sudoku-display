@@ -9,6 +9,9 @@ repository = "https://github.com/shgnaka/sudoku-display"
 [lib]
 crate-type = ["cdylib"]
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
 [dependencies]
 console_error_panic_hook = "0.1.7"
 js-sys = "0.3.77"

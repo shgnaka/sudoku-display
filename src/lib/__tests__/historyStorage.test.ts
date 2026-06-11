@@ -248,6 +248,164 @@ describe("historyStorage", () => {
     expect(loadSolvedPuzzleHistory()).toEqual([valid]);
   });
 
+  it("normalizes legacy entries and rejects invalid history shapes", () => {
+    recordSolvedPuzzle(
+      createRecord({
+        attemptId: "legacy-attempt",
+        completedAt: "2026-06-10T09:00:00.000Z"
+      })
+    );
+    const valid = loadSolvedPuzzleHistory()[0];
+    clearSolvedPuzzleHistory();
+
+    seedStorage(
+      STORAGE_KEY,
+      JSON.stringify([
+        {
+          id: valid.puzzleId,
+          puzzle: valid.puzzle,
+          completedAt: valid.completedAt,
+          completedBoard: valid.completedBoard,
+          elapsedMs: valid.elapsedMs
+        },
+        {
+          attemptId: "mismatch",
+          puzzle: valid.puzzle,
+          generatedAt: valid.completedAt,
+          completedAt: valid.completedAt,
+          completedBoard: valid.completedBoard,
+          elapsedMs: valid.elapsedMs,
+          puzzleId: "wrong"
+        },
+        {
+          attemptId: "missing-board",
+          puzzle: valid.puzzle,
+          generatedAt: valid.completedAt,
+          completedAt: valid.completedAt
+        },
+        {
+          attemptId: "bad-difficulty",
+          puzzle: valid.puzzle,
+          generatedAt: valid.completedAt,
+          difficulty: "expert"
+        }
+      ])
+    );
+
+    expect(loadSolvedPuzzleHistory()).toEqual([
+      {
+        attemptId: valid.puzzleId,
+        puzzleId: valid.puzzleId,
+        puzzle: valid.puzzle,
+        generatedAt: valid.completedAt,
+        completedAt: valid.completedAt,
+        completedBoard: valid.completedBoard,
+        elapsedMs: valid.elapsedMs
+      }
+    ]);
+  });
+
+  it("rejects invalid generated records, duplicate attempts, and write failures", () => {
+    expect(
+      () =>
+        recordGeneratedPuzzle(
+          createGeneratedRecord({
+            generatedAt: "not-a-date"
+          })
+        )
+    ).not.toThrow();
+    expect(loadSolvedPuzzleHistory()).toEqual([]);
+
+    expect(
+      () =>
+        recordGeneratedPuzzle(
+          createGeneratedRecord({
+            attemptId: "invalid-puzzle",
+            puzzle: "invalid puzzle"
+          })
+        )
+    ).not.toThrow();
+
+    const generated = createGeneratedRecord({ attemptId: "duplicate-attempt" });
+    recordGeneratedPuzzle(generated);
+    recordGeneratedPuzzle(generated);
+    expect(loadSolvedPuzzleHistory()).toHaveLength(1);
+
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota");
+    });
+
+    expect(
+      () =>
+        recordGeneratedPuzzle(
+          createGeneratedRecord({
+            attemptId: "write-failure"
+          })
+        )
+    ).not.toThrow();
+
+    setItemSpy.mockRestore();
+
+    expect(
+      () =>
+        recordGeneratedPuzzle(
+          createGeneratedRecord({
+            attemptId: "bad-difficulty",
+            difficulty: "expert" as never
+          })
+        )
+    ).not.toThrow();
+
+    setItemSpy.mockRestore();
+  });
+
+  it("ignores duplicate solved attempts and invalid completion updates", () => {
+    const solved = createRecord({ attemptId: "duplicate-solved" });
+    recordSolvedPuzzle(solved);
+    recordSolvedPuzzle(solved);
+
+    expect(loadSolvedPuzzleHistory()).toHaveLength(1);
+
+    const generated = createGeneratedRecord({ attemptId: "complete-me" });
+    recordGeneratedPuzzle(generated);
+
+    expect(
+      completePuzzleHistory({
+        attemptId: generated.attemptId,
+        puzzle: generated.puzzle,
+        completedBoard: [] as any,
+        completedAt: generated.generatedAt,
+        elapsedMs: 125_000
+      })
+    ).toBe(false);
+
+    expect(
+      completePuzzleHistory({
+        attemptId: generated.attemptId,
+        puzzle: generated.puzzle,
+        completedBoard: createSolvedBoardFixture(),
+        completedAt: "not-a-date",
+        elapsedMs: 125_000
+      })
+    ).toBe(false);
+
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota");
+    });
+
+    expect(
+      completePuzzleHistory({
+        attemptId: generated.attemptId,
+        puzzle: generated.puzzle,
+        completedBoard: createSolvedBoardFixture(),
+        completedAt: generated.generatedAt,
+        elapsedMs: 125_000
+      })
+    ).toBe(false);
+
+    setItemSpy.mockRestore();
+  });
+
   it("returns an empty list for broken JSON or a non-array root", () => {
     seedStorage(STORAGE_KEY, "{broken}");
     expect(loadSolvedPuzzleHistory()).toEqual([]);
@@ -279,6 +437,7 @@ describe("historyStorage", () => {
   it("is a no-op when recording or clearing without window", () => {
     withWindowUndefined(() => {
       expect(() => recordSolvedPuzzle(createRecord())).not.toThrow();
+      expect(() => recordGeneratedPuzzle(createGeneratedRecord())).not.toThrow();
       expect(() => clearSolvedPuzzleHistory()).not.toThrow();
     });
   });
