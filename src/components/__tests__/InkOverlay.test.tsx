@@ -45,7 +45,8 @@ function firePointer(
     pointerType: { value: init.pointerType },
     clientX: { value: init.clientX },
     clientY: { value: init.clientY },
-    pressure: { value: 0.5 }
+    pressure: { value: 0.5 },
+    isPrimary: { value: true }
   });
 
   fireEvent(target, event);
@@ -126,8 +127,9 @@ describe("InkOverlay", () => {
     expect(stroke.points).toHaveLength(1);
   });
 
-  it("does not draw for touch input", () => {
-    const onCommitStroke = vi.fn();
+  it("commits stroke for touch input", () => {
+    setMaxTouchPoints(5);
+    const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
     const onActiveBlockChange = vi.fn();
 
     const { getByTestId } = render(
@@ -158,7 +160,9 @@ describe("InkOverlay", () => {
     });
     firePointer(canvas, "pointerup", { pointerId: 12, pointerType: "touch", clientX: 20, clientY: 20 });
 
-    expect(onCommitStroke).not.toHaveBeenCalled();
+    expect(onActiveBlockChange).toHaveBeenCalledWith("0-0");
+    expect(onCommitStroke).toHaveBeenCalledTimes(1);
+    expect(onCommitStroke.mock.calls[0][1].points.length).toBeGreaterThan(1);
   });
 
   it("does not draw for mouse input on touch-capable devices", () => {
@@ -275,7 +279,7 @@ describe("InkOverlay", () => {
     expect(onCommitStroke).not.toHaveBeenCalled();
   });
 
-  it("commits via pointer cancel and tolerates pointer capture failure", () => {
+  it("discards pointer cancel and tolerates pointer capture failure", () => {
     const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
     const onActiveBlockChange = vi.fn<(blockId: BlockId) => void>();
 
@@ -299,10 +303,70 @@ describe("InkOverlay", () => {
     firePointer(canvas, "pointerdown", { pointerId: 3, pointerType: "pen", clientX: -10, clientY: -20 });
     firePointer(canvas, "pointercancel", { pointerId: 3, pointerType: "pen", clientX: 500, clientY: 600 });
 
+    expect(onCommitStroke).not.toHaveBeenCalled();
+  });
+
+  it("ignores a second finger while a touch stroke is active", () => {
+    setMaxTouchPoints(5);
+    const onCommitStroke = vi.fn<(blockId: BlockId, stroke: Stroke) => void>();
+
+    const { getByTestId } = render(
+      <InkOverlay
+        activeBlockId="0-0"
+        inkState={createEmptyInkState()}
+        isInkMode
+        onActiveBlockChange={vi.fn()}
+        onCommitStroke={onCommitStroke}
+      />
+    );
+
+    const root = getByTestId("ink-overlay");
+    mockCanvasRects(root);
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
+
+    firePointer(canvas, "pointerdown", { pointerId: 30, pointerType: "touch", clientX: 10, clientY: 10 });
+    firePointer(canvas, "pointerdown", { pointerId: 31, pointerType: "touch", clientX: 80, clientY: 80 });
+    firePointer(canvas, "pointerup", { pointerId: 31, pointerType: "touch", clientX: 90, clientY: 90 });
+    firePointer(canvas, "pointerup", { pointerId: 30, pointerType: "touch", clientX: 20, clientY: 20 });
+
     expect(onCommitStroke).toHaveBeenCalledTimes(1);
-    const [, stroke] = onCommitStroke.mock.calls[0];
-    expect(stroke.points[0].x).toBe(0);
-    expect(stroke.points[0].y).toBe(0);
+    const points = onCommitStroke.mock.calls[0][1].points;
+    expect(points[points.length - 1]?.x).toBeCloseTo(20 / 120);
+  });
+
+  it("redraws the active stroke before pointer up", () => {
+    const stroke = vi.fn();
+    const context = {
+      beginPath: vi.fn(),
+      clearRect: vi.fn(),
+      lineJoin: "round",
+      lineCap: "round",
+      lineWidth: 1,
+      moveTo: vi.fn(),
+      lineTo: vi.fn(),
+      stroke,
+      strokeStyle: "#000"
+    } as unknown as CanvasRenderingContext2D;
+
+    const { getByTestId } = render(
+      <InkOverlay
+        activeBlockId="0-0"
+        inkState={createEmptyInkState()}
+        isInkMode
+        onActiveBlockChange={vi.fn()}
+        onCommitStroke={vi.fn()}
+      />
+    );
+
+    const root = getByTestId("ink-overlay");
+    mockCanvasRects(root);
+    const canvas = getByTestId("ink-canvas-0-0") as HTMLCanvasElement;
+    canvas.getContext = vi.fn(() => context) as unknown as HTMLCanvasElement["getContext"];
+
+    firePointer(canvas, "pointerdown", { pointerId: 32, pointerType: "touch", clientX: 10, clientY: 10 });
+    firePointer(canvas, "pointermove", { pointerId: 32, pointerType: "touch", clientX: 20, clientY: 20 });
+
+    expect(stroke).toHaveBeenCalled();
   });
 
   it("observes canvases with ResizeObserver and disconnects on unmount", () => {

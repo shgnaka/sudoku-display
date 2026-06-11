@@ -32,7 +32,7 @@ describe("gameStorage", () => {
   });
 
   it("saves and loads raw input + board", () => {
-    const state = createPersistedGameStateFixture();
+    const state = { ...createPersistedGameStateFixture(), attemptId: "attempt-1" };
 
     saveGameState(state);
 

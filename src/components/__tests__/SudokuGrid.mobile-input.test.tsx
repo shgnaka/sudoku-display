@@ -1,5 +1,6 @@
-import { fireEvent, screen, within } from "@testing-library/react";
+import { createEvent, fireEvent, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { STORAGE_KEYS } from "../../constants/storageKeys";
 import { cellLabel, renderApp, resetAppTestState } from "../../test-utils/renderApp";
 
 describe("Sudoku UI mobile sheet input", () => {
@@ -172,5 +173,59 @@ describe("Sudoku UI mobile sheet input", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
     expect(screen.getByText("セル選択を解除しました。")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["smartphone", { isMobile: true, isSheetInput: true }],
+    ["tablet", { isMobile: false, isSheetInput: true }]
+  ] as const)("saves a finger-drawn stroke on %s", (_label, viewport) => {
+    Object.defineProperty(window.navigator, "maxTouchPoints", {
+      configurable: true,
+      value: 5
+    });
+    renderApp(viewport);
+    fireEvent.click(screen.getByRole("button", { name: "手書きモード切替（現在: OFF）" }));
+
+    const canvas = screen.getByTestId("ink-canvas-0-0");
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      configurable: true,
+      value: () => ({
+        width: 120,
+        height: 120,
+        top: 0,
+        left: 0,
+        right: 120,
+        bottom: 120,
+        x: 0,
+        y: 0,
+        toJSON: () => ({})
+      })
+    });
+
+    const fireTouchPointer = (type: "pointerdown" | "pointermove" | "pointerup", x: number): void => {
+      const event =
+        type === "pointerdown"
+          ? createEvent.pointerDown(canvas)
+          : type === "pointermove"
+            ? createEvent.pointerMove(canvas)
+            : createEvent.pointerUp(canvas);
+      Object.defineProperties(event, {
+        pointerId: { value: 71 },
+        pointerType: { value: "touch" },
+        isPrimary: { value: true },
+        clientX: { value: x },
+        clientY: { value: x },
+        pressure: { value: 0.5 }
+      });
+      fireEvent(canvas, event);
+    };
+
+    fireTouchPointer("pointerdown", 10);
+    fireTouchPointer("pointermove", 30);
+    fireTouchPointer("pointerup", 40);
+
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.ink) ?? "{}");
+    expect(stored["0-0"]).toHaveLength(1);
+    expect(stored["0-0"][0].points.length).toBeGreaterThan(2);
   });
 });
