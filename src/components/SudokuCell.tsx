@@ -12,6 +12,7 @@ interface SudokuCellProps {
   disabled?: boolean;
   inputMode?: SudokuCellInputMode;
   isSelected?: boolean;
+  isInvalid?: boolean;
   onChange: (row: number, col: number, value: number | null) => void;
   onBlurCell?: () => void;
   onFocusCell?: () => void;
@@ -25,12 +26,18 @@ export function SudokuCell({
   disabled = false,
   inputMode = "keyboard",
   isSelected = false,
+  isInvalid = false,
   onChange,
   onBlurCell,
   onFocusCell,
   onSelect
 }: SudokuCellProps): JSX.Element {
-  const className = ["sudoku-cell", `origin-${cell.origin}`, isSelected ? "is-selected" : ""]
+  const className = [
+    "sudoku-cell",
+    `origin-${cell.origin}`,
+    isSelected ? "is-selected" : "",
+    isInvalid ? "is-invalid" : ""
+  ]
     .filter(Boolean)
     .join(" ");
   const isReadOnly = cell.origin === "given" || disabled;
@@ -83,9 +90,11 @@ export function SudokuCell({
       <button
         aria-label={ariaLabel}
         aria-disabled={isReadOnly}
+        aria-invalid={isInvalid || undefined}
         className={className}
         data-col={col}
         data-row={row}
+        disabled={disabled}
         onClick={handleSelect}
         tabIndex={disabled ? -1 : undefined}
         type="button"
@@ -98,6 +107,8 @@ export function SudokuCell({
   return (
     <input
       aria-label={ariaLabel}
+      aria-invalid={isInvalid || undefined}
+      disabled={disabled}
       className={className}
       data-col={col}
       data-row={row}

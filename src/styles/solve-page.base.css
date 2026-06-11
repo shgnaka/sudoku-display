@@ -70,6 +70,30 @@
   touch-action: none;
 }
 
+.board-wrap.timer-paused {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.board-wrap.timer-paused .sudoku-grid,
+.board-wrap.timer-paused .ink-overlay {
+  filter: blur(12px);
+  opacity: 0.38;
+  pointer-events: none;
+  user-select: none;
+}
+
+.board-wrap.timer-paused::before {
+  content: "一時停止中";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-strong);
+  font-weight: var(--font-weight-bold);
+  z-index: 6;
+}
+
 .board-wrap.review-locked::after {
   content: "";
   position: absolute;
@@ -144,6 +168,53 @@ button.sudoku-cell[aria-disabled="true"] {
 .sudoku-cell.is-selected {
   box-shadow: inset 0 0 0 2px var(--focus);
   z-index: 1;
+}
+
+.sudoku-cell.is-invalid {
+  color: var(--text-danger-strong);
+  background: var(--surface-danger-soft);
+  box-shadow: inset 0 0 0 2px var(--line-danger);
+}
+
+.solve-tools-panel {
+  display: grid;
+  gap: var(--space-lg);
+  width: min(100%, 560px);
+  margin-inline: auto;
+  padding: var(--space-lg);
+  border: var(--border-width-base) solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  background: var(--panel-bg);
+}
+
+.solve-tools-time {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  color: var(--text-muted);
+}
+
+.solve-tools-time strong {
+  color: var(--text-strong);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-section-title);
+}
+
+.solve-tools-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.solve-tools-actions > :only-child {
+  grid-column: 1 / -1;
+}
+
+.solve-tools-message {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: var(--font-size-caption);
 }
 
 .solve-input-sheet-slot {

@@ -1,8 +1,21 @@
-import { MOBILE_BREAKPOINT_PX } from "../src/constants/layout";
+import { MOBILE_BREAKPOINT_PX, SOLVE_INPUT_SHEET_BREAKPOINT_PX } from "../src/constants/layout";
 import type { Plugin } from "vite";
 
 const MOBILE_BREAKPOINT_TOKEN = "__MOBILE_BREAKPOINT_PX__";
 const MOBILE_BREAKPOINT_VALUE = `${MOBILE_BREAKPOINT_PX}px`;
+const TABLET_BREAKPOINT_TOKEN = "__TABLET_BREAKPOINT_PX__";
+const TABLET_BREAKPOINT_VALUE = `${SOLVE_INPUT_SHEET_BREAKPOINT_PX}px`;
+const BREAKPOINT_REPLACEMENTS = [
+  [MOBILE_BREAKPOINT_TOKEN, MOBILE_BREAKPOINT_VALUE],
+  [TABLET_BREAKPOINT_TOKEN, TABLET_BREAKPOINT_VALUE]
+] as const;
+
+function replaceBreakpointTokens(source: string): string {
+  return BREAKPOINT_REPLACEMENTS.reduce(
+    (result, [token, value]) => result.replaceAll(token, value),
+    source
+  );
+}
 
 function isCssModuleId(id: string): boolean {
   return /\.css($|\?)/.test(id);
@@ -13,12 +26,15 @@ export function breakpointTokenPlugin(): Plugin {
     name: "breakpoint-token-plugin",
     enforce: "pre",
     transform(code, id) {
-      if (!isCssModuleId(id) || !code.includes(MOBILE_BREAKPOINT_TOKEN)) {
+      if (
+        !isCssModuleId(id) ||
+        !BREAKPOINT_REPLACEMENTS.some(([token]) => code.includes(token))
+      ) {
         return null;
       }
 
       return {
-        code: code.replaceAll(MOBILE_BREAKPOINT_TOKEN, MOBILE_BREAKPOINT_VALUE),
+        code: replaceBreakpointTokens(code),
         map: null
       };
     },
@@ -32,12 +48,12 @@ export function breakpointTokenPlugin(): Plugin {
           continue;
         }
 
-        output.source = output.source.replaceAll(MOBILE_BREAKPOINT_TOKEN, MOBILE_BREAKPOINT_VALUE);
+        output.source = replaceBreakpointTokens(output.source);
 
-        if (output.source.includes(MOBILE_BREAKPOINT_TOKEN)) {
-          this.error(
-            `Unresolved CSS breakpoint token ${MOBILE_BREAKPOINT_TOKEN} found in ${output.fileName}.`
-          );
+        for (const [token] of BREAKPOINT_REPLACEMENTS) {
+          if (output.source.includes(token)) {
+            this.error(`Unresolved CSS breakpoint token ${token} found in ${output.fileName}.`);
+          }
         }
       }
     }
