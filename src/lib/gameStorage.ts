@@ -5,6 +5,7 @@ import { SUDOKU_MAX_VALUE, SUDOKU_MIN_VALUE, SUDOKU_SIZE } from "../constants/su
 const STORAGE_KEY = STORAGE_KEYS.game;
 
 export interface PersistedGameState {
+  attemptId?: string;
   rawInput: string;
   board: Board;
 }
@@ -81,6 +82,7 @@ export function loadGameState(): PersistedGameState | null {
     }
 
     return {
+      ...(typeof parsed.attemptId === "string" ? { attemptId: parsed.attemptId } : {}),
       rawInput: parsed.rawInput,
       board: parsed.board
     };
