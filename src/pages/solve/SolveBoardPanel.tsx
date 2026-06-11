@@ -11,6 +11,8 @@ interface SolveBoardPanelProps {
   boardSlotRef: RefObject<HTMLDivElement>;
   inputMode: "keyboard" | "sheet";
   isReviewMode: boolean;
+  isTimerPaused: boolean;
+  invalidCellKeys: ReadonlySet<string>;
   isInkMode: boolean;
   activeBlockId: BlockId;
   inkState: InkState;
@@ -29,6 +31,8 @@ export function SolveBoardPanel({
   boardSlotRef,
   inputMode,
   isReviewMode,
+  isTimerPaused,
+  invalidCellKeys,
   isInkMode,
   activeBlockId,
   inkState,
@@ -44,13 +48,21 @@ export function SolveBoardPanel({
     <div className="solve-board-panel">
       <div className="board-slot" ref={boardSlotRef}>
         <div
-          className={isReviewMode ? "board-wrap review-locked" : "board-wrap"}
+          className={[
+            "board-wrap",
+            isReviewMode ? "review-locked" : "",
+            isTimerPaused ? "timer-paused" : ""
+          ]
+            .filter(Boolean)
+            .join(" ")}
           style={boardFitSize ? ({ "--board-fit-size": `${boardFitSize}px` } as CSSProperties) : undefined}
         >
           <SudokuGrid
             board={board}
-            disabled={isReviewMode}
+            disabled={isReviewMode || isTimerPaused}
+            hidden={isTimerPaused}
             inputMode={inputMode}
+            invalidCellKeys={invalidCellKeys}
             onCellBlur={inputMode === "keyboard" ? onCellBlur : undefined}
             onCellChange={onCellChange}
             onCellFocus={inputMode === "keyboard" ? onCellFocus : undefined}

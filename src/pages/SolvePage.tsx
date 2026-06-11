@@ -11,6 +11,7 @@ import { useSudokuAppState } from "../state/SudokuAppStateProvider";
 import { SolveBoardPanel } from "./solve/SolveBoardPanel";
 import { SolveControlsPanel } from "./solve/SolveControlsPanel";
 import { SolveInputSection } from "./solve/SolveInputSection";
+import { SolveToolsPanel } from "../components/solve-tools/SolveToolsPanel";
 import { useSolveSelectionController } from "./solve/useSolveSelectionController";
 
 export function SolvePage(): JSX.Element {
@@ -19,6 +20,9 @@ export function SolvePage(): JSX.Element {
     errorMessage,
     isInkMode,
     isReviewMode,
+    isTimerCompleted,
+    isTimerPaused,
+    invalidCellKeys,
     activeBlockId,
     inkState,
     setActiveBlockId,
@@ -39,7 +43,8 @@ export function SolvePage(): JSX.Element {
   const boardSlotRef = useRef<HTMLDivElement | null>(null);
   const boardFitSize = useBoardFitSize(boardSlotRef, { enabled: !isMobileViewport });
   const inputMode = isSheetInputViewport ? "sheet" : "keyboard";
-  const shouldShowInkActions = isInkMode && (inputMode === "sheet" || keyboardInset === 0);
+  const isBoardLocked = isReviewMode || isTimerCompleted;
+  const shouldShowInkActions = isInkMode && !isBoardLocked && (inputMode === "sheet" || keyboardInset === 0);
 
   const {
     selectedCell,
@@ -51,18 +56,18 @@ export function SolvePage(): JSX.Element {
   } = useSolveSelectionController({
     inputMode,
     isInkMode,
-    isReviewMode,
+    isReviewMode: isBoardLocked,
     solvePageRef,
     onCellChange: handleCellChange
   });
 
-  const isSheetInputDisabled = isReviewMode || selectedCell === null;
+  const isSheetInputDisabled = isBoardLocked || isTimerPaused || selectedCell === null;
 
   useKeyboardScrollLock({
-    enabled: inputMode === "keyboard" && isGridEditing && !isReviewMode,
+    enabled: inputMode === "keyboard" && isGridEditing && !isBoardLocked,
     keyboardInset
   });
-  useReviewScrollLock(isReviewMode);
+  useReviewScrollLock(isBoardLocked);
 
   useEffect(() => {
     if (inputMode !== "sheet") {
@@ -98,7 +103,9 @@ export function SolvePage(): JSX.Element {
         inkState={inkState}
         inputMode={inputMode}
         isInkMode={isInkMode}
-        isReviewMode={isReviewMode}
+        isReviewMode={isBoardLocked}
+        isTimerPaused={isTimerPaused}
+        invalidCellKeys={invalidCellKeys}
         onActiveBlockChange={setActiveBlockId}
         onCellBlur={() => setIsGridEditing(false)}
         onCellChange={handleCellChange}
@@ -109,14 +116,17 @@ export function SolvePage(): JSX.Element {
       />
 
       <SolveControlsPanel
+        isCompleted={isTimerCompleted}
         isInkMode={isInkMode}
-        isReviewMode={isReviewMode}
+        isReviewMode={isBoardLocked}
         onClearActiveBlock={handleClearActiveBlock}
         onClearAllInk={handleClearAllInk}
         onToggleInkMode={toggleInkMode}
         onToggleReviewMode={toggleReviewMode}
         shouldShowInkActions={shouldShowInkActions}
       />
+
+      {!isSheetInputViewport && <SolveToolsPanel />}
 
       <SolveInputSection
         inputDisabled={isSheetInputDisabled}

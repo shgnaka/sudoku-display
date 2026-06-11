@@ -1,6 +1,7 @@
 export const APP_ROUTES = [
   { key: "solve", label: "解く", hash: "#/solve" },
   { key: "manage", label: "作問", hash: "#/manage" },
+  { key: "history", label: "履歴", hash: "#/history" },
   { key: "storage", label: "保存管理", hash: "#/storage" },
   { key: "help", label: "ヘルプ", hash: "#/help" }
 ] as const;

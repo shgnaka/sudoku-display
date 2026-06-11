@@ -2,7 +2,9 @@ import type { RefObject } from "react";
 
 interface AppHeaderProps {
   currentLabel: string;
+  isHistoryActive: boolean;
   isMenuOpen: boolean;
+  onToggleHistory: () => void;
   onToggleMenu: () => void;
   menuButtonRef?: RefObject<HTMLButtonElement>;
   compact?: boolean;
@@ -10,7 +12,9 @@ interface AppHeaderProps {
 
 export function AppHeader({
   currentLabel,
+  isHistoryActive,
   isMenuOpen,
+  onToggleHistory,
   onToggleMenu,
   menuButtonRef,
   compact = false
@@ -20,6 +24,15 @@ export function AppHeader({
 
   return (
     <header className={compact ? "app-header compact" : "app-header"}>
+      <button
+        aria-current={isHistoryActive ? "page" : undefined}
+        aria-label={isHistoryActive ? "履歴を閉じて元のページに戻る" : "履歴を表示"}
+        className={isHistoryActive ? "history-button active" : "history-button"}
+        onClick={onToggleHistory}
+        type="button"
+      >
+        履歴
+      </button>
       {!compact && (
         <div>
           <h1>Sudoku Display</h1>

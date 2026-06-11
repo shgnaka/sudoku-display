@@ -4,16 +4,19 @@ import { join, relative, resolve } from "node:path";
 const MOBILE_BREAKPOINT_TOKEN = "__MOBILE_BREAKPOINT_PX__";
 const MOBILE_MEDIA_QUERY = `@media (max-width: ${MOBILE_BREAKPOINT_TOKEN})`;
 const FORBIDDEN_MOBILE_MEDIA_QUERY = "@media (max-width: 768px)";
-const SHEET_MEDIA_QUERY = "@media (max-width: 1024px)";
+const TABLET_BREAKPOINT_TOKEN = "__TABLET_BREAKPOINT_PX__";
+const TABLET_MEDIA_QUERY = `@media (max-width: ${TABLET_BREAKPOINT_TOKEN})`;
+const FORBIDDEN_TABLET_MEDIA_QUERY = "@media (max-width: 1024px)";
 const NOTE_TAG = "BREAKPOINT_SYNC_NOTE";
 const NOTE_CONST = "MOBILE_BREAKPOINT_PX";
+const TABLET_NOTE_CONST = "SOLVE_INPUT_SHEET_BREAKPOINT_PX";
 const NOTE_SOURCE = "src/constants/layout.ts";
 const EXPECTED_MOBILE_FILES = [
-  "src/styles/app-shell.css",
   "src/styles/common-ui.css",
   "src/styles/solve-page.base.css",
   "src/styles/solve-page.no-scroll.css"
 ];
+const EXPECTED_TABLET_FILES = ["src/styles/app-shell.css"];
 
 const rootDir = process.cwd();
 const stylesDir = resolve(rootDir, "src/styles");
@@ -36,6 +39,7 @@ function toRepoPath(fullPath) {
 const violations = [];
 const cssFiles = collectCssFiles(stylesDir);
 const filesWithMobileMedia = new Set();
+const filesWithTabletMedia = new Set();
 
 for (const filePath of cssFiles) {
   const repoPath = toRepoPath(filePath);
@@ -45,6 +49,25 @@ for (const filePath of cssFiles) {
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
     if (!line.includes(MOBILE_MEDIA_QUERY)) {
+      if (!line.includes(TABLET_MEDIA_QUERY)) {
+        continue;
+      }
+
+      filesWithTabletMedia.add(repoPath);
+      const noteLine = lines[i - 1] ?? "";
+      const missing = [];
+      if (!noteLine.includes(NOTE_TAG)) {
+        missing.push(NOTE_TAG);
+      }
+      if (!noteLine.includes(TABLET_NOTE_CONST)) {
+        missing.push(TABLET_NOTE_CONST);
+      }
+      if (!noteLine.includes(NOTE_SOURCE)) {
+        missing.push(NOTE_SOURCE);
+      }
+      if (missing.length > 0) {
+        violations.push(`${repoPath}:${i + 1} missing sync note parts: ${missing.join(", ")}`);
+      }
       continue;
     }
 
@@ -71,8 +94,8 @@ for (const filePath of cssFiles) {
     violations.push(`${repoPath}: found forbidden hardcoded mobile query ${FORBIDDEN_MOBILE_MEDIA_QUERY}`);
   }
 
-  if (source.includes(SHEET_MEDIA_QUERY)) {
-    violations.push(`${repoPath}: found forbidden CSS query ${SHEET_MEDIA_QUERY}`);
+  if (source.includes(FORBIDDEN_TABLET_MEDIA_QUERY)) {
+    violations.push(`${repoPath}: found forbidden tablet query ${FORBIDDEN_TABLET_MEDIA_QUERY}`);
   }
 }
 
@@ -85,6 +108,18 @@ for (const actual of filesWithMobileMedia) {
 for (const expected of expectedSet) {
   if (!filesWithMobileMedia.has(expected)) {
     violations.push(`${expected}: expected file is missing ${MOBILE_MEDIA_QUERY}`);
+  }
+}
+
+const expectedTabletSet = new Set(EXPECTED_TABLET_FILES);
+for (const actual of filesWithTabletMedia) {
+  if (!expectedTabletSet.has(actual)) {
+    violations.push(`${actual}: unexpected file contains ${TABLET_MEDIA_QUERY}`);
+  }
+}
+for (const expected of expectedTabletSet) {
+  if (!filesWithTabletMedia.has(expected)) {
+    violations.push(`${expected}: expected file is missing ${TABLET_MEDIA_QUERY}`);
   }
 }
 

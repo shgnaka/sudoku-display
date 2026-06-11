@@ -79,6 +79,7 @@
   --font-size-hint: 0.9rem;
   --font-size-input-mono: 0.95rem;
   --font-size-cell: clamp(0.95rem, 2vw, 1.2rem);
+  --font-size-history-cell: clamp(0.65rem, 2.8vw, 0.9rem);
   --font-size-pad: clamp(0.72rem, 2.8vw, 0.98rem);
   --font-size-nav-mobile: 0.76rem;
 
